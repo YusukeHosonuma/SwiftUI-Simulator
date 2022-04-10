@@ -14,6 +14,7 @@ public struct SimulatorView<Content: View>: View {
     @AppStorage("SwiftUI-Simulator.locale")
     private var locale: LocaleType = .jaJP
 
+    @available(iOS 15, *)
     @AppStorage("SwiftUI-Simulator.dynamicTypeSize")
     private var dynamicTypeSize: DynamicTypeSize = .medium
 
@@ -131,7 +132,7 @@ public struct SimulatorView<Content: View>: View {
                 //
                 // 􀀅 Dynamic Type Sizes slider
                 //
-                if isDynamicTypeSizesEnabled {
+                if #available(iOS 15, *), isDynamicTypeSizesEnabled {
                     Slider(
                         value: $dynamicTypeSize.sliderBinding(),
                         in: DynamicTypeSize.sliderRange,
@@ -213,7 +214,7 @@ public struct SimulatorView<Content: View>: View {
             }
             .padding()
             .frame(height: 64)
-            .background(.gray.opacity(0.05))
+            .background(Color.gray.opacity(0.05))
         }
     }
 
@@ -272,7 +273,11 @@ public struct SimulatorView<Content: View>: View {
                 .environment(\.colorScheme, isDark ? .dark : .light)
                 .environment(\.calendar, Calendar(identifier: calendarIdentifier))
                 .when(isDynamicTypeSizesEnabled) {
-                    $0.environment(\.dynamicTypeSize, dynamicTypeSize)
+                    if #available(iOS 15, *) {
+                        $0.environment(\.dynamicTypeSize, dynamicTypeSize)
+                    } else {
+                        $0
+                    }
                 }
 
                 footer()
@@ -306,7 +311,7 @@ public struct SimulatorView<Content: View>: View {
     @ViewBuilder
     private func footer() -> some View {
         HStack {
-            if isDynamicTypeSizesEnabled {
+            if #available(iOS 15, *), isDynamicTypeSizesEnabled {
                 Text(dynamicTypeSize.label)
             }
             Spacer()
