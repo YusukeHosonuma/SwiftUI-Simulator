@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension Binding where Value: SliderCompatible {
+extension Binding where Value: SliderValue {
     func sliderBinding() -> Binding<Double> {
         .init(
             get: {

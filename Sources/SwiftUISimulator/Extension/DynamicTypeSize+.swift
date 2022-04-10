@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension DynamicTypeSize: SliderCompatible { // TODO: DynamicTypeSize is iOS 15+
+extension DynamicTypeSize: SliderValue { // TODO: DynamicTypeSize is iOS 15+
     static let sliderRange: ClosedRange<Double> = 0 ... 6
 
     var sliderIndex: Int { rawValue }

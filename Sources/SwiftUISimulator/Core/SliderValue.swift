@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol SliderCompatible {
+protocol SliderValue {
     static var sliderRange: ClosedRange<Double> { get }
     var sliderIndex: Int { get }
     init(fromSliderIndex: Int)
