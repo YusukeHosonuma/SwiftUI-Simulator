@@ -32,3 +32,7 @@ struct HelloApp: App {
     }
 }
 ```
+
+## Requirements
+
+- iOS 14+
