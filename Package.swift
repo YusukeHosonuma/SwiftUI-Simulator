@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "SwiftUISimulator",
     platforms: [
-        .iOS(.v15),
+        .iOS(.v14),
     ],
     products: [
         .library(name: "SwiftUISimulator", targets: ["SwiftUISimulator"]),

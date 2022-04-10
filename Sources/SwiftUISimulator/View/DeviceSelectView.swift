@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct DeviceSelectView: View {
-    @Environment(\.dismiss) private var dismiss
 
+    // 💡 iOS 15+
+    @Environment(\.presentationMode) var presentationMode
+    
     private let selectedDevices: Binding<Set<Device>>
 
     init(selectedDevices: Binding<Set<Device>>) {
@@ -19,24 +21,35 @@ struct DeviceSelectView: View {
     var body: some View {
         NavigationView {
             List(selection: selectedDevices) {
-                Section("iPhone") {
+                //
+                // 💡 iOS 15+
+                //
+                // `Section("xxx") { ... }`
+                // https://developer.apple.com/documentation/swiftui/section/init(_:content:)-90be4
+                //
+                Section {
                     ForEach(Device.allCases.filter { $0.isIpad == false }, id: \.name) { device in
                         Text(device.name)
                             .tag(device)
                     }
+                } header: {
+                    Text("iPhone")
                 }
-                Section("iPad") {
+                
+                Section {
                     ForEach(Device.allCases.filter(\.isIpad), id: \.name) { device in
                         Text(device.name)
                             .tag(device)
                     }
+                } header: {
+                    Text("iPad")
                 }
             }
             .environment(\.editMode, .constant(.active))
             .toolbar {
                 ToolbarItem(placement: .destructiveAction) {
                     Button("Done") {
-                        dismiss()
+                        presentationMode.wrappedValue.dismiss()
                     }
                     .disabled(selectedDevices.wrappedValue.isEmpty)
                 }
