@@ -38,12 +38,7 @@ public struct SimulatorView<Content: View>: View {
     @State private var isPresentedDeviceSelectSheet = false
 
     private let content: () -> Content
-
-    public init(@ViewBuilder _ content: @escaping () -> Content) {
-        self.content = content
-        enableDevices = Self.loadEnableDevices()
-    }
-
+    
     private func saveEnableDevices() {
         let rawValues = Array(enableDevices.map(\.rawValue)) // TODO: change string to safe.
         UserDefaults.standard.set(rawValues, forKey: "SwiftUI-Simulator.enableDevices")
@@ -55,6 +50,11 @@ public struct SimulatorView<Content: View>: View {
         } else {
             return Set(Device.allCases)
         }
+    }
+
+    public init(@ViewBuilder _ content: @escaping () -> Content) {
+        self.content = content
+        enableDevices = Self.loadEnableDevices()
     }
 
     public var body: some View {
@@ -311,6 +311,6 @@ public struct SimulatorView<Content: View>: View {
             }
             Spacer()
         }
-        .foregroundColor(.secondary)
+        .foregroundColor(.gray)
     }
 }
