@@ -4,17 +4,16 @@
 import PackageDescription
 
 let package = Package(
-    name: "SwiftUI-Simulator",
+    name: "SwiftUISimulator",
     platforms: [
         .iOS(.v15),
-        .macOS(.v12),
     ],
     products: [
-        .library(name: "SwiftUI-Simulator", targets: ["SwiftUI-Simulator"]),
+        .library(name: "SwiftUISimulator", targets: ["SwiftUISimulator"]),
     ],
     dependencies: [],
     targets: [
-        .target(name: "SwiftUI-Simulator", dependencies: []),
-        .testTarget(name: "SwiftUI-SimulatorTests", dependencies: ["SwiftUI-Simulator"]),
+        .target(name: "SwiftUISimulator", dependencies: []),
+        .testTarget(name: "SwiftUISimulatorTests", dependencies: ["SwiftUISimulator"]),
     ]
 )
