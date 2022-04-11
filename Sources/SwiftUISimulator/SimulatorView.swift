@@ -39,7 +39,7 @@ public struct SimulatorView<Content: View>: View {
     @State private var isPresentedDeviceSelectSheet = false
 
     private let content: () -> Content
-    
+
     private func saveEnableDevices() {
         let rawValues = Array(enableDevices.map(\.rawValue)) // TODO: change string to safe.
         UserDefaults.standard.set(rawValues, forKey: "SwiftUI-Simulator.enableDevices")

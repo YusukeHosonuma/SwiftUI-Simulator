@@ -8,16 +8,15 @@
 import SwiftUI
 
 struct DeviceSelectView: View {
-
     // 💡 iOS 15+
     @Environment(\.presentationMode) var presentationMode
-    
+
     private let selectedDevices: Binding<Set<Device>>
 
     init(selectedDevices: Binding<Set<Device>>) {
         self.selectedDevices = selectedDevices
     }
-    
+
     var body: some View {
         NavigationView {
             List(selection: selectedDevices) {
@@ -41,7 +40,7 @@ struct DeviceSelectView: View {
                         }
                     }
                 }
-                
+
                 Section {
                     ForEach(Device.iPads, id: \.name) { device in
                         Text(device.name)

@@ -11,7 +11,7 @@ enum Device: Int, CaseIterable, Comparable {
     static func < (lhs: Device, rhs: Device) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
-    
+
     case iPodTouch
     case iPhoneSE
     case iPhone12Mini
@@ -30,11 +30,11 @@ enum Device: Int, CaseIterable, Comparable {
     case iPadAir_4th
     case iPadPro_11
     case iPadPro_12_9
-    
+
     static var iPhones: [Self] {
         Device.allCases.filter { $0.type == .iPhone }
     }
-    
+
     static var iPads: [Self] {
         Device.allCases.filter { $0.type == .iPad }
     }
@@ -50,7 +50,7 @@ enum Device: Int, CaseIterable, Comparable {
         case .iPhone12: return .iPhone12
         case .iPhone11ProMax: return .iPhone11ProMax
         case .iPhone13ProMax: return .iPhone13ProMax
-            
+
         case .iPadMini_5h: return .iPadMini_5h
         case .iPadMini_6th: return .iPadMini_6th
         case .iPadPro_9_7: return .iPadPro_9_7
@@ -61,37 +61,37 @@ enum Device: Int, CaseIterable, Comparable {
         case .iPadPro_12_9: return .iPadPro_12_9
         }
     }
-    
+
     var name: String {
         info.name
     }
-    
+
     var inch: String {
         info.inch
     }
-    
+
     var size: CGSize {
         info.size
     }
-    
+
     var safeAreaTop: CGFloat {
         info.safeArea.top
     }
-    
+
     var safeAreaBottom: CGFloat {
         info.safeArea.bottom == 0
             ? info.safeArea.bottom
             : info.safeArea.bottom - 8 // why?
     }
-    
+
     var portraitSizeClass: SizeClasses {
         info.portraitSizeClass
     }
-    
+
     var landscapeSizeClass: SizeClasses {
         info.landscapeSizeClass
     }
-    
+
     var type: DeviceType {
         info.type
     }

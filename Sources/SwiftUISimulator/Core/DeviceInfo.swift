@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Yusuke Hosonuma on 2022/04/11.
 //
@@ -22,7 +22,7 @@ struct DeviceInfo {
     let landscapeSizeClass: SizeClasses
     let safeArea: SafeArea
     let type: DeviceType
-    
+
     private init(
         name: String,
         inch: String,
@@ -40,14 +40,14 @@ struct DeviceInfo {
         self.safeArea = safeArea
         self.type = type
     }
-    
+
     // 💡 References:
     // https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/adaptivity-and-layout/
     // https://qiita.com/MJeeeey/items/a640922da33dacc0fc30
     // https://www.screensizes.app/
-    
+
     // MARK: iPhone
-    
+
     //
     // iPod Touch - 4.0 inch
     //
@@ -59,7 +59,7 @@ struct DeviceInfo {
         landscapeSizeClass: (.compact, .compact),
         type: .iPhone
     )
-    
+
     //
     // iPhone SE (3rd) - 4.7 inch
     //
@@ -71,7 +71,7 @@ struct DeviceInfo {
         landscapeSizeClass: (.compact, .compact),
         type: .iPhone
     )
-    
+
     //
     // iPhone 12 mini (5.4 inch)
     //
@@ -83,7 +83,7 @@ struct DeviceInfo {
         landscapeSizeClass: (.compact, .compact),
         type: .iPhone
     )
-    
+
     //
     // iPhone 8 Plus (5.5 inch)
     //
@@ -95,7 +95,7 @@ struct DeviceInfo {
         landscapeSizeClass: (.regular, .compact),
         type: .iPhone
     )
-    
+
     //
     // iPhone 11 Pro (5.8 inch)
     //
@@ -108,7 +108,7 @@ struct DeviceInfo {
         safeArea: (44, 34),
         type: .iPhone
     )
-    
+
     //
     // iPhone 11 (6.1 inch)
     //
@@ -121,7 +121,7 @@ struct DeviceInfo {
         safeArea: (48, 34),
         type: .iPhone
     )
-    
+
     //
     // iPhone 12 (6.1 inch)
     //
@@ -134,7 +134,7 @@ struct DeviceInfo {
         safeArea: (50, 34), // TODO: really?
         type: .iPhone
     )
-    
+
     //
     // iPhone 11 Pro Max (6.5 inch)
     //
@@ -147,7 +147,7 @@ struct DeviceInfo {
         safeArea: (44, 34),
         type: .iPhone
     )
-    
+
     //
     // iPhone 13 Pro Max (6.7 inch)
     //
@@ -160,9 +160,9 @@ struct DeviceInfo {
         safeArea: (47, 34),
         type: .iPhone
     )
-    
+
     // MARK: iPad
-    
+
     //
     // iPad mini 5th (7.9 inch)
     //
@@ -175,7 +175,7 @@ struct DeviceInfo {
         safeArea: (24, 20), // TODO: same as iPad mini (6th) ?
         type: .iPad
     )
-    
+
     //
     // iPad mini 6th (8.3 inch)
     //
@@ -188,7 +188,7 @@ struct DeviceInfo {
         safeArea: (24, 20),
         type: .iPad
     )
-    
+
     //
     // iPad Pro (9.7 inch)
     //
@@ -200,7 +200,7 @@ struct DeviceInfo {
         landscapeSizeClass: (.regular, .regular),
         type: .iPad
     )
-    
+
     //
     // iPad 9th (10.2 inch)
     //
@@ -213,7 +213,7 @@ struct DeviceInfo {
         safeArea: (20, 0), // TODO: really?
         type: .iPad
     )
-    
+
     //
     // iPad Air 3rd (10.5 inch)
     //
@@ -225,7 +225,7 @@ struct DeviceInfo {
         landscapeSizeClass: (.regular, .regular),
         type: .iPad
     )
-    
+
     //
     // iPad Air 4th (10.9 inch)
     //
@@ -238,7 +238,7 @@ struct DeviceInfo {
         safeArea: (24, 20),
         type: .iPad
     )
-    
+
     //
     // iPad Pro 11 (11 inch)
     //
@@ -251,7 +251,7 @@ struct DeviceInfo {
         safeArea: (24, 20),
         type: .iPad
     )
-    
+
     //
     // iPad Pro (12.9 inch)
     //
