@@ -33,6 +33,9 @@ public struct SimulatorView<Content: View>: View {
     @AppStorage("SwiftUI-Simulator.calendarIdentifier")
     private var calendarIdentifier: Calendar.Identifier = .iso8601
 
+    @AppStorage("SwiftUI-Simulator.isDualMode")
+    private var isDualMode = false
+
     // 💡 Note: save and restore by code.
     @State private var enableDevices: Set<Device>
 
@@ -92,10 +95,26 @@ public struct SimulatorView<Content: View>: View {
     @ViewBuilder
     private func simulatorContainer(deviceSize: CGSize, orientation: DeviceOrientation) -> some View {
         ZStack(alignment: .bottomLeading) {
-            simulatedContent(orientation: orientation)
-                .offset(y: -32)
-                .animation(.default, value: device)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            Group {
+                if isDualMode {
+                    if orientation == .portrait {
+                        HStack(spacing: 24) {
+                            simulatedContent(colorScheme: .dark, orientation: orientation)
+                            simulatedContent(colorScheme: .light, orientation: orientation)
+                        }
+                    } else {
+                        VStack(spacing: 64) {
+                            simulatedContent(colorScheme: .dark, orientation: orientation)
+                            simulatedContent(colorScheme: .light, orientation: orientation)
+                        }
+                    }
+                } else {
+                    simulatedContent(colorScheme: isDark ? .dark : .light, orientation: orientation)
+                }
+            }
+            .offset(y: -32)
+            .animation(.default, value: device)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             HStack {
                 //
@@ -144,6 +163,16 @@ public struct SimulatorView<Content: View>: View {
                 Spacer()
 
                 //
+                // 􀏠
+                //
+                Button {
+                    isDualMode.toggle()
+                } label: {
+                    Icon("square.split.2x1")
+                }
+                .padding(.trailing, 4)
+
+                //
                 // 􀟝 Device
                 //
                 Menu {
@@ -180,6 +209,7 @@ public struct SimulatorView<Content: View>: View {
                     }
                 }
                 .padding(.trailing, 4)
+                .disabled(isDualMode == true)
 
                 //
                 // 􀫖 Locale
@@ -213,13 +243,13 @@ public struct SimulatorView<Content: View>: View {
                 }
             }
             .padding()
-            .frame(height: 64)
+            .frame(width: deviceSize.width, height: 64)
             .background(Color.gray.opacity(0.05))
         }
     }
 
     @ViewBuilder
-    private func simulatedContent(orientation: DeviceOrientation) -> some View {
+    private func simulatedContent(colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
         let safeAreaHeight = device.safeAreaTop + device.safeAreaBottom
         let fw = device.size.width
         let fh = device.size.height - (isDisplaySafeArea ? 0 : safeAreaHeight)
@@ -231,54 +261,7 @@ public struct SimulatorView<Content: View>: View {
 
         ZStack(alignment: .topLeading) {
             ZStack(alignment: .bottomLeading) {
-                Group {
-                    let appContent = content().frame(width: width, height: height, alignment: .center)
-
-                    if orientation == .portrait {
-                        VStack(spacing: 0) {
-                            if isDisplaySafeArea {
-                                Color.pink.opacity(0.1)
-                                    .frame(height: device.safeAreaTop)
-                            }
-
-                            appContent
-
-                            if isDisplaySafeArea {
-                                Color.pink.opacity(0.1)
-                                    .frame(height: device.safeAreaBottom)
-                            }
-                        }
-                        .frame(width: width)
-                    } else {
-                        HStack(spacing: 0) {
-                            if isDisplaySafeArea {
-                                Color.pink.opacity(0.1)
-                                    .frame(width: device.safeAreaTop)
-                            }
-
-                            appContent
-
-                            if isDisplaySafeArea {
-                                Color.pink.opacity(0.1)
-                                    .frame(width: device.safeAreaBottom)
-                            }
-                        }
-                        .frame(height: height)
-                    }
-                }
-                .border(.blue)
-                .environment(\.verticalSizeClass, orientation == .portrait ? device.portraitSizeClass.height : device.landscapeSizeClass.height)
-                .environment(\.horizontalSizeClass, orientation == .portrait ? device.portraitSizeClass.width : device.landscapeSizeClass.width)
-                .environment(\.locale, .init(identifier: locale.rawValue))
-                .environment(\.colorScheme, isDark ? .dark : .light)
-                .environment(\.calendar, Calendar(identifier: calendarIdentifier))
-                .when(isDynamicTypeSizesEnabled) {
-                    if #available(iOS 15, *) {
-                        $0.environment(\.dynamicTypeSize, dynamicTypeSize)
-                    } else {
-                        $0
-                    }
-                }
+                appContent(width: width, height: height, colorScheme: colorScheme, orientation: orientation)
 
                 footer()
                     .offset(y: 24)
@@ -294,6 +277,57 @@ public struct SimulatorView<Content: View>: View {
         }, content: {
             DeviceSelectView(selectedDevices: $enableDevices)
         })
+    }
+
+    private func appContent(width: CGFloat, height: CGFloat, colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
+        Group {
+            let appContent = content().frame(width: width, height: height, alignment: .center)
+
+            if orientation == .portrait {
+                VStack(spacing: 0) {
+                    if isDisplaySafeArea {
+                        Color.pink.opacity(0.1)
+                            .frame(height: device.safeAreaTop)
+                    }
+
+                    appContent
+
+                    if isDisplaySafeArea {
+                        Color.pink.opacity(0.1)
+                            .frame(height: device.safeAreaBottom)
+                    }
+                }
+                .frame(width: width)
+            } else {
+                HStack(spacing: 0) {
+                    if isDisplaySafeArea {
+                        Color.pink.opacity(0.1)
+                            .frame(width: device.safeAreaTop)
+                    }
+
+                    appContent
+
+                    if isDisplaySafeArea {
+                        Color.pink.opacity(0.1)
+                            .frame(width: device.safeAreaBottom)
+                    }
+                }
+                .frame(height: height)
+            }
+        }
+        .border(.blue)
+        .environment(\.verticalSizeClass, orientation == .portrait ? device.portraitSizeClass.height : device.landscapeSizeClass.height)
+        .environment(\.horizontalSizeClass, orientation == .portrait ? device.portraitSizeClass.width : device.landscapeSizeClass.width)
+        .environment(\.locale, .init(identifier: locale.rawValue))
+        .environment(\.colorScheme, colorScheme)
+        .environment(\.calendar, Calendar(identifier: calendarIdentifier))
+        .when(isDynamicTypeSizesEnabled) {
+            if #available(iOS 15, *) {
+                $0.environment(\.dynamicTypeSize, dynamicTypeSize)
+            } else {
+                $0
+            }
+        }
     }
 
     @ViewBuilder
