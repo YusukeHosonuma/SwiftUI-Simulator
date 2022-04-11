@@ -31,6 +31,14 @@ enum Device: Int, CaseIterable, Comparable {
     case iPadPro_11
     case iPadPro_12_9
     
+    static var iPhones: [Self] {
+        Device.allCases.filter { $0.type == .iPhone }
+    }
+    
+    static var iPads: [Self] {
+        Device.allCases.filter { $0.type == .iPad }
+    }
+
     var info: DeviceInfo {
         switch self {
         case .iPodTouch: return .iPodTouch
