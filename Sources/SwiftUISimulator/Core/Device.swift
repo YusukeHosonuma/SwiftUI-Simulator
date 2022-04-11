@@ -14,79 +14,85 @@ enum Device: Int, CaseIterable, Comparable {
 
     case iPodTouch
     case iPhoneSE
+    case iPhone12Mini
     case iPhone8Plus
+    case iPhone11Pro
+    case iPhone11
+    case iPhone12
     case iPhone11ProMax
+    case iPhone13ProMax
+
+    case iPadMini_5h
     case iPadMini_6th
+    case iPadPro_9_7
+    case iPad_9th
+    case iPadAir_3rd
+    case iPadAir_4th
+    case iPadPro_11
+    case iPadPro_12_9
+
+    static var iPhones: [Self] {
+        Device.allCases.filter { $0.type == .iPhone }
+    }
+
+    static var iPads: [Self] {
+        Device.allCases.filter { $0.type == .iPad }
+    }
+
+    var info: DeviceInfo {
+        switch self {
+        case .iPodTouch: return .iPodTouch
+        case .iPhoneSE: return .iPhoneSE
+        case .iPhone12Mini: return .iPhone12Mini
+        case .iPhone8Plus: return .iPhone8Plus
+        case .iPhone11Pro: return .iPhone11Pro
+        case .iPhone11: return .iPhone11
+        case .iPhone12: return .iPhone12
+        case .iPhone11ProMax: return .iPhone11ProMax
+        case .iPhone13ProMax: return .iPhone13ProMax
+
+        case .iPadMini_5h: return .iPadMini_5h
+        case .iPadMini_6th: return .iPadMini_6th
+        case .iPadPro_9_7: return .iPadPro_9_7
+        case .iPad_9th: return .iPad_9th
+        case .iPadAir_3rd: return .iPadAir_3rd
+        case .iPadAir_4th: return .iPadAir_4th
+        case .iPadPro_11: return .iPadPro_11
+        case .iPadPro_12_9: return .iPadPro_12_9
+        }
+    }
 
     var name: String {
-        switch self {
-        case .iPodTouch:
-            return "iPod Touch"
-        case .iPhoneSE:
-            return "iPhone SE - 4.7 inch"
-        case .iPhone8Plus:
-            return "iPhone 8 Plus - 5.5 inch"
-        case .iPhone11ProMax:
-            return "iPhone 11 Pro Max - 6.5 inch"
-        case .iPadMini_6th:
-            return "iPad mini (6th)"
-        }
+        info.name
+    }
+
+    var inch: String {
+        info.inch
     }
 
     var size: CGSize {
-        switch self {
-        case .iPodTouch:
-            return CGSize(width: 320, height: 480)
-        case .iPhoneSE:
-            return CGSize(width: 375, height: 667)
-        case .iPhone8Plus:
-            return CGSize(width: 414, height: 736)
-        case .iPhone11ProMax:
-            return CGSize(width: 414, height: 896)
-        case .iPadMini_6th:
-            return CGSize(width: 744, height: 1133)
-        }
+        info.size
     }
 
     var safeAreaTop: CGFloat {
-        switch self {
-        case .iPhone11ProMax:
-            return 44
-        default:
-            return 20
-        }
+        info.safeArea.top
     }
 
     var safeAreaBottom: CGFloat {
-        switch self {
-        case .iPhone11ProMax:
-            return 34 - 8
-        default:
-            return 0
-        }
+        info.safeArea.bottom == 0
+            ? info.safeArea.bottom
+            : info.safeArea.bottom - 8 // why?
     }
 
     var portraitSizeClass: SizeClasses {
-        switch self {
-        case .iPadMini_6th:
-            return (.regular, .regular)
-        default:
-            return (.compact, .regular)
-        }
+        info.portraitSizeClass
     }
 
     var landscapeSizeClass: SizeClasses {
-        switch self {
-        case .iPodTouch, .iPhoneSE:
-            return (.compact, .compact)
-        case .iPhone8Plus, .iPhone11ProMax:
-            return (.regular, .compact)
-        default:
-            return (.regular, .regular) // any iPad
-        }
+        info.landscapeSizeClass
     }
 
-    var isIpad: Bool {
-        size.width >= 744
+    var type: DeviceType {
+        info.type
     }
 }

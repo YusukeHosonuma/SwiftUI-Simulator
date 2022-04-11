@@ -39,7 +39,7 @@ public struct SimulatorView<Content: View>: View {
     @State private var isPresentedDeviceSelectSheet = false
 
     private let content: () -> Content
-    
+
     private func saveEnableDevices() {
         let rawValues = Array(enableDevices.map(\.rawValue)) // TODO: change string to safe.
         UserDefaults.standard.set(rawValues, forKey: "SwiftUI-Simulator.enableDevices")
@@ -301,7 +301,7 @@ public struct SimulatorView<Content: View>: View {
         let w = Int(device.size.width)
         let h = Int(device.size.height)
         HStack {
-            Text("\(device.name) (\(w) x \(h))")
+            Text("\(device.name) - \(device.inch) inch (\(w) x \(h))")
             Spacer()
             Text("\(locale.rawValue)")
         }

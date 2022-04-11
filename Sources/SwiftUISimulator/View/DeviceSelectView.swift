@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct DeviceSelectView: View {
-
     // 💡 iOS 15+
     @Environment(\.presentationMode) var presentationMode
-    
+
     private let selectedDevices: Binding<Set<Device>>
 
     init(selectedDevices: Binding<Set<Device>>) {
@@ -28,21 +27,33 @@ struct DeviceSelectView: View {
                 // https://developer.apple.com/documentation/swiftui/section/init(_:content:)-90be4
                 //
                 Section {
-                    ForEach(Device.allCases.filter { $0.isIpad == false }, id: \.name) { device in
+                    ForEach(Device.iPhones, id: \.name) { device in
                         Text(device.name)
                             .tag(device)
                     }
                 } header: {
-                    Text("iPhone")
+                    HStack {
+                        Text("iPhone")
+                        Spacer()
+                        Button("Select All") {
+                            selectedDevices.wrappedValue = selectedDevices.wrappedValue.union(Device.iPhones)
+                        }
+                    }
                 }
-                
+
                 Section {
-                    ForEach(Device.allCases.filter(\.isIpad), id: \.name) { device in
+                    ForEach(Device.iPads, id: \.name) { device in
                         Text(device.name)
                             .tag(device)
                     }
                 } header: {
-                    Text("iPad")
+                    HStack {
+                        Text("iPad")
+                        Spacer()
+                        Button("Select All") {
+                            selectedDevices.wrappedValue = selectedDevices.wrappedValue.union(Device.iPads)
+                        }
+                    }
                 }
             }
             .environment(\.editMode, .constant(.active))
