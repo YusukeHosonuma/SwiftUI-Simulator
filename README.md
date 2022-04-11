@@ -4,6 +4,8 @@ A description of this package.
 
 ## Setup
 
+Install via Swift Package Manager.
+
 ```swift
 let package = Package(
     dependencies: [
@@ -17,6 +19,8 @@ let package = Package(
 )
 ```
 
+Wrap you root view by `SimulatorView`.
+
 ```swift
 import SwiftUISimulator
 
@@ -25,9 +29,13 @@ struct HelloApp: App {
     var body: some Scene {
         WindowGroup {
             // ✅ Please wrap your root view.
-            SimulatorView {
+            #if DEBUG
+            SimulatorView { // ✅ Wrap your root view.
                 ContentView()
             }
+            #else
+            ContentView()
+            #endif
         }
     }
 }
