@@ -301,7 +301,7 @@ public struct SimulatorView<Content: View>: View {
         let w = Int(device.size.width)
         let h = Int(device.size.height)
         HStack {
-            Text("\(device.name) - \(device.inch) (\(w) x \(h))")
+            Text("\(device.name) - \(device.inch) inch (\(w) x \(h))")
             Spacer()
             Text("\(locale.rawValue)")
         }
