@@ -28,7 +28,7 @@ struct DeviceSelectView: View {
                 // https://developer.apple.com/documentation/swiftui/section/init(_:content:)-90be4
                 //
                 Section {
-                    ForEach(Device.allCases.filter { $0.isIpad == false }, id: \.name) { device in
+                    ForEach(Device.allCases.filter { $0.type == .iPhone }, id: \.name) { device in
                         Text(device.name)
                             .tag(device)
                     }
@@ -37,7 +37,7 @@ struct DeviceSelectView: View {
                 }
                 
                 Section {
-                    ForEach(Device.allCases.filter(\.isIpad), id: \.name) { device in
+                    ForEach(Device.allCases.filter { $0.type == .iPad }, id: \.name) { device in
                         Text(device.name)
                             .tag(device)
                     }
