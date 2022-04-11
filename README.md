@@ -35,4 +35,4 @@ struct HelloApp: App {
 
 ## Requirements
 
-- iOS 14+
+- iOS 15+ (currently)
