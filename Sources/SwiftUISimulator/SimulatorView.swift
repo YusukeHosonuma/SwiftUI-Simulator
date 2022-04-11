@@ -152,7 +152,7 @@ public struct SimulatorView<Content: View>: View {
                             ? enableDevices.filter { $0.size.width < deviceSize.width && $0.size.height < deviceSize.height }
                             : enableDevices.filter { $0.size.height < deviceSize.width && $0.size.width < deviceSize.height }
 
-                        ForEach(devices.sorted().reversed(), id: \.name) { device in
+                        ForEach(Array(devices.sorted().reversed()), id: \.name) { device in
                             Text(device.name)
                                 .tag(device)
                             // 😇 `disabled` are not working. (I have no choice but to deal with it by filtering)
