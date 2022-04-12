@@ -39,6 +39,9 @@ public struct SimulatorView<Content: View>: View {
     @AppStorage("SwiftUI-Simulator.isDualMode")
     private var isDualMode = false
 
+    @AppStorage("SwiftUI-Simulator.isPortrait")
+    private var isPortrait = true
+
     //
     // 💡 Note: save and restore by code.
     //
@@ -78,7 +81,7 @@ public struct SimulatorView<Content: View>: View {
             return Set([.iso8601, .japanese])
         }
     }
-    
+
     //
     // Sheets
     //
@@ -100,7 +103,7 @@ public struct SimulatorView<Content: View>: View {
             VStack {
                 Group {
                     if isSimulatorEnabled {
-                        simulatorContainer(deviceSize: reader.size, orientation: .init(deviceSize: reader.size))
+                        simulatorContainer(realDeviceSize: reader.size)
                     } else {
                         simulatorIcon()
                     }
@@ -233,11 +236,12 @@ public struct SimulatorView<Content: View>: View {
     }
 
     @ViewBuilder
-    private func simulatorContainer(deviceSize: CGSize, orientation: DeviceOrientation) -> some View {
+    private func simulatorContainer(realDeviceSize: CGSize) -> some View {
         ZStack(alignment: .bottomLeading) {
             Group {
+                let orientation: DeviceOrientation = isPortrait ? .portrait : .landscape
                 if isDualMode {
-                    if orientation == .portrait {
+                    if isPortrait {
                         HStack(spacing: 24) {
                             simulatedContent(colorScheme: .dark, orientation: orientation)
                             simulatedContent(colorScheme: .light, orientation: orientation)
@@ -254,9 +258,10 @@ public struct SimulatorView<Content: View>: View {
             }
             .offset(y: -32)
             .animation(.default, value: device)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(width: realDeviceSize.width, height: realDeviceSize.height)
+            .frame(maxWidth: .infinity, maxHeight: realDeviceSize.height)
 
-            HStack {
+            HStack(alignment: .center) {
                 //
                 // 􀣌 Setting menu
                 //
@@ -278,7 +283,17 @@ public struct SimulatorView<Content: View>: View {
                 Spacer()
 
                 //
-                // 􀏠
+                // 􀎮 Rotate
+                //
+                Button {
+                    isPortrait.toggle()
+                } label: {
+                    Icon("rotate.left")
+                }
+                .padding(.trailing, 4)
+
+                //
+                // 􀏠 Dual mode
                 //
                 Button {
                     isDualMode.toggle()
@@ -292,9 +307,9 @@ public struct SimulatorView<Content: View>: View {
                 //
                 Menu {
                     Picker(selection: $device) {
-                        let devices = orientation == .portrait
-                            ? enableDevices.filter { $0.size.width < deviceSize.width && $0.size.height < deviceSize.height }
-                            : enableDevices.filter { $0.size.height < deviceSize.width && $0.size.width < deviceSize.height }
+                        let devices = isPortrait
+                            ? enableDevices.filter { $0.size.width < realDeviceSize.width && $0.size.height < realDeviceSize.height }
+                            : enableDevices.filter { $0.size.height < realDeviceSize.width && $0.size.width < realDeviceSize.height }
 
                         ForEach(Array(devices.sorted().reversed()), id: \.name) { device in
                             Text(device.name)
@@ -358,8 +373,8 @@ public struct SimulatorView<Content: View>: View {
                 }
             }
             .padding()
-            .frame(width: deviceSize.width, height: 64)
-            .background(Color.gray.opacity(0.05))
+            .frame(width: realDeviceSize.width, height: 64)
+            .background(Color(red: 220, green: 220, blue: 220))
         }
     }
 
