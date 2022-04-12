@@ -7,7 +7,25 @@
 
 import SwiftUI
 
-typealias SafeArea = (top: CGFloat, bottom: CGFloat)
+struct SafeArea {
+    
+    // Good old iPhone 😎
+    static let standard: Self = .init(
+        portrait: (20, 0),
+        landscape: (20, 0, 0, 0)
+    )
+    
+    static let portraitTopOnly: Self = .init(
+        portrait: (20, 0),
+        landscape: (0, 0, 0, 0)
+    )
+    
+    let portrait: SafeAreaPortrait
+    let landscape: SafeAreaLandscape
+}
+
+typealias SafeAreaPortrait = (top: CGFloat, bottom: CGFloat)
+typealias SafeAreaLandscape = (top: CGFloat, bottom: CGFloat, left: CGFloat, right: CGFloat)
 
 enum DeviceType {
     case iPhone
@@ -29,7 +47,7 @@ struct DeviceInfo {
         size: CGSize,
         portraitSizeClass: SizeClasses,
         landscapeSizeClass: SizeClasses,
-        safeArea: SafeArea = (20, 0), // TODO: safe area in landscape.
+        safeArea: SafeArea,
         type: DeviceType
     ) {
         self.name = name
@@ -57,6 +75,7 @@ struct DeviceInfo {
         size: CGSize(width: 320, height: 480),
         portraitSizeClass: (.compact, .regular),
         landscapeSizeClass: (.compact, .compact),
+        safeArea: .standard, // TODO: really?
         type: .iPhone
     )
 
@@ -69,6 +88,7 @@ struct DeviceInfo {
         size: CGSize(width: 375, height: 667),
         portraitSizeClass: (.compact, .regular),
         landscapeSizeClass: (.compact, .compact),
+        safeArea: .standard, // TODO: really?
         type: .iPhone
     )
 
@@ -81,6 +101,7 @@ struct DeviceInfo {
         size: CGSize(width: 375, height: 812),
         portraitSizeClass: (.compact, .regular),
         landscapeSizeClass: (.compact, .compact),
+        safeArea: .init(portrait: (50, 34), landscape: (0, 21, 50, 50)),
         type: .iPhone
     )
 
@@ -93,6 +114,7 @@ struct DeviceInfo {
         size: CGSize(width: 414, height: 736),
         portraitSizeClass: (.compact, .regular),
         landscapeSizeClass: (.regular, .compact),
+        safeArea: .portraitTopOnly,
         type: .iPhone
     )
 
@@ -105,7 +127,7 @@ struct DeviceInfo {
         size: CGSize(width: 375, height: 812),
         portraitSizeClass: (.compact, .regular),
         landscapeSizeClass: (.compact, .compact),
-        safeArea: (44, 34),
+        safeArea: .init(portrait: (44, 34), landscape: (0, 21, 48, 48)),
         type: .iPhone
     )
 
@@ -118,7 +140,7 @@ struct DeviceInfo {
         size: CGSize(width: 414, height: 896),
         portraitSizeClass: (.compact, .regular),
         landscapeSizeClass: (.regular, .compact),
-        safeArea: (48, 34),
+        safeArea: .init(portrait: (48, 34), landscape: (0, 21, 44, 44)),
         type: .iPhone
     )
 
@@ -131,7 +153,7 @@ struct DeviceInfo {
         size: CGSize(width: 390, height: 844),
         portraitSizeClass: (.compact, .regular),
         landscapeSizeClass: (.compact, .compact),
-        safeArea: (50, 34), // TODO: really?
+        safeArea: .init(portrait: (50, 34), landscape: (0, 21, 50, 50)),// TODO: same as iPhone 12 mini?
         type: .iPhone
     )
 
@@ -144,7 +166,7 @@ struct DeviceInfo {
         size: CGSize(width: 414, height: 896),
         portraitSizeClass: (.compact, .regular),
         landscapeSizeClass: (.regular, .compact),
-        safeArea: (44, 34),
+        safeArea: .init(portrait: (44, 34), landscape: (0, 21, 44, 44)),
         type: .iPhone
     )
 
@@ -156,8 +178,8 @@ struct DeviceInfo {
         inch: "6.7",
         size: CGSize(width: 428, height: 926),
         portraitSizeClass: (.compact, .regular),
-        landscapeSizeClass: (.regular, .compact), // same as `iPhone 12 Pro Max`?
-        safeArea: (47, 34),
+        landscapeSizeClass: (.regular, .compact), // TODO: same as `iPhone 12 Pro Max`?
+        safeArea: .init(portrait: (47, 34), landscape: (0, 21, 47, 48)), // ref: https://useyourloaf.com/blog/iphone-13-screen-sizes/
         type: .iPhone
     )
 
@@ -172,7 +194,7 @@ struct DeviceInfo {
         size: CGSize(width: 768, height: 1024),
         portraitSizeClass: (.regular, .regular),
         landscapeSizeClass: (.regular, .regular),
-        safeArea: (24, 20), // TODO: same as iPad mini (6th) ?
+        safeArea: .init(portrait: (24, 20), landscape: (24, 20, 0, 0)), // TODO: same as iPad mini (6th) ?
         type: .iPad
     )
 
@@ -185,7 +207,7 @@ struct DeviceInfo {
         size: CGSize(width: 744, height: 1133),
         portraitSizeClass: (.regular, .regular),
         landscapeSizeClass: (.regular, .regular),
-        safeArea: (24, 20),
+        safeArea: .init(portrait: (24, 20), landscape: (24, 20, 0, 0)),
         type: .iPad
     )
 
@@ -198,6 +220,7 @@ struct DeviceInfo {
         size: CGSize(width: 768, height: 1024),
         portraitSizeClass: (.regular, .regular),
         landscapeSizeClass: (.regular, .regular),
+        safeArea: .standard,
         type: .iPad
     )
 
@@ -210,7 +233,7 @@ struct DeviceInfo {
         size: CGSize(width: 810, height: 1080),
         portraitSizeClass: (.regular, .regular),
         landscapeSizeClass: (.regular, .regular),
-        safeArea: (20, 0), // TODO: really?
+        safeArea: .init(portrait: (20, 0), landscape: (20, 0, 0, 0)), // ref: https://useyourloaf.com/blog/ipad-2021-screen-sizes/
         type: .iPad
     )
 
@@ -223,6 +246,7 @@ struct DeviceInfo {
         size: CGSize(width: 834, height: 1112),
         portraitSizeClass: (.regular, .regular),
         landscapeSizeClass: (.regular, .regular),
+        safeArea: .standard,
         type: .iPad
     )
 
@@ -235,7 +259,7 @@ struct DeviceInfo {
         size: CGSize(width: 820, height: 1180),
         portraitSizeClass: (.regular, .regular),
         landscapeSizeClass: (.regular, .regular),
-        safeArea: (24, 20),
+        safeArea: .init(portrait: (24, 20), landscape: (24, 20, 0, 0)),
         type: .iPad
     )
 
@@ -248,7 +272,7 @@ struct DeviceInfo {
         size: CGSize(width: 834, height: 1194),
         portraitSizeClass: (.regular, .regular),
         landscapeSizeClass: (.regular, .regular),
-        safeArea: (24, 20),
+        safeArea: .init(portrait: (24, 20), landscape: (24, 20, 0, 0)),
         type: .iPad
     )
 
@@ -261,7 +285,7 @@ struct DeviceInfo {
         size: CGSize(width: 1024, height: 1366),
         portraitSizeClass: (.regular, .regular),
         landscapeSizeClass: (.regular, .regular),
-        safeArea: (24, 20),
+        safeArea: .init(portrait: (24, 20), landscape: (24, 20, 0, 0)),
         type: .iPad
     )
 }

@@ -73,16 +73,93 @@ enum Device: Int, CaseIterable, Comparable {
     var size: CGSize {
         info.size
     }
-
-    var safeAreaTop: CGFloat {
-        info.safeArea.top
+    
+    func size(orientation: DeviceOrientation) -> CGSize {
+        switch orientation {
+        case .portrait:
+            return info.size
+        case .landscape:
+            return CGSize(width: info.size.height, height: info.size.width)
+        }
     }
 
-    var safeAreaBottom: CGFloat {
-        info.safeArea.bottom == 0
-            ? info.safeArea.bottom
-            : info.safeArea.bottom - 8 // why?
+    func safeAreaWidth(orientation: DeviceOrientation) -> CGFloat {
+        let portrait = info.safeArea.portrait
+        let landscape = info.safeArea.landscape
+        
+        switch orientation {
+        case .portrait:
+            return 0
+        case .landscape:
+            return landscape.left + landscape.right
+        }
     }
+    
+    func safeAreaHeight(orientation: DeviceOrientation) -> CGFloat {
+        let portrait = info.safeArea.portrait
+        let landscape = info.safeArea.landscape
+        
+        switch orientation {
+        case .portrait:
+            return portrait.top + portrait.bottom
+        case .landscape:
+            return landscape.top + landscape.bottom
+        }
+    }
+    
+    func safeAreaTop(orientation: DeviceOrientation) -> CGFloat {
+        let portrait = info.safeArea.portrait
+        let landscape = info.safeArea.landscape
+        
+        switch orientation {
+        case .portrait:
+            return portrait.top
+        case .landscape:
+            return landscape.top
+        }
+    }
+    
+    var safeAreaLeft: CGFloat {
+        info.safeArea.landscape.left
+    }
+    
+    var safeAreaRight: CGFloat {
+        info.safeArea.landscape.right
+    }
+    
+    func safeAreaBottom(orientation: DeviceOrientation) -> CGFloat {
+        let portrait = info.safeArea.portrait
+        let landscape = info.safeArea.landscape
+        
+        // TODO: why and really?
+        switch orientation {
+        case .portrait:
+            return max(0, portrait.bottom)
+        case .landscape:
+            return max(0, landscape.bottom)
+        }
+    }
+    
+//    var safeArea: SafeArea {
+//        var portrait = info.safeArea.portrait
+//        var landscape = info.safeArea.landscape
+//        
+//        // TODO: why and really?
+//        portrait.bottom = max(0, portrait.bottom - 8)
+//        landscape.bottom = max(0, landscape.bottom - 8)
+//
+//        return SafeArea(portrait: portrait, landscape: landscape)
+//    }
+    
+//    var safeAreaTop: CGFloat {
+//        info.safeArea.top
+//    }
+//
+//    var safeAreaBottom: CGFloat {
+//        info.safeArea.bottom == 0
+//            ? info.safeArea.bottom
+//            : info.safeArea.bottom - 8 // why?
+//    }
 
     var portraitSizeClass: SizeClasses {
         info.portraitSizeClass
