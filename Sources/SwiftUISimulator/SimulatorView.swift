@@ -237,9 +237,9 @@ public struct SimulatorView<Content: View>: View {
 
     @ViewBuilder
     private func simulatorContainer(realDeviceSize: CGSize) -> some View {
+        let orientation: DeviceOrientation = isPortrait ? .portrait : .landscape
         ZStack(alignment: .bottomLeading) {
             Group {
-                let orientation: DeviceOrientation = isPortrait ? .portrait : .landscape
                 if isDualMode {
                     if isPortrait {
                         HStack(spacing: 24) {
@@ -307,11 +307,15 @@ public struct SimulatorView<Content: View>: View {
                 //
                 Menu {
                     Picker(selection: $device) {
-                        let devices = isPortrait
-                            ? enableDevices.filter { $0.size.width < realDeviceSize.width && $0.size.height < realDeviceSize.height }
-                            : enableDevices.filter { $0.size.height < realDeviceSize.width && $0.size.width < realDeviceSize.height }
+                        let devices = enableDevices
+                            .filter {
+                                let size = $0.size(orientation: orientation)
+                                return size.width < realDeviceSize.width && size.height < realDeviceSize.height
+                            }
+                            .sorted()
+                            .reversed()
 
-                        ForEach(Array(devices.sorted().reversed()), id: \.name) { device in
+                        ForEach(Array(devices), id: \.name) { device in
                             Text(device.name)
                                 .tag(device)
                             // 😇 `disabled` are not working. (I have no choice but to deal with it by filtering)
@@ -380,85 +384,72 @@ public struct SimulatorView<Content: View>: View {
 
     @ViewBuilder
     private func simulatedContent(colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
-        let safeAreaWidth = device.safeAreaWidth(orientation: orientation)
-        let safeAreaHeight = device.safeAreaHeight(orientation: orientation)
-        let fw = device.size.width
-        let fh = device.size.height - (isDisplaySafeArea ? 0 : safeAreaHeight)
-        let (frameWidth, _) = orientation == .portrait ? (fw, fh) : (fh, fw)
-
-        let width = device.size(orientation: orientation).width - safeAreaWidth
-        let height = device.size(orientation: orientation).height - safeAreaHeight
+        let width = device.size(orientation: orientation).width
 
         ZStack(alignment: .topLeading) {
             ZStack(alignment: .bottomLeading) {
-                appContent(width: width, height: height, colorScheme: colorScheme, orientation: orientation)
+                appContent(colorScheme: colorScheme, orientation: orientation)
 
                 if isDisplayInformation {
                     footer()
                         .offset(y: 24)
-                        .frame(width: frameWidth)
+                        .frame(width: width)
                 }
             }
 
             if isDisplayInformation {
-                header()
+                header(orientaion: orientation)
                     .offset(y: -24)
-                    .frame(width: frameWidth)
+                    .frame(width: width)
             }
         }
     }
 
-    private func appContent(width: CGFloat, height: CGFloat, colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
-        Group {
-            let appContent = content().frame(width: width, height: height, alignment: .center)
+    @ViewBuilder
+    private func appContent(colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
+        let deviceSize = device.size(orientation: orientation)
+        let safeArea = device.safeArea(orientation: orientation)
+        let contentSize = safeArea.contentSize
+        let sizeClass = device.sizeClass(orientation: orientation)
 
-            if orientation == .portrait {
-                VStack(spacing: 0) {
-                    if isDisplaySafeArea {
-                        Color.pink.opacity(0.1)
-                            .frame(height: device.safeAreaTop(orientation: orientation))
-                    }
-
-                    appContent
-
-                    if isDisplaySafeArea {
-                        Color.pink.opacity(0.1)
-                            .frame(height: device.safeAreaBottom(orientation: orientation))
-                    }
-                }
-                .frame(width: width)
-            } else {
-                HStack(spacing: 0) {
-                    if isDisplaySafeArea {
-                        Color.pink.opacity(0.1)
-                            .frame(width: device.safeAreaLeft)
-                    }
-                    
-                    VStack(spacing: 0) {
-                        if isDisplaySafeArea {
-                            Color.pink.opacity(0.1)
-                                .frame(height: device.safeAreaTop(orientation: orientation))
-                        }
-
-                        appContent
-
-                        if isDisplaySafeArea {
-                            Color.pink.opacity(0.1)
-                                .frame(height: device.safeAreaBottom(orientation: orientation))
-                        }
-                    }
-                    
-                    if isDisplaySafeArea {
-                        Color.pink.opacity(0.1)
-                            .frame(width: device.safeAreaRight)
-                    }
-                }
+        VStack(spacing: 0) {
+            //
+            // Safe area - Top
+            //
+            safeAreaMargin()
+                .frame(height: safeArea.top)
+            
+            HStack(spacing: 0) {
+                //
+                // Safe area - Left
+                //
+                safeAreaMargin()
+                    .frame(width: safeArea.left)
+                
+                //
+                // Application content
+                //
+                content()
+                    .frame(width: contentSize.width, height: contentSize.height, alignment: .center)
+                
+                //
+                // Safe area - Right
+                //
+                safeAreaMargin()
+                    .frame(width: safeArea.right)
+                
             }
+            
+            //
+            // Safe area - Bottom
+            //
+            safeAreaMargin()
+                .frame(height: safeArea.bottom)
         }
-        .frame(width: device.size(orientation: orientation).width, height: device.size(orientation: orientation).height)
+        .frame(width: deviceSize.width, height: deviceSize.height)
         .border(.blue)
-        .environment(\.verticalSizeClass, orientation == .portrait ? device.portraitSizeClass.height : device.landscapeSizeClass.height)
-        .environment(\.horizontalSizeClass, orientation == .portrait ? device.portraitSizeClass.width : device.landscapeSizeClass.width)
+        .environment(\.verticalSizeClass, sizeClass.height)
+        .environment(\.horizontalSizeClass, sizeClass.width)
         .environment(\.locale, .init(identifier: locale))
         .environment(\.colorScheme, colorScheme)
         .environment(\.calendar, Calendar(identifier: calendar))
@@ -472,9 +463,17 @@ public struct SimulatorView<Content: View>: View {
     }
 
     @ViewBuilder
-    private func header() -> some View {
-        let w = Int(device.size.width)
-        let h = Int(device.size.height)
+    private func safeAreaMargin() -> some View {
+        if isDisplaySafeArea {
+            Color.pink.opacity(0.1)
+        }
+    }
+    
+    @ViewBuilder
+    private func header(orientaion: DeviceOrientation) -> some View {
+        let deviceSize = device.size(orientation: orientaion)
+        let w = Int(deviceSize.width)
+        let h = Int(deviceSize.height)
         HStack {
             Text("\(device.name) - \(device.inch) inch (\(w) x \(h))")
             Spacer()
