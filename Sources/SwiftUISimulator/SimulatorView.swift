@@ -103,7 +103,7 @@ public struct SimulatorView<Content: View>: View {
             VStack {
                 Group {
                     if isSimulatorEnabled {
-                        simulatorContainer(deviceSize: reader.size)
+                        simulatorContainer(realDeviceSize: reader.size)
                     } else {
                         simulatorIcon()
                     }
@@ -236,7 +236,7 @@ public struct SimulatorView<Content: View>: View {
     }
 
     @ViewBuilder
-    private func simulatorContainer(deviceSize: CGSize) -> some View {
+    private func simulatorContainer(realDeviceSize: CGSize) -> some View {
         ZStack(alignment: .bottomLeading) {
             Group {
                 let orientation: DeviceOrientation = isPortrait ? .portrait : .landscape
@@ -258,8 +258,8 @@ public struct SimulatorView<Content: View>: View {
             }
             .offset(y: -32)
             .animation(.default, value: device)
-            .frame(width: deviceSize.width, height: deviceSize.height)
-            .frame(maxWidth: .infinity, maxHeight: deviceSize.height)
+            .frame(width: realDeviceSize.width, height: realDeviceSize.height)
+            .frame(maxWidth: .infinity, maxHeight: realDeviceSize.height)
 
             HStack(alignment: .center) {
                 //
@@ -308,8 +308,8 @@ public struct SimulatorView<Content: View>: View {
                 Menu {
                     Picker(selection: $device) {
                         let devices = isPortrait
-                            ? enableDevices.filter { $0.size.width < deviceSize.width && $0.size.height < deviceSize.height }
-                            : enableDevices.filter { $0.size.height < deviceSize.width && $0.size.width < deviceSize.height }
+                            ? enableDevices.filter { $0.size.width < realDeviceSize.width && $0.size.height < realDeviceSize.height }
+                            : enableDevices.filter { $0.size.height < realDeviceSize.width && $0.size.width < realDeviceSize.height }
 
                         ForEach(Array(devices.sorted().reversed()), id: \.name) { device in
                             Text(device.name)
@@ -373,7 +373,7 @@ public struct SimulatorView<Content: View>: View {
                 }
             }
             .padding()
-            .frame(width: deviceSize.width, height: 64)
+            .frame(width: realDeviceSize.width, height: 64)
             .background(Color(red: 220, green: 220, blue: 220))
         }
     }
