@@ -70,8 +70,8 @@ enum Device: Int, CaseIterable, Comparable {
         info.inch
     }
 
-    var size: CGSize {
-        info.size
+    var type: DeviceType {
+        info.type
     }
     
     func size(orientation: DeviceOrientation) -> CGSize {
@@ -82,94 +82,17 @@ enum Device: Int, CaseIterable, Comparable {
             return CGSize(width: info.size.height, height: info.size.width)
         }
     }
-
-    func safeAreaWidth(orientation: DeviceOrientation) -> CGFloat {
-        let portrait = info.safeArea.portrait
-        let landscape = info.safeArea.landscape
-        
+    
+    func safeArea(orientation: DeviceOrientation) -> SafeAreaProxy {
+        .init(screenSize: info.size, safeArea: info.safeArea, orientation: orientation)
+    }
+    
+    func sizeClass(orientation: DeviceOrientation) -> SizeClasses {
         switch orientation {
         case .portrait:
-            return 0
+            return info.portraitSizeClass
         case .landscape:
-            return landscape.left + landscape.right
+            return info.landscapeSizeClass
         }
-    }
-    
-    func safeAreaHeight(orientation: DeviceOrientation) -> CGFloat {
-        let portrait = info.safeArea.portrait
-        let landscape = info.safeArea.landscape
-        
-        switch orientation {
-        case .portrait:
-            return portrait.top + portrait.bottom
-        case .landscape:
-            return landscape.top + landscape.bottom
-        }
-    }
-    
-    func safeAreaTop(orientation: DeviceOrientation) -> CGFloat {
-        let portrait = info.safeArea.portrait
-        let landscape = info.safeArea.landscape
-        
-        switch orientation {
-        case .portrait:
-            return portrait.top
-        case .landscape:
-            return landscape.top
-        }
-    }
-    
-    var safeAreaLeft: CGFloat {
-        info.safeArea.landscape.left
-    }
-    
-    var safeAreaRight: CGFloat {
-        info.safeArea.landscape.right
-    }
-    
-    func safeAreaBottom(orientation: DeviceOrientation) -> CGFloat {
-        let portrait = info.safeArea.portrait
-        let landscape = info.safeArea.landscape
-        
-        // TODO: why and really?
-        switch orientation {
-        case .portrait:
-            return max(0, portrait.bottom)
-        case .landscape:
-            return max(0, landscape.bottom)
-        }
-    }
-    
-//    var safeArea: SafeArea {
-//        var portrait = info.safeArea.portrait
-//        var landscape = info.safeArea.landscape
-//        
-//        // TODO: why and really?
-//        portrait.bottom = max(0, portrait.bottom - 8)
-//        landscape.bottom = max(0, landscape.bottom - 8)
-//
-//        return SafeArea(portrait: portrait, landscape: landscape)
-//    }
-    
-//    var safeAreaTop: CGFloat {
-//        info.safeArea.top
-//    }
-//
-//    var safeAreaBottom: CGFloat {
-//        info.safeArea.bottom == 0
-//            ? info.safeArea.bottom
-//            : info.safeArea.bottom - 8 // why?
-//    }
-
-    var portraitSizeClass: SizeClasses {
-        info.portraitSizeClass
-    }
-
-    var landscapeSizeClass: SizeClasses {
-        info.landscapeSizeClass
-    }
-
-    var type: DeviceType {
-        info.type
     }
 }
