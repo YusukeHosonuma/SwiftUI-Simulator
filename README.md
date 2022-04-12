@@ -28,9 +28,9 @@ import SwiftUISimulator
 struct HelloApp: App {
     var body: some Scene {
         WindowGroup {
-            // ✅ Please wrap your root view.
+            // ✅ Please wrap your root view by `SimulatorView`.
             #if DEBUG
-            SimulatorView { // ✅ Wrap your root view.
+            SimulatorView {
                 ContentView()
             }
             #else
