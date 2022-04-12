@@ -81,7 +81,7 @@ public struct SimulatorView<Content: View>: View {
             return Set([.iso8601, .japanese])
         }
     }
-    
+
     //
     // Sheets
     //

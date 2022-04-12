@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Yusuke Hosonuma on 2022/04/12.
 //
@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct MultiItemSelectView<Item, Row>: View where Item: Hashable, Row: View {
-    
     // 💡 iOS 15+: `\.dismiss`
     @Environment(\.presentationMode) private var presentationMode
 
