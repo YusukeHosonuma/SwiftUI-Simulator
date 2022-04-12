@@ -411,7 +411,8 @@ public struct SimulatorView<Content: View>: View {
         let safeArea = device.safeArea(orientation: orientation)
         let contentSize = safeArea.contentSize
         let sizeClass = device.sizeClass(orientation: orientation)
-
+        let frameSize = isDisplaySafeArea ? deviceSize : contentSize
+        
         VStack(spacing: 0) {
             //
             // Safe area - Top
@@ -437,7 +438,6 @@ public struct SimulatorView<Content: View>: View {
                 //
                 safeAreaMargin()
                     .frame(width: safeArea.right)
-                
             }
             
             //
@@ -446,7 +446,7 @@ public struct SimulatorView<Content: View>: View {
             safeAreaMargin()
                 .frame(height: safeArea.bottom)
         }
-        .frame(width: deviceSize.width, height: deviceSize.height)
+        .frame(width: frameSize.width, height: frameSize.height)
         .border(.blue)
         .environment(\.verticalSizeClass, sizeClass.height)
         .environment(\.horizontalSizeClass, sizeClass.width)
