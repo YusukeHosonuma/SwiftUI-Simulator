@@ -386,27 +386,16 @@ public struct SimulatorView<Content: View>: View {
     private func simulatedContent(colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
         let width = device.size(orientation: orientation).width
 
-        ZStack(alignment: .topLeading) {
-            ZStack(alignment: .bottomLeading) {
-                appContent(colorScheme: colorScheme, orientation: orientation)
-
-                if isDisplayInformation {
-                    footer()
-                        .offset(y: 24)
-                        .frame(width: width)
-                }
-            }
-
-            if isDisplayInformation {
-                header(orientaion: orientation)
-                    .offset(y: -24)
-                    .frame(width: width)
-            }
+        VStack(spacing: 0) {
+            header(orientaion: orientation)
+            simulatedScreen(colorScheme: colorScheme, orientation: orientation)
+            footer()
         }
+        .frame(width: width)
     }
 
     @ViewBuilder
-    private func appContent(colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
+    private func simulatedScreen(colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
         let deviceSize = device.size(orientation: orientation)
         let safeArea = device.safeArea(orientation: orientation)
         let contentSize = safeArea.contentSize
@@ -489,10 +478,12 @@ public struct SimulatorView<Content: View>: View {
         let w = Int(deviceSize.width)
         let h = Int(deviceSize.height)
         HStack {
-            Text("\(device.name) - \(device.inch) inch (\(w) x \(h))")
+            Text("\(device.name) - \(device.inch) inch")
             Spacer()
+            Text("\(w) x \(h)")
         }
         .foregroundColor(.info)
+        .font(.caption)
     }
 
     @ViewBuilder
@@ -505,6 +496,7 @@ public struct SimulatorView<Content: View>: View {
             Text("\(locale) / \(calendar.rawValue)")
         }
         .foregroundColor(.info)
+        .font(.caption)
     }
 }
 
