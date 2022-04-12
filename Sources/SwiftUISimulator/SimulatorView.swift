@@ -206,7 +206,14 @@ public struct SimulatorView<Content: View>: View {
         .sheet(isPresented: $isPresentedLocaleSelectSheet) {
             saveEnableLocales()
         } content: {
-            LocaleSelectView(selectedLocaleIdentifiers: $enableLocales)
+            MultiItemSelectView(
+                title: "Select locales",
+                selectedItems: $enableLocales,
+                allItems: Locale.availableIdentifiers.filter { $0.contains("_") }.sorted(),
+                allowNoSelected: false
+            ) {
+                Text($0)
+            }
         }
         //
         // Select calendar sheet.

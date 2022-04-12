@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MultiItemSelectView<Item, Row>: View where Item: Hashable, Item: Identifiable, Row: View {
+struct MultiItemSelectView<Item, Row>: View where Item: Hashable, Row: View {
     
     // 💡 iOS 15+: `\.dismiss`
     @Environment(\.presentationMode) private var presentationMode
@@ -36,7 +36,7 @@ struct MultiItemSelectView<Item, Row>: View where Item: Hashable, Item: Identifi
         NavigationView {
             List(selection: selectedItems) {
                 Section {
-                    ForEach(allItems) { item in
+                    ForEach(allItems, id: \.self) { item in
                         row(item).tag(item)
                     }
                 } header: {
