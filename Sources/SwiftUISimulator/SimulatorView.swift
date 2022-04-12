@@ -342,7 +342,7 @@ public struct SimulatorView<Content: View>: View {
                 .disabled(isDualMode == true)
 
                 //
-                // 􀫖 Locale
+                // 􀀄 Locale
                 //
                 Menu {
                     Picker(selection: $locale) {
@@ -374,20 +374,20 @@ public struct SimulatorView<Content: View>: View {
             }
             .padding()
             .frame(width: realDeviceSize.width, height: 64)
-            .background(Color(red: 220, green: 220, blue: 220))
+            .background(Color(red: 0.95, green: 0.95, blue: 0.95, opacity: 1.0))
         }
     }
 
     @ViewBuilder
     private func simulatedContent(colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
-        let safeAreaHeight = device.safeAreaTop + device.safeAreaBottom
+        let safeAreaWidth = device.safeAreaWidth(orientation: orientation)
+        let safeAreaHeight = device.safeAreaHeight(orientation: orientation)
         let fw = device.size.width
         let fh = device.size.height - (isDisplaySafeArea ? 0 : safeAreaHeight)
         let (frameWidth, _) = orientation == .portrait ? (fw, fh) : (fh, fw)
 
-        let w = device.size.width
-        let h = device.size.height - safeAreaHeight
-        let (width, height) = orientation == .portrait ? (w, h) : (h, w)
+        let width = device.size(orientation: orientation).width - safeAreaWidth
+        let height = device.size(orientation: orientation).height - safeAreaHeight
 
         ZStack(alignment: .topLeading) {
             ZStack(alignment: .bottomLeading) {
@@ -416,14 +416,14 @@ public struct SimulatorView<Content: View>: View {
                 VStack(spacing: 0) {
                     if isDisplaySafeArea {
                         Color.pink.opacity(0.1)
-                            .frame(height: device.safeAreaTop)
+                            .frame(height: device.safeAreaTop(orientation: orientation))
                     }
 
                     appContent
 
                     if isDisplaySafeArea {
                         Color.pink.opacity(0.1)
-                            .frame(height: device.safeAreaBottom)
+                            .frame(height: device.safeAreaBottom(orientation: orientation))
                     }
                 }
                 .frame(width: width)
@@ -431,19 +431,31 @@ public struct SimulatorView<Content: View>: View {
                 HStack(spacing: 0) {
                     if isDisplaySafeArea {
                         Color.pink.opacity(0.1)
-                            .frame(width: device.safeAreaTop)
+                            .frame(width: device.safeAreaLeft)
                     }
+                    
+                    VStack(spacing: 0) {
+                        if isDisplaySafeArea {
+                            Color.pink.opacity(0.1)
+                                .frame(height: device.safeAreaTop(orientation: orientation))
+                        }
 
-                    appContent
+                        appContent
 
+                        if isDisplaySafeArea {
+                            Color.pink.opacity(0.1)
+                                .frame(height: device.safeAreaBottom(orientation: orientation))
+                        }
+                    }
+                    
                     if isDisplaySafeArea {
                         Color.pink.opacity(0.1)
-                            .frame(width: device.safeAreaBottom)
+                            .frame(width: device.safeAreaRight)
                     }
                 }
-                .frame(height: height)
             }
         }
+        .frame(width: device.size(orientation: orientation).width, height: device.size(orientation: orientation).height)
         .border(.blue)
         .environment(\.verticalSizeClass, orientation == .portrait ? device.portraitSizeClass.height : device.landscapeSizeClass.height)
         .environment(\.horizontalSizeClass, orientation == .portrait ? device.portraitSizeClass.width : device.landscapeSizeClass.width)
