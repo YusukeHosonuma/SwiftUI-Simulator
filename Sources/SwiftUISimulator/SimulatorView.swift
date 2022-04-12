@@ -12,7 +12,7 @@ public struct SimulatorView<Content: View>: View {
     private var device: Device = .iPhoneSE
 
     @AppStorage("SwiftUI-Simulator.locale")
-    private var locale: LocaleType = .jaJP
+    private var locale: String = "en_US"
 
     @available(iOS 15, *)
     @AppStorage("SwiftUI-Simulator.dynamicTypeSize")
@@ -26,7 +26,7 @@ public struct SimulatorView<Content: View>: View {
 
     @AppStorage("SwiftUI-Simulator.isDisplayInformation")
     private var isDisplayInformation = true
-    
+
     @AppStorage("SwiftUI-Simulator.isDisplaySafeArea")
     private var isDisplaySafeArea = true
 
@@ -39,12 +39,11 @@ public struct SimulatorView<Content: View>: View {
     @AppStorage("SwiftUI-Simulator.isDualMode")
     private var isDualMode = false
 
+    //
     // 💡 Note: save and restore by code.
+    //
     @State private var enableDevices: Set<Device>
-
-    @State private var isPresentedDeviceSelectSheet = false
-
-    private let content: () -> Content
+    @State private var enableLocales: Set<String>
 
     private func saveEnableDevices() {
         let rawValues = Array(enableDevices.map(\.rawValue)) // TODO: change string to safe.
@@ -59,9 +58,26 @@ public struct SimulatorView<Content: View>: View {
         }
     }
 
+    private func saveEnableLocales() {
+        UserDefaults.standard.set(Array(enableLocales), forKey: "SwiftUI-Simulator.enableLocales")
+    }
+
+    private static func loadEnableLocales() -> Set<String> {
+        Set(UserDefaults.standard.stringArray(forKey: "SwiftUI-Simulator.enableLocales") ?? ["en_US", "ja_JP"])
+    }
+
+    //
+    // Sheets
+    //
+    @State private var isPresentedDeviceSelectSheet = false
+    @State private var isPresentedLocaleSelectSheet = false
+
+    private let content: () -> Content
+
     public init(@ViewBuilder _ content: @escaping () -> Content) {
         self.content = content
         enableDevices = Self.loadEnableDevices()
+        enableLocales = Self.loadEnableLocales()
     }
 
     public var body: some View {
@@ -94,7 +110,7 @@ public struct SimulatorView<Content: View>: View {
             }
         }
     }
-    
+
     private func settingMenu() -> some View {
         Menu {
             //
@@ -109,6 +125,15 @@ public struct SimulatorView<Content: View>: View {
             Divider() // --------
 
             //
+            // 􀆪
+            //
+            Button {
+                isPresentedLocaleSelectSheet.toggle()
+            } label: {
+                Label("Select locales", systemImage: "globe")
+            }
+
+            //
             // 􀟜
             //
             Button {
@@ -117,7 +142,7 @@ public struct SimulatorView<Content: View>: View {
                 Label("Select devices", systemImage: "iphone")
             }
 
-            Divider()
+            Divider() // --------
 
             //
             // 􀂔
@@ -142,6 +167,22 @@ public struct SimulatorView<Content: View>: View {
             // 􀣌
             //
             Icon("gearshape.fill")
+        }
+        //
+        // Select device sheet.
+        //
+        .sheet(isPresented: $isPresentedDeviceSelectSheet) {
+            saveEnableDevices()
+        } content: {
+            DeviceSelectView(selectedDevices: $enableDevices)
+        }
+        //
+        // Select locale sheet.
+        //
+        .sheet(isPresented: $isPresentedLocaleSelectSheet) {
+            saveEnableLocales()
+        } content: {
+            LocaleSelectView(selectedLocaleIdentifiers: $enableLocales)
         }
     }
 
@@ -244,8 +285,8 @@ public struct SimulatorView<Content: View>: View {
                 //
                 Menu {
                     Picker(selection: $locale) {
-                        ForEach(LocaleType.allCases, id: \.rawValue) { locale in
-                            Text(locale.rawValue).tag(locale)
+                        ForEach(Array(enableLocales.sorted()), id: \.self) { identifier in
+                            Text(identifier).tag(identifier)
                         }
                     } label: {
                         EmptyView()
@@ -304,11 +345,6 @@ public struct SimulatorView<Content: View>: View {
                     .frame(width: frameWidth)
             }
         }
-        .sheet(isPresented: $isPresentedDeviceSelectSheet, onDismiss: {
-            saveEnableDevices()
-        }, content: {
-            DeviceSelectView(selectedDevices: $enableDevices)
-        })
     }
 
     private func appContent(width: CGFloat, height: CGFloat, colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
@@ -350,7 +386,7 @@ public struct SimulatorView<Content: View>: View {
         .border(.blue)
         .environment(\.verticalSizeClass, orientation == .portrait ? device.portraitSizeClass.height : device.landscapeSizeClass.height)
         .environment(\.horizontalSizeClass, orientation == .portrait ? device.portraitSizeClass.width : device.landscapeSizeClass.width)
-        .environment(\.locale, .init(identifier: locale.rawValue))
+        .environment(\.locale, .init(identifier: locale))
         .environment(\.colorScheme, colorScheme)
         .environment(\.calendar, Calendar(identifier: calendarIdentifier))
         .when(isDynamicTypeSizesEnabled) {
@@ -369,7 +405,7 @@ public struct SimulatorView<Content: View>: View {
         HStack {
             Text("\(device.name) - \(device.inch) inch (\(w) x \(h))")
             Spacer()
-            Text("\(locale.rawValue)")
+            Text("\(locale)")
         }
         .foregroundColor(.gray)
     }
