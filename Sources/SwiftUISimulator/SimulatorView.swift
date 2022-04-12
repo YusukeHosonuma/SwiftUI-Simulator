@@ -24,6 +24,9 @@ public struct SimulatorView<Content: View>: View {
     @AppStorage("SwiftUI-Simulator.isDark")
     private var isDark = false
 
+    @AppStorage("SwiftUI-Simulator.isDisplayInformation")
+    private var isDisplayInformation = true
+    
     @AppStorage("SwiftUI-Simulator.isDisplaySafeArea")
     private var isDisplaySafeArea = true
 
@@ -91,6 +94,56 @@ public struct SimulatorView<Content: View>: View {
             }
         }
     }
+    
+    private func settingMenu() -> some View {
+        Menu {
+            //
+            // 􀆨
+            //
+            Button {
+                isSimulatorEnabled.toggle()
+            } label: {
+                Label("Disable simulator", systemImage: "power")
+            }
+
+            Divider() // --------
+
+            //
+            // 􀟜
+            //
+            Button {
+                isPresentedDeviceSelectSheet.toggle()
+            } label: {
+                Label("Select devices", systemImage: "iphone")
+            }
+
+            Divider()
+
+            //
+            // 􀂔
+            //
+            Toggle(isOn: $isDynamicTypeSizesEnabled) {
+                Label("Dynamic Type Sizes", systemImage: "a.square")
+            }
+            //
+            // 􀪛
+            //
+            Toggle(isOn: $isDisplaySafeArea) {
+                Label("Safe Area", systemImage: "square.tophalf.filled")
+            }
+            //
+            // 􀅴
+            //
+            Toggle(isOn: $isDisplayInformation) {
+                Label("Information", systemImage: "info.circle")
+            }
+        } label: {
+            //
+            // 􀣌
+            //
+            Icon("gearshape.fill")
+        }
+    }
 
     @ViewBuilder
     private func simulatorContainer(deviceSize: CGSize, orientation: DeviceOrientation) -> some View {
@@ -120,33 +173,8 @@ public struct SimulatorView<Content: View>: View {
                 //
                 // 􀣌 Setting menu
                 //
-                Menu {
-                    Button {
-                        isSimulatorEnabled.toggle()
-                    } label: {
-                        Label("Disable simulator", systemImage: "power")
-                    }
-
-                    Divider()
-
-                    Button {
-                        isPresentedDeviceSelectSheet.toggle()
-                    } label: {
-                        Label("Select devices", systemImage: "iphone")
-                    }
-
-                    Divider()
-
-                    Toggle(isOn: $isDynamicTypeSizesEnabled) {
-                        Label("Dynamic Type Sizes", systemImage: "a.square")
-                    }
-                    Toggle(isOn: $isDisplaySafeArea) {
-                        Label("Safe Area", systemImage: "square.tophalf.filled")
-                    }
-                } label: {
-                    Icon("gearshape.fill")
-                }
-                .padding(.trailing, 16)
+                settingMenu()
+                    .padding(.trailing, 16)
 
                 //
                 // 􀀅 Dynamic Type Sizes slider
@@ -263,14 +291,18 @@ public struct SimulatorView<Content: View>: View {
             ZStack(alignment: .bottomLeading) {
                 appContent(width: width, height: height, colorScheme: colorScheme, orientation: orientation)
 
-                footer()
-                    .offset(y: 24)
-                    .frame(width: frameWidth)
+                if isDisplayInformation {
+                    footer()
+                        .offset(y: 24)
+                        .frame(width: frameWidth)
+                }
             }
 
-            header()
-                .offset(y: -24)
-                .frame(width: frameWidth)
+            if isDisplayInformation {
+                header()
+                    .offset(y: -24)
+                    .frame(width: frameWidth)
+            }
         }
         .sheet(isPresented: $isPresentedDeviceSelectSheet, onDismiss: {
             saveEnableDevices()
