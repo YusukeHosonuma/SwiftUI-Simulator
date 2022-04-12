@@ -417,15 +417,13 @@ public struct SimulatorView<Content: View>: View {
             //
             // Safe area - Top
             //
-            safeAreaMargin()
-                .frame(height: safeArea.top)
+            safeAreaMargin(.vertical, size: safeArea.top)
             
             HStack(spacing: 0) {
                 //
                 // Safe area - Left
                 //
-                safeAreaMargin()
-                    .frame(width: safeArea.left)
+                safeAreaMargin(.horizontal, size: safeArea.left)
                 
                 //
                 // Application content
@@ -436,15 +434,13 @@ public struct SimulatorView<Content: View>: View {
                 //
                 // Safe area - Right
                 //
-                safeAreaMargin()
-                    .frame(width: safeArea.right)
+                safeAreaMargin(.horizontal, size: safeArea.right)
             }
             
             //
             // Safe area - Bottom
             //
-            safeAreaMargin()
-                .frame(height: safeArea.bottom)
+            safeAreaMargin(.vertical, size: safeArea.bottom)
         }
         .frame(width: frameSize.width, height: frameSize.height)
         .border(.blue)
@@ -463,9 +459,27 @@ public struct SimulatorView<Content: View>: View {
     }
 
     @ViewBuilder
-    private func safeAreaMargin() -> some View {
+    private func safeAreaMargin(_ axis: Axis, size: CGFloat) -> some View {
         if isDisplaySafeArea {
-            Color.pink.opacity(0.1)
+            Group {
+                if isDisplayInformation {
+                    VStack(alignment: .center) {
+                        Text("\(Int(size))")
+                            .foregroundColor(.info)
+                            .font(.system(size: 12))
+                    }
+                } else {
+                    Color.clear
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.safeArea)
+            .when(axis == .vertical) {
+                $0.frame(height: size)
+            }
+            .when(axis == .horizontal) {
+                $0.frame(width: size)
+            }
         }
     }
     
@@ -478,7 +492,7 @@ public struct SimulatorView<Content: View>: View {
             Text("\(device.name) - \(device.inch) inch (\(w) x \(h))")
             Spacer()
         }
-        .foregroundColor(.gray)
+        .foregroundColor(.info)
     }
 
     @ViewBuilder
@@ -490,6 +504,16 @@ public struct SimulatorView<Content: View>: View {
             Spacer()
             Text("\(locale) / \(calendar.rawValue)")
         }
-        .foregroundColor(.gray)
+        .foregroundColor(.info)
+    }
+}
+
+extension Color {
+    static var info: Self {
+        .gray.opacity(0.9)
+    }
+    
+    static var safeArea: Self {
+        .pink.opacity(0.1)
     }
 }
