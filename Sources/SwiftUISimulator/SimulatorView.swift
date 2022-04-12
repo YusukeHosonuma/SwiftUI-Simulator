@@ -33,8 +33,8 @@ public struct SimulatorView<Content: View>: View {
     @AppStorage("SwiftUI-Simulator.isSimulatorEnabled")
     private var isSimulatorEnabled = true
 
-    @AppStorage("SwiftUI-Simulator.calendarIdentifier")
-    private var calendarIdentifier: Calendar.Identifier = .iso8601
+    @AppStorage("SwiftUI-Simulator.calendar")
+    private var calendar: Calendar.Identifier = .iso8601
 
     @AppStorage("SwiftUI-Simulator.isDualMode")
     private var isDualMode = false
@@ -44,6 +44,7 @@ public struct SimulatorView<Content: View>: View {
     //
     @State private var enableDevices: Set<Device>
     @State private var enableLocales: Set<String>
+    @State private var enableCalendars: Set<Calendar.Identifier>
 
     private func saveEnableDevices() {
         let rawValues = Array(enableDevices.map(\.rawValue)) // TODO: change string to safe.
@@ -66,11 +67,24 @@ public struct SimulatorView<Content: View>: View {
         Set(UserDefaults.standard.stringArray(forKey: "SwiftUI-Simulator.enableLocales") ?? ["en_US", "ja_JP"])
     }
 
+    private func saveEnableCalendars() {
+        UserDefaults.standard.set(Array(enableCalendars.map(\.rawValue)), forKey: "SwiftUI-Simulator.enableCalendars")
+    }
+
+    private static func loadEnableCalendars() -> Set<Calendar.Identifier> {
+        if let rawValues = UserDefaults.standard.stringArray(forKey: "SwiftUI-Simulator.enableCalendars") {
+            return Set(rawValues.compactMap(Calendar.Identifier.init))
+        } else {
+            return Set([.iso8601, .japanese])
+        }
+    }
+    
     //
     // Sheets
     //
     @State private var isPresentedDeviceSelectSheet = false
     @State private var isPresentedLocaleSelectSheet = false
+    @State private var isPresentedCalendarSelectSheet = false
 
     private let content: () -> Content
 
@@ -78,6 +92,7 @@ public struct SimulatorView<Content: View>: View {
         self.content = content
         enableDevices = Self.loadEnableDevices()
         enableLocales = Self.loadEnableLocales()
+        enableCalendars = Self.loadEnableCalendars()
     }
 
     public var body: some View {
@@ -125,7 +140,16 @@ public struct SimulatorView<Content: View>: View {
             Divider() // --------
 
             //
-            // 􀆪
+            // 􀉉 Locale select
+            //
+            Button {
+                isPresentedCalendarSelectSheet.toggle()
+            } label: {
+                Label("Select calendars", systemImage: "calendar")
+            }
+
+            //
+            // 􀆪 Locale select
             //
             Button {
                 isPresentedLocaleSelectSheet.toggle()
@@ -134,7 +158,7 @@ public struct SimulatorView<Content: View>: View {
             }
 
             //
-            // 􀟜
+            // 􀟜 Device select
             //
             Button {
                 isPresentedDeviceSelectSheet.toggle()
@@ -183,6 +207,21 @@ public struct SimulatorView<Content: View>: View {
             saveEnableLocales()
         } content: {
             LocaleSelectView(selectedLocaleIdentifiers: $enableLocales)
+        }
+        //
+        // Select calendar sheet.
+        //
+        .sheet(isPresented: $isPresentedCalendarSelectSheet) {
+            saveEnableCalendars()
+        } content: {
+            MultiItemSelectView(
+                title: "Select calendars",
+                selectedItems: $enableCalendars,
+                allItems: Calendar.Identifier.allCases,
+                allowNoSelected: false
+            ) {
+                Text($0.rawValue)
+            }
         }
     }
 
@@ -300,8 +339,8 @@ public struct SimulatorView<Content: View>: View {
                 // 􀉉 Calendar
                 //
                 Menu {
-                    Picker(selection: $calendarIdentifier) {
-                        ForEach(Calendar.Identifier.allCases) { identifier in
+                    Picker(selection: $calendar) {
+                        ForEach(Array(enableCalendars)) { identifier in
                             Text(identifier.id).tag(identifier)
                         }
                     } label: {
@@ -388,7 +427,7 @@ public struct SimulatorView<Content: View>: View {
         .environment(\.horizontalSizeClass, orientation == .portrait ? device.portraitSizeClass.width : device.landscapeSizeClass.width)
         .environment(\.locale, .init(identifier: locale))
         .environment(\.colorScheme, colorScheme)
-        .environment(\.calendar, Calendar(identifier: calendarIdentifier))
+        .environment(\.calendar, Calendar(identifier: calendar))
         .when(isDynamicTypeSizesEnabled) {
             if #available(iOS 15, *) {
                 $0.environment(\.dynamicTypeSize, dynamicTypeSize)
@@ -405,7 +444,6 @@ public struct SimulatorView<Content: View>: View {
         HStack {
             Text("\(device.name) - \(device.inch) inch (\(w) x \(h))")
             Spacer()
-            Text("\(locale)")
         }
         .foregroundColor(.gray)
     }
@@ -417,6 +455,7 @@ public struct SimulatorView<Content: View>: View {
                 Text(dynamicTypeSize.label)
             }
             Spacer()
+            Text("\(locale) / \(calendar.rawValue)")
         }
         .foregroundColor(.gray)
     }
