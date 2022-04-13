@@ -265,19 +265,19 @@ public struct SimulatorView<Content: View>: View {
                 .animation(.default, value: device)
                 .frame(maxWidth: .infinity, maxHeight: reader.size.height + reader.safeAreaInsets.bottom)
 
-                //
-                // Cheet sheets
-                //
-                if isDisplayCheetSheet {
+                VStack(spacing: 0) {
+                    //
+                    // Cheet sheets
+                    //
                     cheetSheet()
-                }
 
-                //
-                // Toolbar
-                //
-                simulatorToolBar(realDeviceSize: reader.size, orientation: orientation)
-                    .padding(.bottom, reader.safeAreaInsets.bottom)
-                    .background(Color.toolbarBackground)
+                    //
+                    // Toolbar
+                    //
+                    simulatorToolBar(realDeviceSize: reader.size, orientation: orientation)
+                        .padding(.bottom, reader.safeAreaInsets.bottom)
+                        .background(Color.toolbarBackground)
+                }
             }
             .edgesIgnoringSafeArea(.bottom)
         }
@@ -288,23 +288,23 @@ public struct SimulatorView<Content: View>: View {
             HStack(alignment: .top) {
                 textSampleView()
                     .frame(width: 240)
+                    .offset(x: isDisplayCheetSheet ? 0 : -240)
 
                 Spacer()
 
                 colorSampleView()
                     .frame(width: 240)
+                    .offset(x: isDisplayCheetSheet ? 0 : +240)
             }
             .environment(\.colorScheme, isDark ? .dark : .light)
         }
     }
 
     private func textSampleView() -> some View {
-        VStack(alignment: .leading) {
-            List {
-                ForEach(Font.TextStyle.allCases, id: \.name) { textStyle in
-                    Text("\(textStyle.name)")
-                        .font(.system(textStyle))
-                }
+        List {
+            ForEach(Font.TextStyle.allCases, id: \.name) { textStyle in
+                Text("\(textStyle.name)")
+                    .font(.system(textStyle))
             }
         }
         .when(isDynamicTypeSizesEnabled) {
@@ -422,9 +422,9 @@ public struct SimulatorView<Content: View>: View {
                     isDark.toggle()
                 } label: {
                     if isDark {
-                        Icon("moon")
-                    } else {
                         Icon("sun.max")
+                    } else {
+                        Icon("moon")
                     }
                 }
                 .padding(.trailing, 4)
