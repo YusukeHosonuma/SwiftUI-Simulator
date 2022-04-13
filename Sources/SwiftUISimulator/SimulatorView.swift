@@ -102,17 +102,15 @@ public struct SimulatorView<Content: View>: View {
     }
 
     public var body: some View {
-        GeometryReader { reader in
-            VStack {
-                Group {
-                    if isSimulatorEnabled {
-                        simulatorContainer(realDeviceSize: reader.size, realDeviceSafeArea: reader.safeAreaInsets)
-                    } else {
-                        simulatorIcon()
-                    }
+        VStack {
+            Group {
+                if isSimulatorEnabled {
+                    simulatorContainer()
+                } else {
+                    simulatorIcon()
                 }
-                .background(Color.white)
             }
+            .background(Color.white)
         }
     }
 
@@ -239,42 +237,43 @@ public struct SimulatorView<Content: View>: View {
     }
 
     @ViewBuilder
-    private func simulatorContainer(realDeviceSize: CGSize, realDeviceSafeArea: EdgeInsets) -> some View {
+    private func simulatorContainer() -> some View {
         let orientation: DeviceOrientation = isPortrait ? .portrait : .landscape
-
-        ZStack(alignment: .bottomLeading) {
-            ZStack(alignment: .top) {
-                Group {
-                    if isDualMode {
-                        if isPortrait {
-                            HStack(spacing: 24) {
-                                simulatedContent(colorScheme: .dark, orientation: orientation)
-                                simulatedContent(colorScheme: .light, orientation: orientation)
+        GeometryReader { reader in
+            ZStack(alignment: .bottomLeading) {
+                ZStack(alignment: .top) {
+                    Group {
+                        if isDualMode {
+                            if isPortrait {
+                                HStack(spacing: 24) {
+                                    simulatedContent(colorScheme: .dark, orientation: orientation)
+                                    simulatedContent(colorScheme: .light, orientation: orientation)
+                                }
+                            } else {
+                                VStack(spacing: 64) {
+                                    simulatedContent(colorScheme: .dark, orientation: orientation)
+                                    simulatedContent(colorScheme: .light, orientation: orientation)
+                                }
                             }
                         } else {
-                            VStack(spacing: 64) {
-                                simulatedContent(colorScheme: .dark, orientation: orientation)
-                                simulatedContent(colorScheme: .light, orientation: orientation)
-                            }
+                            simulatedContent(colorScheme: isDark ? .dark : .light, orientation: orientation)
                         }
-                    } else {
-                        simulatedContent(colorScheme: isDark ? .dark : .light, orientation: orientation)
+                    }
+                    .offset(y: -32)
+                    .animation(.default, value: device)
+                    .frame(maxWidth: .infinity, maxHeight: reader.size.height + reader.safeAreaInsets.bottom)
+
+                    if isDisplayCheetSheet {
+                        cheetSheet()
                     }
                 }
-                .offset(y: -32)
-                .animation(.default, value: device)
-                .frame(maxWidth: .infinity, maxHeight: realDeviceSize.height + realDeviceSafeArea.bottom)
 
-                if isDisplayCheetSheet {
-                    cheetSheet()
-                }
+                simulatorToolBar(realDeviceSize: reader.size, orientation: orientation)
+                    .padding(.bottom, reader.safeAreaInsets.bottom)
+                    .background(Color(red: 0.95, green: 0.95, blue: 0.95, opacity: 1.0))
             }
-
-            simulatorToolBar(realDeviceSize: realDeviceSize, orientation: orientation)
-                .padding(.bottom, realDeviceSafeArea.bottom)
-                .background(Color(red: 0.95, green: 0.95, blue: 0.95, opacity: 1.0))
+            .edgesIgnoringSafeArea(.bottom)
         }
-        .edgesIgnoringSafeArea(.bottom)
     }
 
     private func cheetSheet() -> some View {
@@ -458,7 +457,6 @@ public struct SimulatorView<Content: View>: View {
             }
             .padding()
         }
-        .frame(width: realDeviceSize.width)
     }
 
     @ViewBuilder
