@@ -16,33 +16,101 @@ struct MultiItemSelectView<Item, Row>: View where Item: Hashable, Row: View {
     private let allItems: [Item]
     private let allowNoSelected: Bool
     private let row: (Item) -> Row
+    private let searchableText: (Item) -> String
+    
+    @State private var searchText: String = ""
+    @State private var showCancelButton = false
 
     init(
         title: String,
         selectedItems: Binding<Set<Item>>,
         allItems: [Item],
         allowNoSelected: Bool,
+        searchableText: @escaping (Item) -> String,
         @ViewBuilder row: @escaping (Item) -> Row
     ) {
         self.title = title
         self.selectedItems = selectedItems
         self.allItems = allItems
         self.allowNoSelected = allowNoSelected
+        self.searchableText = searchableText
         self.row = row
+    }
+
+    private var items: [Item] {
+        if searchText.isEmpty {
+            return allItems
+        } else {
+            return allItems.filter { item in
+                searchText
+                    .split(separator: " ")
+                    .reduce(true) { result, text in
+                        result && searchableText(item).localizedCaseInsensitiveContains(text)
+                    }
+            }
+        }
     }
 
     var body: some View {
         NavigationView {
-            List(selection: selectedItems) {
-                Section {
-                    ForEach(allItems, id: \.self) { item in
-                        row(item).tag(item)
-                    }
-                } header: {
+            VStack {
+                //
+                // 􀊫 Search
+                //
+                HStack {
+                    //
+                    // Text field
+                    //
                     HStack {
-                        Spacer()
-                        Button("Select All") {
-                            selectedItems.wrappedValue = Set(allItems)
+                        Image(systemName: "magnifyingglass")
+
+                        TextField("Search", text: $searchText, onEditingChanged: { _ in
+                            self.showCancelButton = true
+                        })
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
+
+                        Button {
+                            searchText = ""
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .opacity(searchText == "" ? 0 : 1)
+                        }
+                    }
+                    .padding(8)
+                    .foregroundColor(.secondary)
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(10.0)
+
+                    //
+                    // Cancel button
+                    //
+                    if showCancelButton {
+                        Button("Cancel") {
+                            hideKeyboard()
+                            searchText = ""
+                            showCancelButton = false
+                        }
+                    }
+                }
+                .padding(.horizontal)
+
+                //
+                // 􀋲 Items
+                //
+                List(selection: selectedItems) {
+                    Section {
+                        ForEach(items, id: \.self) { item in
+                            row(item).tag(item)
+                        }
+                    } header: {
+                        HStack {
+                            Spacer()
+                            if searchText.isEmpty {
+                                Button("Select All") {
+                                    selectedItems.wrappedValue = Set(allItems)
+                                }
+                            }
                         }
                     }
                 }
