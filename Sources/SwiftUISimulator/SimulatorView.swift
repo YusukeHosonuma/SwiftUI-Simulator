@@ -265,13 +265,45 @@ public struct SimulatorView<Content: View>: View {
                 }
                 .offset(y: -32)
                 .animation(.default, value: device)
-                .frame(maxWidth: .infinity, maxHeight: reader.size.height + reader.safeAreaInsets.bottom)
+                .frame(width: reader.size.width, height: reader.size.height + reader.safeAreaInsets.bottom)
 
-                VStack(spacing: 0) {
-                    //
-                    // Cheet sheets
-                    //
-                    cheetSheet()
+                VStack(alignment: .trailing, spacing: 0) {
+                    ZStack(alignment: .bottomTrailing) {
+                        //
+                        // Device select
+                        //
+                        VStack(spacing: 0) {
+                            //
+                            // 􀁮
+                            //
+                            Button {
+                                if let prev = prevDevice() {
+                                    device = prev
+                                }
+                            } label: {
+                                Icon("chevron.up.circle")
+                            }
+                            .disabled(prevDevice() == nil)
+
+                            //
+                            // 􀁰
+                            //
+                            Button {
+                                if let next = nextDevice() {
+                                    device = next
+                                }
+                            } label: {
+                                Icon("chevron.down.circle")
+                            }
+                            .disabled(nextDevice() == nil)
+                        }
+                        .padding(4)
+
+                        //
+                        // Cheet sheets
+                        //
+                        cheetSheet()
+                    }
 
                     //
                     // Toolbar
@@ -283,6 +315,14 @@ public struct SimulatorView<Content: View>: View {
             }
             .edgesIgnoringSafeArea(.bottom)
         }
+    }
+
+    private func prevDevice() -> Device? {
+        enableDevices.sorted().prev(device)
+    }
+
+    private func nextDevice() -> Device? {
+        enableDevices.sorted().next(device)
     }
 
     private func cheetSheet() -> some View {
@@ -332,7 +372,7 @@ public struct SimulatorView<Content: View>: View {
     }
 
     @ViewBuilder
-    private func simulatorToolBar(realDeviceSize: CGSize, orientation: DeviceOrientation) -> some View {
+    private func simulatorToolBar(realDeviceSize _: CGSize, orientation _: DeviceOrientation) -> some View {
         HStack {
             HStack {
                 //
@@ -368,63 +408,28 @@ public struct SimulatorView<Content: View>: View {
 
             HStack {
                 //
-                // 􀎮 Rotate
-                //
-                Button {
-                    isPortrait.toggle()
-                } label: {
-                    Icon("rotate.left")
-                }
-
-                //
                 // 􀏠 Dual mode
                 //
                 Button {
                     isDualMode.toggle()
                 } label: {
-                    Icon("square.split.2x1")
+                    Icon(isDualMode ? "rectangle.portrait.on.rectangle.portrait.slash" : "rectangle.portrait.on.rectangle.portrait")
                 }
 
                 //
-                // 􀟝 Device
+                // 􀉉 Calendar
                 //
                 Menu {
-                    Picker(selection: $device) {
-                        let devices = enableDevices
-                            .filter {
-                                let size = $0.size(orientation: orientation)
-                                return size.width < realDeviceSize.width && size.height < realDeviceSize.height
-                            }
-                            .sorted()
-                            .reversed()
-
-                        ForEach(Array(devices), id: \.name) { device in
-                            Text(device.name)
-                                .tag(device)
-                            // 😇 `disabled` are not working. (I have no choice but to deal with it by filtering)
-                            // https://www.hackingwithswift.com/forums/swiftui/disabling-items-in-a-menu-picker/6992
-                            // .disabled(deviceSize.width < device.size.width || deviceSize.height < device.size.height)
+                    Picker(selection: $calendar) {
+                        ForEach(Array(enableCalendars)) { identifier in
+                            Text(identifier.id).tag(identifier)
                         }
                     } label: {
                         EmptyView()
                     }
                 } label: {
-                    Icon("iphone")
+                    Icon("calendar")
                 }
-
-                //
-                // 􀀂 Light / Dark
-                //
-                Button {
-                    isDark.toggle()
-                } label: {
-                    if isDark {
-                        Icon("sun.max")
-                    } else {
-                        Icon("moon")
-                    }
-                }
-                .disabled(isDualMode == true)
 
                 //
                 // 􀀄 Locale
@@ -442,18 +447,41 @@ public struct SimulatorView<Content: View>: View {
                 }
 
                 //
-                // 􀉉 Calendar
+                // 􀎮 / 􀎰 Rotate
+                //
+                Button {
+                    isPortrait.toggle()
+                } label: {
+                    Icon(isPortrait ? "rotate.left" : "rotate.right")
+                }
+
+                //
+                // 􀀂 Light / Dark
+                //
+                Button {
+                    isDark.toggle()
+                } label: {
+                    Icon(isDark ? "sun.max" : "moon")
+                }
+                .disabled(isDualMode == true)
+
+                //
+                // 􀟝 Device
                 //
                 Menu {
-                    Picker(selection: $calendar) {
-                        ForEach(Array(enableCalendars)) { identifier in
-                            Text(identifier.id).tag(identifier)
+                    Picker(selection: $device) {
+                        ForEach(Array(enableDevices.sorted().reversed()), id: \.name) { device in
+                            Text(device.name)
+                                .tag(device)
+                            // 😇 `disabled` are not working. (I have no choice but to deal with it by filtering)
+                            // https://www.hackingwithswift.com/forums/swiftui/disabling-items-in-a-menu-picker/6992
+                            // .disabled(deviceSize.width < device.size.width || deviceSize.height < device.size.height)
                         }
                     } label: {
                         EmptyView()
                     }
                 } label: {
-                    Icon("calendar")
+                    Icon("iphone")
                 }
             }
         }
