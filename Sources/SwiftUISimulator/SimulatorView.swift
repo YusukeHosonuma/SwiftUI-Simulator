@@ -106,7 +106,7 @@ public struct SimulatorView<Content: View>: View {
             VStack {
                 Group {
                     if isSimulatorEnabled {
-                        simulatorContainer(realDeviceSize: reader.size)
+                        simulatorContainer(realDeviceSize: reader.size, realDeviceSafeArea: reader.safeAreaInsets)
                     } else {
                         simulatorIcon()
                     }
@@ -239,8 +239,9 @@ public struct SimulatorView<Content: View>: View {
     }
 
     @ViewBuilder
-    private func simulatorContainer(realDeviceSize: CGSize) -> some View {
+    private func simulatorContainer(realDeviceSize: CGSize, realDeviceSafeArea: EdgeInsets) -> some View {
         let orientation: DeviceOrientation = isPortrait ? .portrait : .landscape
+
         ZStack(alignment: .bottomLeading) {
             ZStack(alignment: .top) {
                 Group {
@@ -262,8 +263,7 @@ public struct SimulatorView<Content: View>: View {
                 }
                 .offset(y: -32)
                 .animation(.default, value: device)
-                .frame(width: realDeviceSize.width, height: realDeviceSize.height)
-                .frame(maxWidth: .infinity, maxHeight: realDeviceSize.height)
+                .frame(maxWidth: .infinity, maxHeight: realDeviceSize.height + realDeviceSafeArea.bottom)
 
                 if isDisplayCheetSheet {
                     cheetSheet()
@@ -271,7 +271,10 @@ public struct SimulatorView<Content: View>: View {
             }
 
             simulatorToolBar(realDeviceSize: realDeviceSize, orientation: orientation)
+                .padding(.bottom, realDeviceSafeArea.bottom)
+                .background(Color(red: 0.95, green: 0.95, blue: 0.95, opacity: 1.0))
         }
+        .edgesIgnoringSafeArea(.bottom)
     }
 
     private func cheetSheet() -> some View {
@@ -326,7 +329,7 @@ public struct SimulatorView<Content: View>: View {
             Color(red: 0.8, green: 0.8, blue: 0.8) // TODO: refactor - extract modifier
                 .frame(height: 1)
 
-            HStack(alignment: .center) {
+            HStack(alignment: .top) {
                 //
                 // 􀣌 Setting menu
                 //
@@ -454,9 +457,8 @@ public struct SimulatorView<Content: View>: View {
                 }
             }
             .padding()
-            .frame(width: realDeviceSize.width, height: 64)
-            .background(Color(red: 0.95, green: 0.95, blue: 0.95, opacity: 1.0))
         }
+        .frame(width: realDeviceSize.width)
     }
 
     @ViewBuilder
