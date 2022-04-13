@@ -470,12 +470,21 @@ public struct SimulatorView<Content: View>: View {
                 //
                 Menu {
                     Picker(selection: $device) {
-                        ForEach(Array(enableDevices.sorted().reversed()), id: \.name) { device in
-                            Text(device.name)
-                                .tag(device)
-                            // 😇 `disabled` are not working. (I have no choice but to deal with it by filtering)
-                            // https://www.hackingwithswift.com/forums/swiftui/disabling-items-in-a-menu-picker/6992
-                            // .disabled(deviceSize.width < device.size.width || deviceSize.height < device.size.height)
+                        let devices = enableDevices.sorted().reversed()
+                        let deviceGroup = Dictionary(grouping: devices, by: \.type)
+
+                        // e.g.
+                        //
+                        // - iPod
+                        // - iPhones
+                        // - iPads
+                        //
+                        ForEach(deviceGroup.sorted(by: { $0.key.rawValue > $1.key.rawValue }), id: \.key.rawValue) { _, dx in
+                            ForEach(dx, id: \.name) { device in
+                                Text(device.name)
+                                    .tag(device)
+                            }
+                            Divider()
                         }
                     } label: {
                         EmptyView()

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DeviceSelectView: View {
-    // 💡 iOS 15+
+    // 💡 iOS 15+: \.dismiss
     @Environment(\.presentationMode) var presentationMode
 
     private let selectedDevices: Binding<Set<Device>>
@@ -28,8 +28,7 @@ struct DeviceSelectView: View {
                 //
                 Section {
                     ForEach(Device.iPhones, id: \.name) { device in
-                        Text(device.name)
-                            .tag(device)
+                        row(device: device).tag(device)
                     }
                 } header: {
                     HStack {
@@ -43,8 +42,7 @@ struct DeviceSelectView: View {
 
                 Section {
                     ForEach(Device.iPads, id: \.name) { device in
-                        Text(device.name)
-                            .tag(device)
+                        row(device: device).tag(device)
                     }
                 } header: {
                     HStack {
@@ -70,6 +68,16 @@ struct DeviceSelectView: View {
                     }
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private func row(device: Device) -> some View {
+        let size = device.size(orientation: .portrait)
+        HStack {
+            Text("\(device.name) - \(device.inch)")
+            Spacer()
+            Text("\(Int(size.width)) x \(Int(size.height))")
         }
     }
 }
