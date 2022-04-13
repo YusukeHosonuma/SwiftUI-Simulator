@@ -241,36 +241,43 @@ public struct SimulatorView<Content: View>: View {
         let orientation: DeviceOrientation = isPortrait ? .portrait : .landscape
         GeometryReader { reader in
             ZStack(alignment: .bottomLeading) {
-                ZStack(alignment: .top) {
-                    Group {
-                        if isDualMode {
-                            if isPortrait {
-                                HStack(spacing: 24) {
-                                    simulatedContent(colorScheme: .dark, orientation: orientation)
-                                    simulatedContent(colorScheme: .light, orientation: orientation)
-                                }
-                            } else {
-                                VStack(spacing: 64) {
-                                    simulatedContent(colorScheme: .dark, orientation: orientation)
-                                    simulatedContent(colorScheme: .light, orientation: orientation)
-                                }
+                //
+                // Content
+                //
+                Group {
+                    if isDualMode {
+                        if isPortrait {
+                            HStack(spacing: 24) {
+                                simulatedContent(colorScheme: .dark, orientation: orientation)
+                                simulatedContent(colorScheme: .light, orientation: orientation)
                             }
                         } else {
-                            simulatedContent(colorScheme: isDark ? .dark : .light, orientation: orientation)
+                            VStack(spacing: 64) {
+                                simulatedContent(colorScheme: .dark, orientation: orientation)
+                                simulatedContent(colorScheme: .light, orientation: orientation)
+                            }
                         }
-                    }
-                    .offset(y: -32)
-                    .animation(.default, value: device)
-                    .frame(maxWidth: .infinity, maxHeight: reader.size.height + reader.safeAreaInsets.bottom)
-
-                    if isDisplayCheetSheet {
-                        cheetSheet()
+                    } else {
+                        simulatedContent(colorScheme: isDark ? .dark : .light, orientation: orientation)
                     }
                 }
+                .offset(y: -32)
+                .animation(.default, value: device)
+                .frame(maxWidth: .infinity, maxHeight: reader.size.height + reader.safeAreaInsets.bottom)
 
+                //
+                // Cheet sheets
+                //
+                if isDisplayCheetSheet {
+                    cheetSheet()
+                }
+
+                //
+                // Toolbar
+                //
                 simulatorToolBar(realDeviceSize: reader.size, orientation: orientation)
                     .padding(.bottom, reader.safeAreaInsets.bottom)
-                    .background(Color(red: 0.95, green: 0.95, blue: 0.95, opacity: 1.0))
+                    .background(Color.toolbarBackground)
             }
             .edgesIgnoringSafeArea(.bottom)
         }

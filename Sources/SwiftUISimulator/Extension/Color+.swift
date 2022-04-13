@@ -19,6 +19,10 @@ extension Color {
     static var toolbarBorder: Self {
         .init(red: 0.8, green: 0.8, blue: 0.8)
     }
+
+    static var toolbarBackground: Self {
+        .init(red: 0.95, green: 0.95, blue: 0.95, opacity: 1.0)
+    }
 }
 
 extension Color: CaseIterable {
