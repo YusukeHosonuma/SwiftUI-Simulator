@@ -7,6 +7,24 @@
 
 import SwiftUI
 
+extension Color {
+    static var info: Self {
+        .gray.opacity(0.9)
+    }
+
+    static var safeArea: Self {
+        .pink.opacity(0.1)
+    }
+
+    static var toolbarBorder: Self {
+        .init(red: 0.8, green: 0.8, blue: 0.8)
+    }
+
+    static var toolbarBackground: Self {
+        .init(red: 0.95, green: 0.95, blue: 0.95, opacity: 1.0)
+    }
+}
+
 extension Color: CaseIterable {
     public static var allCases: [Color] {
         if #available(iOS 15.0, *) {

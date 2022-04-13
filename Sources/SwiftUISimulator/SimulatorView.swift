@@ -102,17 +102,15 @@ public struct SimulatorView<Content: View>: View {
     }
 
     public var body: some View {
-        GeometryReader { reader in
-            VStack {
-                Group {
-                    if isSimulatorEnabled {
-                        simulatorContainer(realDeviceSize: reader.size)
-                    } else {
-                        simulatorIcon()
-                    }
+        VStack {
+            Group {
+                if isSimulatorEnabled {
+                    simulatorContainer()
+                } else {
+                    simulatorIcon()
                 }
-                .background(Color.white)
             }
+            .background(Color.white)
         }
     }
 
@@ -239,10 +237,13 @@ public struct SimulatorView<Content: View>: View {
     }
 
     @ViewBuilder
-    private func simulatorContainer(realDeviceSize: CGSize) -> some View {
+    private func simulatorContainer() -> some View {
         let orientation: DeviceOrientation = isPortrait ? .portrait : .landscape
-        ZStack(alignment: .bottomLeading) {
-            ZStack(alignment: .top) {
+        GeometryReader { reader in
+            ZStack(alignment: .bottomLeading) {
+                //
+                // Content
+                //
                 Group {
                     if isDualMode {
                         if isPortrait {
@@ -262,15 +263,23 @@ public struct SimulatorView<Content: View>: View {
                 }
                 .offset(y: -32)
                 .animation(.default, value: device)
-                .frame(width: realDeviceSize.width, height: realDeviceSize.height)
-                .frame(maxWidth: .infinity, maxHeight: realDeviceSize.height)
+                .frame(maxWidth: .infinity, maxHeight: reader.size.height + reader.safeAreaInsets.bottom)
 
-                if isDisplayCheetSheet {
+                VStack(spacing: 0) {
+                    //
+                    // Cheet sheets
+                    //
                     cheetSheet()
+
+                    //
+                    // Toolbar
+                    //
+                    simulatorToolBar(realDeviceSize: reader.size, orientation: orientation)
+                        .padding(.bottom, reader.safeAreaInsets.bottom)
+                        .background(Color.toolbarBackground)
                 }
             }
-
-            simulatorToolBar(realDeviceSize: realDeviceSize, orientation: orientation)
+            .edgesIgnoringSafeArea(.bottom)
         }
     }
 
@@ -278,24 +287,24 @@ public struct SimulatorView<Content: View>: View {
         Group {
             HStack(alignment: .top) {
                 textSampleView()
-                    .frame(width: 240)
+                    .frame(width: 220)
+                    .offset(x: isDisplayCheetSheet ? 0 : -220)
 
                 Spacer()
 
                 colorSampleView()
-                    .frame(width: 240)
+                    .frame(width: 220)
+                    .offset(x: isDisplayCheetSheet ? 0 : +220)
             }
             .environment(\.colorScheme, isDark ? .dark : .light)
         }
     }
 
     private func textSampleView() -> some View {
-        VStack(alignment: .leading) {
-            List {
-                ForEach(Font.TextStyle.allCases, id: \.name) { textStyle in
-                    Text("\(textStyle.name)")
-                        .font(.system(textStyle))
-                }
+        List {
+            ForEach(Font.TextStyle.allCases, id: \.name) { textStyle in
+                Text("\(textStyle.name)")
+                    .font(.system(textStyle))
             }
         }
         .when(isDynamicTypeSizesEnabled) {
@@ -322,16 +331,12 @@ public struct SimulatorView<Content: View>: View {
 
     @ViewBuilder
     private func simulatorToolBar(realDeviceSize: CGSize, orientation: DeviceOrientation) -> some View {
-        VStack(spacing: 0) {
-            Color(red: 0.8, green: 0.8, blue: 0.8) // TODO: refactor - extract modifier
-                .frame(height: 1)
-
-            HStack(alignment: .center) {
+        HStack {
+            HStack {
                 //
                 // 􀣌 Setting menu
                 //
                 settingMenu()
-                    .padding(.trailing, 4)
 
                 //
                 // 􀕹 Cheet sheets
@@ -343,7 +348,6 @@ public struct SimulatorView<Content: View>: View {
                 } label: {
                     Icon("doc.text.magnifyingglass")
                 }
-                .padding(.trailing, 4)
 
                 //
                 // 􀀅 Dynamic Type Sizes slider
@@ -356,9 +360,11 @@ public struct SimulatorView<Content: View>: View {
                     )
                     .frame(width: 200)
                 }
+            }
 
-                Spacer()
+            Spacer()
 
+            HStack {
                 //
                 // 􀎮 Rotate
                 //
@@ -367,7 +373,6 @@ public struct SimulatorView<Content: View>: View {
                 } label: {
                     Icon("rotate.left")
                 }
-                .padding(.trailing, 4)
 
                 //
                 // 􀏠 Dual mode
@@ -377,7 +382,6 @@ public struct SimulatorView<Content: View>: View {
                 } label: {
                     Icon("square.split.2x1")
                 }
-                .padding(.trailing, 4)
 
                 //
                 // 􀟝 Device
@@ -405,7 +409,6 @@ public struct SimulatorView<Content: View>: View {
                 } label: {
                     Icon("iphone")
                 }
-                .padding(.trailing, 4)
 
                 //
                 // 􀀂 Light / Dark
@@ -414,12 +417,11 @@ public struct SimulatorView<Content: View>: View {
                     isDark.toggle()
                 } label: {
                     if isDark {
-                        Icon("moon")
-                    } else {
                         Icon("sun.max")
+                    } else {
+                        Icon("moon")
                     }
                 }
-                .padding(.trailing, 4)
                 .disabled(isDualMode == true)
 
                 //
@@ -436,7 +438,6 @@ public struct SimulatorView<Content: View>: View {
                 } label: {
                     Icon("a.circle")
                 }
-                .padding(.trailing, 4)
 
                 //
                 // 􀉉 Calendar
@@ -453,10 +454,9 @@ public struct SimulatorView<Content: View>: View {
                     Icon("calendar")
                 }
             }
-            .padding()
-            .frame(width: realDeviceSize.width, height: 64)
-            .background(Color(red: 0.95, green: 0.95, blue: 0.95, opacity: 1.0))
         }
+        .padding(4)
+        .border(.toolbarBorder, width: 1, edge: .top)
     }
 
     @ViewBuilder
@@ -587,15 +587,5 @@ public struct SimulatorView<Content: View>: View {
         }
         .foregroundColor(.info)
         .font(.caption)
-    }
-}
-
-extension Color {
-    static var info: Self {
-        .gray.opacity(0.9)
-    }
-
-    static var safeArea: Self {
-        .pink.opacity(0.1)
     }
 }
