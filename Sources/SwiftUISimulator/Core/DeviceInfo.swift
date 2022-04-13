@@ -8,18 +8,17 @@
 import SwiftUI
 
 struct SafeArea {
-    
     // Good old iPhone 😎
     static let standard: Self = .init(
         portrait: (20, 0),
         landscape: (20, 0, 0, 0)
     )
-    
+
     static let portraitTopOnly: Self = .init(
         portrait: (20, 0),
         landscape: (0, 0, 0, 0)
     )
-    
+
     let portrait: SafeAreaPortrait
     let landscape: SafeAreaLandscape
 }
@@ -153,7 +152,7 @@ struct DeviceInfo {
         size: CGSize(width: 390, height: 844),
         portraitSizeClass: (.compact, .regular),
         landscapeSizeClass: (.compact, .compact),
-        safeArea: .init(portrait: (50, 34), landscape: (0, 21, 50, 50)),// TODO: same as iPhone 12 mini?
+        safeArea: .init(portrait: (50, 34), landscape: (0, 21, 50, 50)), // TODO: same as iPhone 12 mini?
         type: .iPhone
     )
 

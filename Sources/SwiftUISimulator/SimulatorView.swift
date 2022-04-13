@@ -44,7 +44,7 @@ public struct SimulatorView<Content: View>: View {
 
     @AppStorage("SwiftUI-Simulator.isDisplayCheetSheet")
     private var isDisplayCheetSheet = false
-    
+
     //
     // 💡 Note: save and restore by code.
     //
@@ -273,7 +273,7 @@ public struct SimulatorView<Content: View>: View {
             simulatorToolBar(realDeviceSize: realDeviceSize, orientation: orientation)
         }
     }
-    
+
     private func cheetSheet() -> some View {
         Group {
             HStack(alignment: .top) {
@@ -281,14 +281,14 @@ public struct SimulatorView<Content: View>: View {
                     .frame(width: 240)
 
                 Spacer()
-                
+
                 colorSampleView()
                     .frame(width: 240)
             }
             .environment(\.colorScheme, isDark ? .dark : .light)
         }
     }
-    
+
     private func textSampleView() -> some View {
         VStack(alignment: .leading) {
             List {
@@ -306,7 +306,7 @@ public struct SimulatorView<Content: View>: View {
             }
         }
     }
-    
+
     private func colorSampleView() -> some View {
         List {
             ForEach(Color.allCases, id: \.name) { color in
@@ -319,20 +319,20 @@ public struct SimulatorView<Content: View>: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private func simulatorToolBar(realDeviceSize: CGSize, orientation: DeviceOrientation) -> some View {
         VStack(spacing: 0) {
             Color(red: 0.8, green: 0.8, blue: 0.8)
                 .frame(height: 1)
-            
+
             HStack(alignment: .center) {
                 //
                 // 􀣌 Setting menu
                 //
                 settingMenu()
                     .padding(.trailing, 4)
-                
+
                 //
                 // 􀕹 Cheet sheets
                 //
@@ -344,7 +344,7 @@ public struct SimulatorView<Content: View>: View {
                     Icon("doc.text.magnifyingglass")
                 }
                 .padding(.trailing, 4)
-                
+
                 //
                 // 􀀅 Dynamic Type Sizes slider
                 //
@@ -356,9 +356,9 @@ public struct SimulatorView<Content: View>: View {
                     )
                     .frame(width: 200)
                 }
-                
+
                 Spacer()
-                
+
                 //
                 // 􀎮 Rotate
                 //
@@ -368,7 +368,7 @@ public struct SimulatorView<Content: View>: View {
                     Icon("rotate.left")
                 }
                 .padding(.trailing, 4)
-                
+
                 //
                 // 􀏠 Dual mode
                 //
@@ -378,7 +378,7 @@ public struct SimulatorView<Content: View>: View {
                     Icon("square.split.2x1")
                 }
                 .padding(.trailing, 4)
-                
+
                 //
                 // 􀟝 Device
                 //
@@ -391,7 +391,7 @@ public struct SimulatorView<Content: View>: View {
                             }
                             .sorted()
                             .reversed()
-                        
+
                         ForEach(Array(devices), id: \.name) { device in
                             Text(device.name)
                                 .tag(device)
@@ -406,7 +406,7 @@ public struct SimulatorView<Content: View>: View {
                     Icon("iphone")
                 }
                 .padding(.trailing, 4)
-                
+
                 //
                 // 􀀂 Light / Dark
                 //
@@ -421,7 +421,7 @@ public struct SimulatorView<Content: View>: View {
                 }
                 .padding(.trailing, 4)
                 .disabled(isDualMode == true)
-                
+
                 //
                 // 􀀄 Locale
                 //
@@ -437,7 +437,7 @@ public struct SimulatorView<Content: View>: View {
                     Icon("a.circle")
                 }
                 .padding(.trailing, 4)
-                
+
                 //
                 // 􀉉 Calendar
                 //
@@ -470,12 +470,12 @@ public struct SimulatorView<Content: View>: View {
             if isDisplayInformation {
                 header(orientaion: orientation)
             }
-            
+
             //
             // Content
             //
             simulatedScreen(colorScheme: colorScheme, orientation: orientation)
-            
+
             //
             // Footer
             //
@@ -493,31 +493,31 @@ public struct SimulatorView<Content: View>: View {
         let contentSize = safeArea.contentSize
         let sizeClass = device.sizeClass(orientation: orientation)
         let frameSize = isDisplaySafeArea ? deviceSize : contentSize
-        
+
         VStack(spacing: 0) {
             //
             // Safe area - Top
             //
             safeAreaMargin(.vertical, size: safeArea.top)
-            
+
             HStack(spacing: 0) {
                 //
                 // Safe area - Left
                 //
                 safeAreaMargin(.horizontal, size: safeArea.left)
-                
+
                 //
                 // Application content
                 //
                 content()
                     .frame(width: contentSize.width, height: contentSize.height, alignment: .center)
-                
+
                 //
                 // Safe area - Right
                 //
                 safeAreaMargin(.horizontal, size: safeArea.right)
             }
-            
+
             //
             // Safe area - Bottom
             //
@@ -561,7 +561,7 @@ public struct SimulatorView<Content: View>: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private func header(orientaion: DeviceOrientation) -> some View {
         let deviceSize = device.size(orientation: orientaion)
@@ -594,7 +594,7 @@ extension Color {
     static var info: Self {
         .gray.opacity(0.9)
     }
-    
+
     static var safeArea: Self {
         .pink.opacity(0.1)
     }

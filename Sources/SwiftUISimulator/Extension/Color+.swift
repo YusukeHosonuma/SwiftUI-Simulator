@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Yusuke Hosonuma on 2022/04/13.
 //
@@ -48,7 +48,7 @@ extension Color: CaseIterable {
             ]
         }
     }
-    
+
     var name: String {
         if #available(iOS 15.0, *) {
             switch self {
