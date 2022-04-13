@@ -21,7 +21,7 @@ extension Color {
     }
 
     static var toolbarBackground: Self {
-        .init(red: 0.95, green: 0.95, blue: 0.95, opacity: 1.0)
+        .init(red: 0.98, green: 0.98, blue: 0.98, opacity: 1.0)
     }
 }
 

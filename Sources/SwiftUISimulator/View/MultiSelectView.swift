@@ -17,7 +17,7 @@ struct MultiItemSelectView<Item, Row>: View where Item: Hashable, Row: View {
     private let allowNoSelected: Bool
     private let row: (Item) -> Row
     private let searchableText: (Item) -> String
-    
+
     @State private var searchText: String = ""
     @State private var showCancelButton = false
 
