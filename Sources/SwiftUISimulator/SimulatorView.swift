@@ -323,7 +323,7 @@ public struct SimulatorView<Content: View>: View {
     @ViewBuilder
     private func simulatorToolBar(realDeviceSize: CGSize, orientation: DeviceOrientation) -> some View {
         VStack(spacing: 0) {
-            Color(red: 0.8, green: 0.8, blue: 0.8)
+            Color(red: 0.8, green: 0.8, blue: 0.8) // TODO: refactor - extract modifier
                 .frame(height: 1)
 
             HStack(alignment: .center) {
