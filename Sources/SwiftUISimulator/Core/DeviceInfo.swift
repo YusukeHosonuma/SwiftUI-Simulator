@@ -26,7 +26,8 @@ struct SafeArea {
 typealias SafeAreaPortrait = (top: CGFloat, bottom: CGFloat)
 typealias SafeAreaLandscape = (top: CGFloat, bottom: CGFloat, left: CGFloat, right: CGFloat)
 
-enum DeviceType {
+enum DeviceType: Int {
+    case iPod = 0
     case iPhone
     case iPad
 }
@@ -75,7 +76,7 @@ struct DeviceInfo {
         portraitSizeClass: (.compact, .regular),
         landscapeSizeClass: (.compact, .compact),
         safeArea: .standard, // TODO: really?
-        type: .iPhone
+        type: .iPod
     )
 
     //
