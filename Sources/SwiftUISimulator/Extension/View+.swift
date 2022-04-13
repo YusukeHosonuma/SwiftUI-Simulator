@@ -38,4 +38,8 @@ extension View {
             }
         }
     }
+
+    func hideKeyboard() {
+        UIApplication.hideKeyboard()
+    }
 }

@@ -214,7 +214,8 @@ public struct SimulatorView<Content: View>: View {
                 title: "Select locales",
                 selectedItems: $enableLocales,
                 allItems: Locale.availableIdentifiers.filter { $0.contains("_") }.sorted(),
-                allowNoSelected: false
+                allowNoSelected: false,
+                searchableText: { $0 }
             ) {
                 Text($0)
             }
@@ -229,7 +230,8 @@ public struct SimulatorView<Content: View>: View {
                 title: "Select calendars",
                 selectedItems: $enableCalendars,
                 allItems: Calendar.Identifier.allCases,
-                allowNoSelected: false
+                allowNoSelected: false,
+                searchableText: { $0.rawValue }
             ) {
                 Text($0.rawValue)
             }
