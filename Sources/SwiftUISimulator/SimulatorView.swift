@@ -287,14 +287,14 @@ public struct SimulatorView<Content: View>: View {
         Group {
             HStack(alignment: .top) {
                 textSampleView()
-                    .frame(width: 240)
-                    .offset(x: isDisplayCheetSheet ? 0 : -240)
+                    .frame(width: 220)
+                    .offset(x: isDisplayCheetSheet ? 0 : -220)
 
                 Spacer()
 
                 colorSampleView()
-                    .frame(width: 240)
-                    .offset(x: isDisplayCheetSheet ? 0 : +240)
+                    .frame(width: 220)
+                    .offset(x: isDisplayCheetSheet ? 0 : +220)
             }
             .environment(\.colorScheme, isDark ? .dark : .light)
         }
@@ -331,13 +331,12 @@ public struct SimulatorView<Content: View>: View {
 
     @ViewBuilder
     private func simulatorToolBar(realDeviceSize: CGSize, orientation: DeviceOrientation) -> some View {
-        HStack(alignment: .top) {
-            Group {
+        HStack {
+            HStack {
                 //
                 // 􀣌 Setting menu
                 //
                 settingMenu()
-                    .padding(.trailing, 4)
 
                 //
                 // 􀕹 Cheet sheets
@@ -349,7 +348,6 @@ public struct SimulatorView<Content: View>: View {
                 } label: {
                     Icon("doc.text.magnifyingglass")
                 }
-                .padding(.trailing, 4)
 
                 //
                 // 􀀅 Dynamic Type Sizes slider
@@ -366,7 +364,7 @@ public struct SimulatorView<Content: View>: View {
 
             Spacer()
 
-            Group {
+            HStack {
                 //
                 // 􀎮 Rotate
                 //
@@ -375,7 +373,6 @@ public struct SimulatorView<Content: View>: View {
                 } label: {
                     Icon("rotate.left")
                 }
-                .padding(.trailing, 4)
 
                 //
                 // 􀏠 Dual mode
@@ -385,7 +382,6 @@ public struct SimulatorView<Content: View>: View {
                 } label: {
                     Icon("square.split.2x1")
                 }
-                .padding(.trailing, 4)
 
                 //
                 // 􀟝 Device
@@ -413,7 +409,6 @@ public struct SimulatorView<Content: View>: View {
                 } label: {
                     Icon("iphone")
                 }
-                .padding(.trailing, 4)
 
                 //
                 // 􀀂 Light / Dark
@@ -427,7 +422,6 @@ public struct SimulatorView<Content: View>: View {
                         Icon("moon")
                     }
                 }
-                .padding(.trailing, 4)
                 .disabled(isDualMode == true)
 
                 //
@@ -444,7 +438,6 @@ public struct SimulatorView<Content: View>: View {
                 } label: {
                     Icon("a.circle")
                 }
-                .padding(.trailing, 4)
 
                 //
                 // 􀉉 Calendar
@@ -462,7 +455,7 @@ public struct SimulatorView<Content: View>: View {
                 }
             }
         }
-        .padding()
+        .padding(4)
         .border(.toolbarBorder, width: 1, edge: .top)
     }
 
