@@ -324,11 +324,8 @@ public struct SimulatorView<Content: View>: View {
 
     @ViewBuilder
     private func simulatorToolBar(realDeviceSize: CGSize, orientation: DeviceOrientation) -> some View {
-        VStack(spacing: 0) {
-            Color(red: 0.8, green: 0.8, blue: 0.8) // TODO: refactor - extract modifier
-                .frame(height: 1)
-
-            HStack(alignment: .top) {
+        HStack(alignment: .top) {
+            Group {
                 //
                 // 􀣌 Setting menu
                 //
@@ -358,9 +355,11 @@ public struct SimulatorView<Content: View>: View {
                     )
                     .frame(width: 200)
                 }
+            }
 
-                Spacer()
+            Spacer()
 
+            Group {
                 //
                 // 􀎮 Rotate
                 //
@@ -455,8 +454,9 @@ public struct SimulatorView<Content: View>: View {
                     Icon("calendar")
                 }
             }
-            .padding()
         }
+        .padding()
+        .border(.toolbarBorder, width: 1, edge: .top)
     }
 
     @ViewBuilder
@@ -587,15 +587,5 @@ public struct SimulatorView<Content: View>: View {
         }
         .foregroundColor(.info)
         .font(.caption)
-    }
-}
-
-extension Color {
-    static var info: Self {
-        .gray.opacity(0.9)
-    }
-
-    static var safeArea: Self {
-        .pink.opacity(0.1)
     }
 }
