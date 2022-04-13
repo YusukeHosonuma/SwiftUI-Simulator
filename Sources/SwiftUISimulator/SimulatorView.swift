@@ -42,6 +42,9 @@ public struct SimulatorView<Content: View>: View {
     @AppStorage("SwiftUI-Simulator.isPortrait")
     private var isPortrait = true
 
+    @AppStorage("SwiftUI-Simulator.isDisplayCheetSheet")
+    private var isDisplayCheetSheet = false
+
     //
     // 💡 Note: save and restore by code.
     //
@@ -239,34 +242,108 @@ public struct SimulatorView<Content: View>: View {
     private func simulatorContainer(realDeviceSize: CGSize) -> some View {
         let orientation: DeviceOrientation = isPortrait ? .portrait : .landscape
         ZStack(alignment: .bottomLeading) {
-            Group {
-                if isDualMode {
-                    if isPortrait {
-                        HStack(spacing: 24) {
-                            simulatedContent(colorScheme: .dark, orientation: orientation)
-                            simulatedContent(colorScheme: .light, orientation: orientation)
+            ZStack(alignment: .top) {
+                Group {
+                    if isDualMode {
+                        if isPortrait {
+                            HStack(spacing: 24) {
+                                simulatedContent(colorScheme: .dark, orientation: orientation)
+                                simulatedContent(colorScheme: .light, orientation: orientation)
+                            }
+                        } else {
+                            VStack(spacing: 64) {
+                                simulatedContent(colorScheme: .dark, orientation: orientation)
+                                simulatedContent(colorScheme: .light, orientation: orientation)
+                            }
                         }
                     } else {
-                        VStack(spacing: 64) {
-                            simulatedContent(colorScheme: .dark, orientation: orientation)
-                            simulatedContent(colorScheme: .light, orientation: orientation)
-                        }
+                        simulatedContent(colorScheme: isDark ? .dark : .light, orientation: orientation)
                     }
-                } else {
-                    simulatedContent(colorScheme: isDark ? .dark : .light, orientation: orientation)
+                }
+                .offset(y: -32)
+                .animation(.default, value: device)
+                .frame(width: realDeviceSize.width, height: realDeviceSize.height)
+                .frame(maxWidth: .infinity, maxHeight: realDeviceSize.height)
+
+                if isDisplayCheetSheet {
+                    cheetSheet()
                 }
             }
-            .offset(y: -32)
-            .animation(.default, value: device)
-            .frame(width: realDeviceSize.width, height: realDeviceSize.height)
-            .frame(maxWidth: .infinity, maxHeight: realDeviceSize.height)
+
+            simulatorToolBar(realDeviceSize: realDeviceSize, orientation: orientation)
+        }
+    }
+
+    private func cheetSheet() -> some View {
+        Group {
+            HStack(alignment: .top) {
+                textSampleView()
+                    .frame(width: 240)
+
+                Spacer()
+
+                colorSampleView()
+                    .frame(width: 240)
+            }
+            .environment(\.colorScheme, isDark ? .dark : .light)
+        }
+    }
+
+    private func textSampleView() -> some View {
+        VStack(alignment: .leading) {
+            List {
+                ForEach(Font.TextStyle.allCases, id: \.name) { textStyle in
+                    Text("\(textStyle.name)")
+                        .font(.system(textStyle))
+                }
+            }
+        }
+        .when(isDynamicTypeSizesEnabled) {
+            if #available(iOS 15, *) {
+                $0.environment(\.dynamicTypeSize, dynamicTypeSize)
+            } else {
+                $0
+            }
+        }
+    }
+
+    private func colorSampleView() -> some View {
+        List {
+            ForEach(Color.allCases, id: \.name) { color in
+                HStack {
+                    Text(color.name)
+                    Spacer()
+                    color.frame(width: 60)
+                }
+                .frame(height: 16)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func simulatorToolBar(realDeviceSize: CGSize, orientation: DeviceOrientation) -> some View {
+        VStack(spacing: 0) {
+            Color(red: 0.8, green: 0.8, blue: 0.8) // TODO: refactor - extract modifier
+                .frame(height: 1)
 
             HStack(alignment: .center) {
                 //
                 // 􀣌 Setting menu
                 //
                 settingMenu()
-                    .padding(.trailing, 16)
+                    .padding(.trailing, 4)
+
+                //
+                // 􀕹 Cheet sheets
+                //
+                Button {
+                    withAnimation {
+                        isDisplayCheetSheet.toggle()
+                    }
+                } label: {
+                    Icon("doc.text.magnifyingglass")
+                }
+                .padding(.trailing, 4)
 
                 //
                 // 􀀅 Dynamic Type Sizes slider
@@ -387,9 +464,24 @@ public struct SimulatorView<Content: View>: View {
         let width = device.size(orientation: orientation).width
 
         VStack(spacing: 0) {
-            header(orientaion: orientation)
+            //
+            // Header
+            //
+            if isDisplayInformation {
+                header(orientaion: orientation)
+            }
+
+            //
+            // Content
+            //
             simulatedScreen(colorScheme: colorScheme, orientation: orientation)
-            footer()
+
+            //
+            // Footer
+            //
+            if isDisplayInformation {
+                footer()
+            }
         }
         .frame(width: width)
     }
@@ -401,31 +493,31 @@ public struct SimulatorView<Content: View>: View {
         let contentSize = safeArea.contentSize
         let sizeClass = device.sizeClass(orientation: orientation)
         let frameSize = isDisplaySafeArea ? deviceSize : contentSize
-        
+
         VStack(spacing: 0) {
             //
             // Safe area - Top
             //
             safeAreaMargin(.vertical, size: safeArea.top)
-            
+
             HStack(spacing: 0) {
                 //
                 // Safe area - Left
                 //
                 safeAreaMargin(.horizontal, size: safeArea.left)
-                
+
                 //
                 // Application content
                 //
                 content()
                     .frame(width: contentSize.width, height: contentSize.height, alignment: .center)
-                
+
                 //
                 // Safe area - Right
                 //
                 safeAreaMargin(.horizontal, size: safeArea.right)
             }
-            
+
             //
             // Safe area - Bottom
             //
@@ -452,11 +544,9 @@ public struct SimulatorView<Content: View>: View {
         if isDisplaySafeArea {
             Group {
                 if isDisplayInformation {
-                    VStack(alignment: .center) {
-                        Text("\(Int(size))")
-                            .foregroundColor(.info)
-                            .font(.system(size: 12))
-                    }
+                    Text("\(Int(size))")
+                        .foregroundColor(.info)
+                        .font(.system(size: 12))
                 } else {
                     Color.clear
                 }
@@ -471,7 +561,7 @@ public struct SimulatorView<Content: View>: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private func header(orientaion: DeviceOrientation) -> some View {
         let deviceSize = device.size(orientation: orientaion)
@@ -504,7 +594,7 @@ extension Color {
     static var info: Self {
         .gray.opacity(0.9)
     }
-    
+
     static var safeArea: Self {
         .pink.opacity(0.1)
     }

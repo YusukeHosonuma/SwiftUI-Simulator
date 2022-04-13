@@ -73,7 +73,7 @@ enum Device: Int, CaseIterable, Comparable {
     var type: DeviceType {
         info.type
     }
-    
+
     func size(orientation: DeviceOrientation) -> CGSize {
         switch orientation {
         case .portrait:
@@ -82,11 +82,11 @@ enum Device: Int, CaseIterable, Comparable {
             return CGSize(width: info.size.height, height: info.size.width)
         }
     }
-    
+
     func safeArea(orientation: DeviceOrientation) -> SafeAreaProxy {
         .init(screenSize: info.size, safeArea: info.safeArea, orientation: orientation)
     }
-    
+
     func sizeClass(orientation: DeviceOrientation) -> SizeClasses {
         switch orientation {
         case .portrait:
