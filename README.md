@@ -28,7 +28,7 @@ And following:
 ```swift
 let package = Package(
     dependencies: [
-        .package(url: "https://github.com/YusukeHosonuma/SwiftUI-Simulator.git", branch: "main"),
+        .package(url: "https://github.com/YusukeHosonuma/SwiftUI-Simulator.git", from: "1.0.0"),
     ],
     targets: [
         .target(name: "<your-target-name>", dependencies: [
