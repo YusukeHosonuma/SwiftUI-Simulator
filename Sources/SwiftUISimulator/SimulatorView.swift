@@ -15,52 +15,54 @@ public let devicePresets: Set<Device> = [
     .iPhoneSE,
     .iPhone11,
     .iPhone13ProMax,
-    .iPadMini_5h,
+    .iPadMini_5th,
 ]
 public let localeIdentifierPresets: Set<String> = ["en_US", "ja_JP"]
 public let calendarIdentifierPresets: Set<Calendar.Identifier> = [.iso8601, .japanese]
+
+private let storageKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator"
 
 //
 // SimulatorView
 //
 public struct SimulatorView<Content: View>: View {
-    @AppStorage("SwiftUI-Simulator.device")
+    @AppStorage("\(storageKeyPrefix).device")
     private var device: Device = .iPhoneSE
 
-    @AppStorage("SwiftUI-Simulator.locale")
+    @AppStorage("\(storageKeyPrefix).locale")
     private var locale: String = "en_US"
 
     //
     // ☑️ `DynamicTypeSize` is supported in iOS 15+.
     //
-    @AppStorage("SwiftUI-Simulator.dynamicTypeSize")
+    @AppStorage("\(storageKeyPrefix).dynamicTypeSize")
     private var dynamicTypeSize: DynamicTypeSizeWrapper = .medium
 
-    @AppStorage("SwiftUI-Simulator.isDynamicTypeSizesEnabled")
+    @AppStorage("\(storageKeyPrefix).isDynamicTypeSizesEnabled")
     private var isDynamicTypeSizesEnabled = false
 
-    @AppStorage("SwiftUI-Simulator.isDark")
+    @AppStorage("\(storageKeyPrefix).isDark")
     private var isDark = false
 
-    @AppStorage("SwiftUI-Simulator.isDisplayInformation")
+    @AppStorage("\(storageKeyPrefix).isDisplayInformation")
     private var isDisplayInformation = true
 
-    @AppStorage("SwiftUI-Simulator.isDisplaySafeArea")
+    @AppStorage("\(storageKeyPrefix).isDisplaySafeArea")
     private var isDisplaySafeArea = true
 
-    @AppStorage("SwiftUI-Simulator.isSimulatorEnabled")
+    @AppStorage("\(storageKeyPrefix).isSimulatorEnabled")
     private var isSimulatorEnabled = true
 
-    @AppStorage("SwiftUI-Simulator.calendar")
+    @AppStorage("\(storageKeyPrefix).calendar")
     private var calendar: Calendar.Identifier = .iso8601
 
-    @AppStorage("SwiftUI-Simulator.isDualMode")
+    @AppStorage("\(storageKeyPrefix).isDualMode")
     private var isDualMode = true
 
-    @AppStorage("SwiftUI-Simulator.isPortrait")
+    @AppStorage("\(storageKeyPrefix).isPortrait")
     private var isPortrait = true
 
-    @AppStorage("SwiftUI-Simulator.isDisplayCheetSheet")
+    @AppStorage("\(storageKeyPrefix).isDisplayCheetSheet")
     private var isDisplayCheetSheet = false
 
     //
@@ -71,24 +73,24 @@ public struct SimulatorView<Content: View>: View {
     @State private var enableCalendars: Set<Calendar.Identifier>
 
     private func saveEnableDevices() {
-        let rawValues = Array(enableDevices.map(\.rawValue)) // TODO: change string to safe.
-        UserDefaults.standard.set(rawValues, forKey: "SwiftUI-Simulator.enableDevices")
+        let rawValues = Array(enableDevices.map(\.id))
+        UserDefaults.standard.set(rawValues, forKey: "\(storageKeyPrefix).enableDevices")
     }
 
     private static func loadEnableDevices() -> Set<Device>? {
-        if let rawValues = UserDefaults.standard.array(forKey: "SwiftUI-Simulator.enableDevices") as? [Int] {
-            return Set(rawValues.compactMap(Device.init))
+        if let rawValues = UserDefaults.standard.stringArray(forKey: "\(storageKeyPrefix).enableDevices") {
+            return Set(rawValues.compactMap { Device(id: $0) })
         } else {
             return nil
         }
     }
 
     private func saveEnableLocales() {
-        UserDefaults.standard.set(Array(enableLocales), forKey: "SwiftUI-Simulator.enableLocales")
+        UserDefaults.standard.set(Array(enableLocales), forKey: "\(storageKeyPrefix).enableLocales")
     }
 
     private static func loadEnableLocales() -> Set<String>? {
-        if let identifiers = UserDefaults.standard.stringArray(forKey: "SwiftUI-Simulator.enableLocales") {
+        if let identifiers = UserDefaults.standard.stringArray(forKey: "\(storageKeyPrefix).enableLocales") {
             return Set(identifiers)
         } else {
             return nil
@@ -96,11 +98,11 @@ public struct SimulatorView<Content: View>: View {
     }
 
     private func saveEnableCalendars() {
-        UserDefaults.standard.set(Array(enableCalendars.map(\.rawValue)), forKey: "SwiftUI-Simulator.enableCalendars")
+        UserDefaults.standard.set(Array(enableCalendars.map(\.rawValue)), forKey: "\(storageKeyPrefix).enableCalendars")
     }
 
     private static func loadEnableCalendars() -> Set<Calendar.Identifier>? {
-        if let rawValues = UserDefaults.standard.stringArray(forKey: "SwiftUI-Simulator.enableCalendars") {
+        if let rawValues = UserDefaults.standard.stringArray(forKey: "\(storageKeyPrefix).enableCalendars") {
             return Set(rawValues.compactMap(Calendar.Identifier.init))
         } else {
             return nil
