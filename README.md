@@ -74,6 +74,10 @@ struct HelloApp: App {
 This OSS supports **SwiftUI app** only.<br>
 For example, it may not work if you have resolve `locale` by yourself.
 
+## Contributions
+
+Issues and PRs are welcome, even for minor improvements and corrections.
+
 ## Author
 
 Yusuke Hosonuma / [@tobi462](https://twitter.com/tobi462)
