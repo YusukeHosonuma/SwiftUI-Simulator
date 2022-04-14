@@ -14,9 +14,8 @@ public struct SimulatorView<Content: View>: View {
     @AppStorage("SwiftUI-Simulator.locale")
     private var locale: String = "en_US"
 
-    @available(iOS 15, *)
     @AppStorage("SwiftUI-Simulator.dynamicTypeSize")
-    private var dynamicTypeSize: DynamicTypeSize = .medium
+    private var dynamicTypeSize: DynamicTypeSizeWrapper = .medium
 
     @AppStorage("SwiftUI-Simulator.isDynamicTypeSizesEnabled")
     private var isDynamicTypeSizesEnabled = false
@@ -173,13 +172,16 @@ public struct SimulatorView<Content: View>: View {
             Divider() // --------
 
             //
-            // 􀂔
+            // 􀂔 Dynamic Type Size
             //
-            Toggle(isOn: $isDynamicTypeSizesEnabled) {
-                Label("Dynamic Type Sizes", systemImage: "a.square")
+            if #available(iOS 15, *) {
+                Toggle(isOn: $isDynamicTypeSizesEnabled) {
+                    Label("Dynamic Type Sizes", systemImage: "a.square")
+                }
             }
+            
             //
-            // 􀪛
+            // 􀪛 Locale
             //
             Toggle(isOn: $isDisplaySafeArea) {
                 Label("Safe Area", systemImage: "square.tophalf.filled")
@@ -351,7 +353,7 @@ public struct SimulatorView<Content: View>: View {
         }
         .when(isDynamicTypeSizesEnabled) {
             if #available(iOS 15, *) {
-                $0.environment(\.dynamicTypeSize, dynamicTypeSize)
+                $0.environment(\.dynamicTypeSize, dynamicTypeSize.nativeValue)
             } else {
                 $0
             }
@@ -397,7 +399,7 @@ public struct SimulatorView<Content: View>: View {
                 if #available(iOS 15, *), isDynamicTypeSizesEnabled {
                     Slider(
                         value: $dynamicTypeSize.sliderBinding(),
-                        in: DynamicTypeSize.sliderRange,
+                        in: DynamicTypeSizeWrapper.sliderRange,
                         step: 1
                     )
                     .frame(width: 200)
@@ -571,7 +573,7 @@ public struct SimulatorView<Content: View>: View {
         .environment(\.calendar, Calendar(identifier: calendar))
         .when(isDynamicTypeSizesEnabled) {
             if #available(iOS 15, *) {
-                $0.environment(\.dynamicTypeSize, dynamicTypeSize)
+                $0.environment(\.dynamicTypeSize, dynamicTypeSize.nativeValue)
             } else {
                 $0
             }
