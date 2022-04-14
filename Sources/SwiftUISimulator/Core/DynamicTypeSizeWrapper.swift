@@ -8,7 +8,7 @@
 import SwiftUI
 
 //
-// ☑️ `DynamicTypeSize` is supported on iOS 15+
+// ☑️ `DynamicTypeSize` is supported in iOS 15+.
 //
 enum DynamicTypeSizeWrapper: Int {
     case xSmall = 0

@@ -14,6 +14,9 @@ public struct SimulatorView<Content: View>: View {
     @AppStorage("SwiftUI-Simulator.locale")
     private var locale: String = "en_US"
 
+    //
+    // ☑️ `DynamicTypeSize` is supported in iOS 15+.
+    //
     @AppStorage("SwiftUI-Simulator.dynamicTypeSize")
     private var dynamicTypeSize: DynamicTypeSizeWrapper = .medium
 
