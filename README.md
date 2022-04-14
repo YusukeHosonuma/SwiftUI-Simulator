@@ -19,7 +19,7 @@ let package = Package(
 )
 ```
 
-Wrap you root view by `SimulatorView`.
+Surround the root view with `SimulatorView`.
 
 ```swift
 import SwiftUISimulator
@@ -28,14 +28,10 @@ import SwiftUISimulator
 struct HelloApp: App {
     var body: some Scene {
         WindowGroup {
-            // ✅ Please wrap your root view by `SimulatorView`.
-            #if DEBUG
+            // ✅ Please surround the root view with `SimulatorView`.
             SimulatorView {
                 ContentView()
             }
-            #else
-            ContentView()
-            #endif
         }
     }
 }
@@ -43,4 +39,5 @@ struct HelloApp: App {
 
 ## Requirements
 
-- iOS 15+ (currently)
+- iOS 14+
+  - `Dynamic Type Sizes` is supporte in iOS 15+
