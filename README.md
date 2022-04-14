@@ -38,7 +38,7 @@ let package = Package(
 )
 ```
 
-2. Surround the root view with `SimulatorView`.
+2. Surround the your app's root view with `SimulatorView`.
 
 ```swift
 import SwiftUISimulator
@@ -47,8 +47,8 @@ import SwiftUISimulator
 struct HelloApp: App {
     var body: some Scene {
         WindowGroup {
-            SimulatorView { // ✅ Please surround the root view with `SimulatorView`.
-                RootView()
+            SimulatorView { // ✅ Please surround the your app's root view with `SimulatorView`.
+                ContentView()
             }
         }
     }
