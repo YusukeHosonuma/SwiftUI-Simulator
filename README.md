@@ -71,7 +71,7 @@ struct HelloApp: App {
 
 ## Limitation
 
-This OSS supports **SwiftUI app** only.
+This OSS supports **SwiftUI app** only.<br>
 For example, it may not work if you have resolve `locale` by yourself.
 
 ## Author
