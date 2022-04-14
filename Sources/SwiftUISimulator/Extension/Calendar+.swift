@@ -7,7 +7,11 @@
 
 import Foundation
 
-extension Calendar.Identifier: CaseIterable, RawRepresentable, Identifiable {
+extension Calendar.Identifier: CaseIterable, RawRepresentable, Identifiable, Comparable {
+    public static func < (lhs: Calendar.Identifier, rhs: Calendar.Identifier) -> Bool {
+        lhs.rawValue < rhs.rawValue
+    }
+
     public init?(rawValue: String) {
         switch rawValue {
         case "gregorian": self = .gregorian
