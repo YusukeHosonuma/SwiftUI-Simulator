@@ -93,6 +93,16 @@ This is useful if you want to share with your team.
 
 Issues and PRs are welcome, even for minor improvements and corrections.
 
+## FAQ
+
+Q. How to disable this simulator?<br>
+A. `Disable simulator` on setting menu.
+
+<img width="186" alt="image" src="https://user-images.githubusercontent.com/2990285/163336996-16864267-5a01-446b-afe8-33b613be671d.png">
+
+Q. How it works?<br>
+A. Perhaps s you might imagine, this is achieved by overriding SwiftUI's [Environment](https://developer.apple.com/documentation/swiftui/environment).
+
 ## Author
 
 Yusuke Hosonuma / [@tobi462](https://twitter.com/tobi462)
