@@ -72,7 +72,7 @@ struct HelloApp: App {
 ## Limitation
 
 This OSS supports **SwiftUI app** only.<br>
-For example, it may not work if you have resolve `locale` by yourself.
+For example, it may not work if you have resolve `locale` by yourself. (e.g. use [SwiftGen](https://github.com/SwiftGen/SwiftGen))
 
 ## Contributions
 
