@@ -75,7 +75,7 @@ struct DeviceInfo {
         size: CGSize(width: 320, height: 480),
         portraitSizeClass: (.compact, .regular),
         landscapeSizeClass: (.compact, .compact),
-        safeArea: .standard, // TODO: really?
+        safeArea: .portraitTopOnly,
         type: .iPod
     )
 
@@ -88,7 +88,7 @@ struct DeviceInfo {
         size: CGSize(width: 375, height: 667),
         portraitSizeClass: (.compact, .regular),
         landscapeSizeClass: (.compact, .compact),
-        safeArea: .standard, // TODO: really?
+        safeArea: .portraitTopOnly,
         type: .iPhone
     )
 
@@ -153,7 +153,7 @@ struct DeviceInfo {
         size: CGSize(width: 390, height: 844),
         portraitSizeClass: (.compact, .regular),
         landscapeSizeClass: (.compact, .compact),
-        safeArea: .init(portrait: (50, 34), landscape: (0, 21, 50, 50)), // TODO: same as iPhone 12 mini?
+        safeArea: .init(portrait: (47, 34), landscape: (0, 21, 47, 47)),
         type: .iPhone
     )
 
@@ -178,8 +178,8 @@ struct DeviceInfo {
         inch: "6.7",
         size: CGSize(width: 428, height: 926),
         portraitSizeClass: (.compact, .regular),
-        landscapeSizeClass: (.regular, .compact), // TODO: same as `iPhone 12 Pro Max`?
-        safeArea: .init(portrait: (47, 34), landscape: (0, 21, 47, 48)), // ref: https://useyourloaf.com/blog/iphone-13-screen-sizes/
+        landscapeSizeClass: (.regular, .compact),
+        safeArea: .init(portrait: (47, 34), landscape: (0, 21, 47, 47)),
         type: .iPhone
     )
 
@@ -194,7 +194,7 @@ struct DeviceInfo {
         size: CGSize(width: 768, height: 1024),
         portraitSizeClass: (.regular, .regular),
         landscapeSizeClass: (.regular, .regular),
-        safeArea: .init(portrait: (24, 20), landscape: (24, 20, 0, 0)), // TODO: same as iPad mini (6th) ?
+        safeArea: .standard,
         type: .iPad
     )
 
@@ -233,7 +233,7 @@ struct DeviceInfo {
         size: CGSize(width: 810, height: 1080),
         portraitSizeClass: (.regular, .regular),
         landscapeSizeClass: (.regular, .regular),
-        safeArea: .init(portrait: (20, 0), landscape: (20, 0, 0, 0)), // ref: https://useyourloaf.com/blog/ipad-2021-screen-sizes/
+        safeArea: .standard,
         type: .iPad
     )
 
