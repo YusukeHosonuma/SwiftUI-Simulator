@@ -668,7 +668,7 @@ public struct SimulatorView<Content: View>: View {
         let w = Int(deviceSize.width)
         let h = Int(deviceSize.height)
         HStack {
-            Text("\(device.name) - \(device.inch) inch")
+            Text("\(device.name) (\(device.inch) inch)")
             Spacer()
             Text("\(w) x \(h)")
         }
