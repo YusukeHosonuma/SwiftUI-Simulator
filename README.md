@@ -92,7 +92,7 @@ Issues and PRs are welcome, even for minor improvements and corrections.
 ## FAQ
 
 Q. How to disable this simulator?<br>
-A. `Disable simulator` on setting menu.
+A. `Disable simulator` in setting menu.
 
 <img width="186" alt="image" src="https://user-images.githubusercontent.com/2990285/163336996-16864267-5a01-446b-afe8-33b613be671d.png">
 
