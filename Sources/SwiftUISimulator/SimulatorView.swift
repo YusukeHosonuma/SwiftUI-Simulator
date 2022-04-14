@@ -39,7 +39,7 @@ public struct SimulatorView<Content: View>: View {
     private var calendar: Calendar.Identifier = .iso8601
 
     @AppStorage("SwiftUI-Simulator.isDualMode")
-    private var isDualMode = false
+    private var isDualMode = true
 
     @AppStorage("SwiftUI-Simulator.isPortrait")
     private var isPortrait = true
@@ -182,7 +182,7 @@ public struct SimulatorView<Content: View>: View {
                     Label("Dynamic Type Sizes", systemImage: "a.square")
                 }
             }
-            
+
             //
             // 􀪛 Locale
             //
