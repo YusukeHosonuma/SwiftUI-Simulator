@@ -11,7 +11,7 @@ Enables the following settings without settings or restarting the simulator or r
 
 https://user-images.githubusercontent.com/2990285/163325330-13297947-7222-4cf7-a80b-d999094546d9.mov
 
-No more restarting or settings.
+No more restarting or settings!
 
 And following:
 
