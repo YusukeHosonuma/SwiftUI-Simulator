@@ -74,6 +74,21 @@ struct HelloApp: App {
 This OSS supports **SwiftUI app** only.<br>
 For example, it may not work if you have resolve `locale` by yourself. (e.g. use [SwiftGen](https://github.com/SwiftGen/SwiftGen))
 
+## Configurations
+
+You can specify default `devices`, `locale identifiers` and `calendar identifiers`.
+
+```swift
+SimulatorView(
+    defaultDevices: [.iPhone11, .iPhone13ProMax],      // Set<Device>
+    defaultLocaleIdentifiers: ["it", "fr"],            // Set<String>
+    defaultCalendarIdentifiers: [.gregorian, .iso8601] // Set<Calendar.Identifier>
+) {
+    RootView()
+}
+```
+This is useful if you want to share with your team.
+
 ## Contributions
 
 Issues and PRs are welcome, even for minor improvements and corrections.
