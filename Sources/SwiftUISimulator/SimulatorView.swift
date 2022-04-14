@@ -243,6 +243,7 @@ public struct SimulatorView<Content: View>: View {
             Toggle(isOn: $isDisplaySafeArea) {
                 Label("Safe Area", systemImage: "square.tophalf.filled")
             }
+
             //
             // 􀅴
             //
@@ -333,26 +334,26 @@ public struct SimulatorView<Content: View>: View {
                         //
                         VStack(spacing: 0) {
                             //
-                            // 􀁮
+                            // 􀃿
                             //
                             Button {
                                 if let prev = prevDevice() {
                                     device = prev
                                 }
                             } label: {
-                                Icon("chevron.up.circle")
+                                Icon("chevron.up.square.fill")
                             }
                             .disabled(prevDevice() == nil)
 
                             //
-                            // 􀁰
+                            // 􀄁
                             //
                             Button {
                                 if let next = nextDevice() {
                                     device = next
                                 }
                             } label: {
-                                Icon("chevron.down.circle")
+                                Icon("chevron.down.square.fill")
                             }
                             .disabled(nextDevice() == nil)
                         }
@@ -559,7 +560,9 @@ public struct SimulatorView<Content: View>: View {
 
     @ViewBuilder
     private func simulatedContent(colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
-        let width = device.size(orientation: orientation).width
+        let width = isDisplaySafeArea
+            ? device.size(orientation: orientation).width
+            : device.safeArea(orientation: orientation).contentSize.width
 
         VStack(spacing: 0) {
             //
@@ -666,7 +669,7 @@ public struct SimulatorView<Content: View>: View {
         let w = Int(deviceSize.width)
         let h = Int(deviceSize.height)
         HStack {
-            Text("\(device.name) - \(device.inch) inch")
+            Text("\(device.name) (\(device.inch) inch)")
             Spacer()
             Text("\(w) x \(h)")
         }

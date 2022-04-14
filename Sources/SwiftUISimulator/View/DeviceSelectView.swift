@@ -75,7 +75,7 @@ struct DeviceSelectView: View {
     private func row(device: Device) -> some View {
         let size = device.size(orientation: .portrait)
         HStack {
-            Text("\(device.name) - \(device.inch)")
+            Text("\(device.name) (\(device.inch) inch)")
             Spacer()
             Text("\(Int(size.width)) x \(Int(size.height))")
         }
