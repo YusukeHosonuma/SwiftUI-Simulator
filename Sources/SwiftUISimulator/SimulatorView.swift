@@ -15,7 +15,7 @@ public let devicePresets: Set<Device> = [
     .iPhoneSE,
     .iPhone11,
     .iPhone13ProMax,
-    .iPadMini_5h,
+    .iPadMini_5th,
 ]
 public let localeIdentifierPresets: Set<String> = ["en_US", "ja_JP"]
 public let calendarIdentifierPresets: Set<Calendar.Identifier> = [.iso8601, .japanese]
@@ -73,13 +73,13 @@ public struct SimulatorView<Content: View>: View {
     @State private var enableCalendars: Set<Calendar.Identifier>
 
     private func saveEnableDevices() {
-        let rawValues = Array(enableDevices.map(\.rawValue)) // TODO: change string to safe.
+        let rawValues = Array(enableDevices.map(\.id))
         UserDefaults.standard.set(rawValues, forKey: "\(storageKeyPrefix).enableDevices")
     }
 
     private static func loadEnableDevices() -> Set<Device>? {
-        if let rawValues = UserDefaults.standard.array(forKey: "\(storageKeyPrefix).enableDevices") as? [Int] {
-            return Set(rawValues.compactMap(Device.init))
+        if let rawValues = UserDefaults.standard.stringArray(forKey: "\(storageKeyPrefix).enableDevices") {
+            return Set(rawValues.compactMap { Device(id: $0) })
         } else {
             return nil
         }

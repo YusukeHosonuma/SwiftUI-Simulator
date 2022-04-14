@@ -188,7 +188,7 @@ struct DeviceInfo {
     //
     // iPad mini 5th (7.9 inch)
     //
-    static let iPadMini_5h: Self = .init(
+    static let iPadMini_5th: Self = .init(
         name: "iPad mini 5th",
         inch: "7.9",
         size: CGSize(width: 768, height: 1024),
