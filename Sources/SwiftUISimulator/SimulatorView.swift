@@ -559,7 +559,9 @@ public struct SimulatorView<Content: View>: View {
 
     @ViewBuilder
     private func simulatedContent(colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
-        let width = device.size(orientation: orientation).width
+        let width = isDisplaySafeArea
+            ? device.size(orientation: orientation).width
+            : device.safeArea(orientation: orientation).contentSize.width
 
         VStack(spacing: 0) {
             //
