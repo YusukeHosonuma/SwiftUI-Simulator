@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-enum Device: Int, CaseIterable, Comparable {
-    static func < (lhs: Device, rhs: Device) -> Bool {
+public enum Device: Int, CaseIterable, Comparable {
+    public static func < (lhs: Device, rhs: Device) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
 

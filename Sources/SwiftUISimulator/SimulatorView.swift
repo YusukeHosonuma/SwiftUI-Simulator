@@ -7,6 +7,22 @@
 
 import SwiftUI
 
+//
+// Presets
+//
+public let devicePresets: Set<Device> = [
+    .iPodTouch,
+    .iPhoneSE,
+    .iPhone11,
+    .iPhone13ProMax,
+    .iPadMini_5h,
+]
+public let localeIdentifierPresets: Set<String> = ["en_US", "ja_JP"]
+public let calendarIdentifierPresets: Set<Calendar.Identifier> = [.iso8601, .japanese]
+
+//
+// SimulatorView
+//
 public struct SimulatorView<Content: View>: View {
     @AppStorage("SwiftUI-Simulator.device")
     private var device: Device = .iPhoneSE
@@ -59,11 +75,11 @@ public struct SimulatorView<Content: View>: View {
         UserDefaults.standard.set(rawValues, forKey: "SwiftUI-Simulator.enableDevices")
     }
 
-    private static func loadEnableDevices() -> Set<Device> {
+    private static func loadEnableDevices() -> Set<Device>? {
         if let rawValues = UserDefaults.standard.array(forKey: "SwiftUI-Simulator.enableDevices") as? [Int] {
             return Set(rawValues.compactMap(Device.init))
         } else {
-            return Set(Device.allCases)
+            return nil
         }
     }
 
@@ -71,19 +87,23 @@ public struct SimulatorView<Content: View>: View {
         UserDefaults.standard.set(Array(enableLocales), forKey: "SwiftUI-Simulator.enableLocales")
     }
 
-    private static func loadEnableLocales() -> Set<String> {
-        Set(UserDefaults.standard.stringArray(forKey: "SwiftUI-Simulator.enableLocales") ?? ["en_US", "ja_JP"])
+    private static func loadEnableLocales() -> Set<String>? {
+        if let identifiers = UserDefaults.standard.stringArray(forKey: "SwiftUI-Simulator.enableLocales") {
+            return Set(identifiers)
+        } else {
+            return nil
+        }
     }
 
     private func saveEnableCalendars() {
         UserDefaults.standard.set(Array(enableCalendars.map(\.rawValue)), forKey: "SwiftUI-Simulator.enableCalendars")
     }
 
-    private static func loadEnableCalendars() -> Set<Calendar.Identifier> {
+    private static func loadEnableCalendars() -> Set<Calendar.Identifier>? {
         if let rawValues = UserDefaults.standard.stringArray(forKey: "SwiftUI-Simulator.enableCalendars") {
             return Set(rawValues.compactMap(Calendar.Identifier.init))
         } else {
-            return Set([.iso8601, .japanese])
+            return nil
         }
     }
 
@@ -96,11 +116,43 @@ public struct SimulatorView<Content: View>: View {
 
     private let content: () -> Content
 
-    public init(@ViewBuilder _ content: @escaping () -> Content) {
+    public init(
+        defaultDevices: Set<Device> = devicePresets,
+        defaultLocaleIdentifiers: Set<String> = localeIdentifierPresets,
+        defaultCalendarIdentifiers: Set<Calendar.Identifier> = calendarIdentifierPresets,
+        @ViewBuilder _ content: @escaping () -> Content
+    ) {
         self.content = content
-        enableDevices = Self.loadEnableDevices()
-        enableLocales = Self.loadEnableLocales()
-        enableCalendars = Self.loadEnableCalendars()
+
+        //
+        // Devices
+        //
+        if let devices = Self.loadEnableDevices() {
+            enableDevices = devices
+        } else {
+            enableDevices = defaultDevices
+            device = defaultDevices.first!
+        }
+
+        //
+        // Locale
+        //
+        if let localeIdentifiers = Self.loadEnableLocales() {
+            enableLocales = localeIdentifiers
+        } else {
+            enableLocales = defaultLocaleIdentifiers
+            locale = defaultLocaleIdentifiers.first!
+        }
+
+        //
+        // Calendar
+        //
+        if let calendarIdentifiers = Self.loadEnableCalendars() {
+            enableCalendars = calendarIdentifiers
+        } else {
+            enableCalendars = defaultCalendarIdentifiers
+            calendar = defaultCalendarIdentifiers.first!
+        }
     }
 
     public var body: some View {
@@ -426,7 +478,7 @@ public struct SimulatorView<Content: View>: View {
                 //
                 Menu {
                     Picker(selection: $calendar) {
-                        ForEach(Array(enableCalendars)) { identifier in
+                        ForEach(Array(enableCalendars.sorted().reversed())) { identifier in
                             Text(identifier.id).tag(identifier)
                         }
                     } label: {
@@ -441,7 +493,7 @@ public struct SimulatorView<Content: View>: View {
                 //
                 Menu {
                     Picker(selection: $locale) {
-                        ForEach(Array(enableLocales.sorted()), id: \.self) { identifier in
+                        ForEach(Array(enableLocales.sorted().reversed()), id: \.self) { identifier in
                             Text(identifier).tag(identifier)
                         }
                     } label: {
