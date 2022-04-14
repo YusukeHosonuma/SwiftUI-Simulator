@@ -47,13 +47,9 @@ import SwiftUISimulator
 struct HelloApp: App {
     var body: some Scene {
         WindowGroup {
-            #if DEBUG
             SimulatorView { // ✅ Please surround the root view with `SimulatorView`.
                 RootView()
             }
-            #else
-            RootView()
-            #endif
         }
     }
 }
