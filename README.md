@@ -1,6 +1,6 @@
 # SwiftUI-Simulator
 
-Enables the following settings without setting up or restarting the simulator or real device.
+Enables the following settings without settings or restarting the simulator or real device.
 
 - Any device screen size
 - Light/Dark mode
@@ -9,7 +9,9 @@ Enables the following settings without setting up or restarting the simulator or
 - Calendar
 - Dynamic Type Sizes
 
-No more restarting or configurations!
+https://user-images.githubusercontent.com/2990285/163325330-13297947-7222-4cf7-a80b-d999094546d9.mov
+
+No more restarting or settings.
 
 And following:
 
@@ -59,13 +61,13 @@ struct HelloApp: App {
 
 3. Launch on any iPad. (Large screen is recommended)
 
-<img width="713" alt="image" src="https://user-images.githubusercontent.com/2990285/163323260-8e3955d2-185e-4e0e-a074-3cf2d2db743e.png">
+<img width="400" alt="image" src="https://user-images.githubusercontent.com/2990285/163323260-8e3955d2-185e-4e0e-a074-3cf2d2db743e.png">
 
 
 ## Requirements
 
 - iOS 14+ (Currently supports iPad only)
-  - `Dynamic Type Sizes` is supporte in iOS 15+
+  - `Dynamic Type Sizes` is supports in iOS 15+
 
 ## Limitation
 
