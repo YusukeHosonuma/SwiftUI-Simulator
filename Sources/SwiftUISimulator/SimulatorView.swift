@@ -95,7 +95,6 @@ public struct SimulatorView<Content: View>: View {
                     simulatorIcon()
                 }
             }
-            .background(Color.white)
         }
     }
 
@@ -307,6 +306,7 @@ public struct SimulatorView<Content: View>: View {
                 }
                 .offset(y: -reader.safeAreaInsets.bottom)
             }
+            .background(Color.simulatorBackground)
             .edgesIgnoringSafeArea(.bottom)
         }
     }

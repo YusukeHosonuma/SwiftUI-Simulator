@@ -17,11 +17,15 @@ extension Color {
     }
 
     static var toolbarBorder: Self {
-        .init(red: 0.8, green: 0.8, blue: 0.8)
+        .init(red: 0.85, green: 0.85, blue: 0.85, opacity: 0.9)
     }
 
     static var toolbarBackground: Self {
-        .init(red: 0.98, green: 0.98, blue: 0.98, opacity: 1.0)
+        .init(red: 0.98, green: 0.98, blue: 0.98, opacity: 0.9)
+    }
+    
+    static var simulatorBackground: Self {
+        .white
     }
 }
 
