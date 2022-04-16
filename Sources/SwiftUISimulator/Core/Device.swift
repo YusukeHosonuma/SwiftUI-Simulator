@@ -28,7 +28,7 @@ public enum Device: Int, CaseIterable, Comparable {
     case iPadAir_4th
     case iPadPro_11
     case iPadPro_12_9
-    
+
     public static func < (lhs: Device, rhs: Device) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
@@ -54,7 +54,7 @@ public enum Device: Int, CaseIterable, Comparable {
         case .iPadPro_12_9: return "iPadPro_12_9"
         }
     }
-    
+
     init(id: String) {
         switch id {
         case "iPodTouch": self = .iPodTouch
@@ -78,7 +78,7 @@ public enum Device: Int, CaseIterable, Comparable {
             preconditionFailure()
         }
     }
-    
+
     static var iPhones: [Self] {
         [.iPodTouch] + Device.allCases.filter { $0.type == .iPhone }
     }

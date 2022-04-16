@@ -20,7 +20,7 @@ struct Icon: View {
     var body: some View {
         Image(systemName: systemName)
             .font(.system(size: 20))
-            .frame(width: 48, height: 48)
+            .frame(width: 44, height: 44)
             .contentShape(Rectangle())
     }
 }
