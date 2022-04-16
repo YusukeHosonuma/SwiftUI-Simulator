@@ -420,7 +420,7 @@ public struct SimulatorView<Content: View>: View {
                 //
                 // 􀀅 Dynamic Type Sizes slider
                 //
-                if #available(iOS 15, *), isDynamicTypeSizesEnabled {
+                if isDynamicTypeSizesEnabled {
                     Slider(
                         value: $dynamicTypeSize.sliderBinding(),
                         in: DynamicTypeSizeWrapper.sliderRange,
