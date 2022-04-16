@@ -59,6 +59,8 @@ final class UserPreferences: ObservableObject {
     private func saveDevice() {
         if let rawValue = device?.id {
             UserDefaults.standard.set(rawValue, forKey: "\(storageKeyPrefix).deviceID")
+        } else {
+            UserDefaults.standard.removeObject(forKey: "\(storageKeyPrefix).deviceID")
         }
     }
 
