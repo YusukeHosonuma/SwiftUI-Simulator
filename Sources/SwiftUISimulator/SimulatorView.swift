@@ -13,9 +13,6 @@ internal let storageKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator"
 // SimulatorView
 //
 public struct SimulatorView<Content: View>: View {
-    @AppStorage("\(storageKeyPrefix).device")
-    private var device: Device = .iPhoneSE
-
     @AppStorage("\(storageKeyPrefix).locale")
     private var locale: String = "en_US"
 
@@ -232,27 +229,41 @@ public struct SimulatorView<Content: View>: View {
                 //
                 // Content
                 //
-                Group {
-                    if isDualMode {
-                        if isPortrait {
-                            HStack(spacing: 24) {
-                                simulatedContent(colorScheme: .dark, orientation: orientation)
-                                simulatedContent(colorScheme: .light, orientation: orientation)
+                if let device = userPreferences.device {
+                    Group {
+                        if isDualMode {
+                            if isPortrait {
+                                HStack(spacing: 24) {
+                                    simulatedContent(device: device, colorScheme: .dark, orientation: orientation)
+                                    simulatedContent(device: device, colorScheme: .light, orientation: orientation)
+                                }
+                            } else {
+                                VStack(spacing: 64) {
+                                    simulatedContent(device: device, colorScheme: .dark, orientation: orientation)
+                                    simulatedContent(device: device, colorScheme: .light, orientation: orientation)
+                                }
                             }
                         } else {
-                            VStack(spacing: 64) {
-                                simulatedContent(colorScheme: .dark, orientation: orientation)
-                                simulatedContent(colorScheme: .light, orientation: orientation)
-                            }
+                            simulatedContent(device: device, colorScheme: isDark ? .dark : .light, orientation: orientation)
                         }
-                    } else {
-                        simulatedContent(colorScheme: isDark ? .dark : .light, orientation: orientation)
                     }
+                    .offset(y: -32)
+                    .animation(.default, value: device)
+                    .frame(width: reader.size.width, height: reader.size.height + reader.safeAreaInsets.bottom)
+                } else {
+                    content()
+                        .overrideEnvironments(
+                            sizeClasses: nil, // ☑️ Use real device size classes.
+                            locale: locale,
+                            colorScheme: isDark ? .dark : .light,
+                            calendar: calendar,
+                            dynamicTypeSize: dynamicTypeSize
+                        )
                 }
-                .offset(y: -32)
-                .animation(.default, value: device)
-                .frame(width: reader.size.width, height: reader.size.height + reader.safeAreaInsets.bottom)
 
+                //
+                // Controls
+                //
                 VStack(alignment: .trailing, spacing: 0) {
                     if horizontalSizeClass == .regular {
                         ZStack(alignment: .bottomTrailing) {
@@ -307,7 +318,7 @@ public struct SimulatorView<Content: View>: View {
             //
             Button {
                 if let prev = prevDevice() {
-                    device = prev
+                    userPreferences.device = prev
                 }
             } label: {
                 Icon("chevron.up.square.fill")
@@ -319,7 +330,7 @@ public struct SimulatorView<Content: View>: View {
             //
             Button {
                 if let next = nextDevice() {
-                    device = next
+                    userPreferences.device = next
                 }
             } label: {
                 Icon("chevron.down.square.fill")
@@ -329,11 +340,13 @@ public struct SimulatorView<Content: View>: View {
     }
 
     private func prevDevice() -> Device? {
-        userPreferences.enableDevices.sorted().prev(device)
+        guard let device = userPreferences.device else { return nil }
+        return userPreferences.enableDevices.sorted().prev(device)
     }
 
     private func nextDevice() -> Device? {
-        userPreferences.enableDevices.sorted().next(device)
+        guard let device = userPreferences.device else { return nil }
+        return userPreferences.enableDevices.sorted().next(device)
     }
 
     private func cheetSheetOvelay() -> some View {
@@ -490,9 +503,17 @@ public struct SimulatorView<Content: View>: View {
                 // 􀟝 Device
                 //
                 Menu {
-                    Picker(selection: $device) {
+                    Picker(selection: $userPreferences.device) {
                         let devices = userPreferences.enableDevices.sorted().reversed()
                         let deviceGroup = Dictionary(grouping: devices, by: \.type)
+
+                        //
+                        // Real device
+                        //
+                        Text("Default")
+                            .tag(Device?(nil))
+
+                        Divider() // ----
 
                         // e.g.
                         //
@@ -503,10 +524,11 @@ public struct SimulatorView<Content: View>: View {
                         ForEach(deviceGroup.sorted(by: { $0.key.rawValue > $1.key.rawValue }), id: \.key.rawValue) { _, dx in
                             ForEach(dx, id: \.name) { device in
                                 Text(device.name)
-                                    .tag(device)
+                                    .tag(Optional(device))
                             }
-                            Divider()
+                            Divider() // ----
                         }
+
                     } label: {
                         EmptyView()
                     }
@@ -525,36 +547,51 @@ public struct SimulatorView<Content: View>: View {
     }
 
     @ViewBuilder
-    private func simulatedContent(colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
+    private func simulatedContent(device: Device, colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
         let width = isDisplaySafeArea
             ? device.size(orientation: orientation).width
             : device.safeArea(orientation: orientation).contentSize.width
 
         VStack(spacing: 0) {
             //
-            // Header
+            // Header: e.g. "iPhone SE (3rd) (4.7 inch)" and "375 x 667"
             //
             if isDisplayInformation {
-                header(orientaion: orientation)
+                let deviceSize = device.size(orientation: orientation)
+                HStack {
+                    Text("\(device.name) (\(device.inch) inch)")
+                    Spacer()
+                    Text("\(Int(deviceSize.width)) x \(Int(deviceSize.height))")
+                }
+                .foregroundColor(.info)
+                .font(.caption)
             }
 
             //
             // Content
             //
-            simulatedScreen(colorScheme: colorScheme, orientation: orientation)
+            simulatedScreen(device: device, colorScheme: colorScheme, orientation: orientation)
 
             //
-            // Footer
+            // Footer: e.g. "xSmall" and "ja_JP / iso8601"
             //
             if isDisplayInformation {
-                footer()
+                HStack {
+                    if isDynamicTypeSizesEnabled {
+                        Text(dynamicTypeSize.label)
+                    }
+                    Spacer()
+                    Text("\(locale) / \(calendar.rawValue)")
+                }
+                .foregroundColor(.info)
+                .font(.caption)
             }
         }
         .frame(width: width)
     }
 
     @ViewBuilder
-    private func simulatedScreen(colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
+    private func simulatedScreen(device: Device, colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
         let deviceSize = device.size(orientation: orientation)
         let safeArea = device.safeArea(orientation: orientation)
         let contentSize = safeArea.contentSize
@@ -592,18 +629,13 @@ public struct SimulatorView<Content: View>: View {
         }
         .frame(width: frameSize.width, height: frameSize.height)
         .border(.blue)
-        .environment(\.verticalSizeClass, sizeClass.height)
-        .environment(\.horizontalSizeClass, sizeClass.width)
-        .environment(\.locale, .init(identifier: locale))
-        .environment(\.colorScheme, colorScheme)
-        .environment(\.calendar, Calendar(identifier: calendar))
-        .when(isDynamicTypeSizesEnabled) {
-            if #available(iOS 15, *) {
-                $0.environment(\.dynamicTypeSize, dynamicTypeSize.nativeValue)
-            } else {
-                $0
-            }
-        }
+        .overrideEnvironments(
+            sizeClasses: sizeClass,
+            locale: locale,
+            colorScheme: colorScheme,
+            calendar: calendar,
+            dynamicTypeSize: dynamicTypeSize
+        )
     }
 
     @ViewBuilder
@@ -628,31 +660,30 @@ public struct SimulatorView<Content: View>: View {
             }
         }
     }
+}
 
-    @ViewBuilder
-    private func header(orientaion: DeviceOrientation) -> some View {
-        let deviceSize = device.size(orientation: orientaion)
-        let w = Int(deviceSize.width)
-        let h = Int(deviceSize.height)
-        HStack {
-            Text("\(device.name) (\(device.inch) inch)")
-            Spacer()
-            Text("\(w) x \(h)")
-        }
-        .foregroundColor(.info)
-        .font(.caption)
-    }
-
-    @ViewBuilder
-    private func footer() -> some View {
-        HStack {
-            if #available(iOS 15, *), isDynamicTypeSizesEnabled {
-                Text(dynamicTypeSize.label)
+extension View {
+    func overrideEnvironments(
+        sizeClasses: SizeClasses?,
+        locale: String,
+        colorScheme: ColorScheme,
+        calendar: Calendar.Identifier,
+        dynamicTypeSize: DynamicTypeSizeWrapper?
+    ) -> some View {
+        environment(\.locale, .init(identifier: locale))
+            .environment(\.colorScheme, colorScheme)
+            .environment(\.calendar, Calendar(identifier: calendar))
+            .whenLet(sizeClasses) { content, sizeClasses in
+                content
+                    .environment(\.horizontalSizeClass, sizeClasses.width)
+                    .environment(\.verticalSizeClass, sizeClasses.height)
             }
-            Spacer()
-            Text("\(locale) / \(calendar.rawValue)")
-        }
-        .foregroundColor(.info)
-        .font(.caption)
+            .whenLet(dynamicTypeSize) {
+                if #available(iOS 15, *) {
+                    $0.environment(\.dynamicTypeSize, $1.nativeValue)
+                } else {
+                    $0
+                }
+            }
     }
 }

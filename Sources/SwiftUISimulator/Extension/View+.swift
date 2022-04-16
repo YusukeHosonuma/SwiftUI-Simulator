@@ -17,6 +17,15 @@ extension View {
         }
     }
 
+    @ViewBuilder
+    func whenLet<V, Content: View>(_ optional: V?, @ViewBuilder transform: (Self, V) -> Content) -> some View {
+        if let value = optional {
+            transform(self, value)
+        } else {
+            self
+        }
+    }
+
     func border(_ color: Color, width: CGFloat, edge: Edge.Set) -> some View {
         VStack(spacing: 0) {
             if edge == .top || edge == .vertical {
