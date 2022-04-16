@@ -23,7 +23,7 @@ public struct SimulatorView<Content: View>: View {
     private var dynamicTypeSize: DynamicTypeSizeWrapper = .medium
 
     @AppStorage("\(storageKeyPrefix).isDynamicTypeSizesEnabled")
-    private var isDynamicTypeSizesEnabled = false
+    private var isDynamicTypeSizesEnabled = true
 
     @AppStorage("\(storageKeyPrefix).isDark")
     private var isDark = false
