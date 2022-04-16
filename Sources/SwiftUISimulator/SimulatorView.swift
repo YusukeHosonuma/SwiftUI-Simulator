@@ -511,7 +511,7 @@ public struct SimulatorView<Content: View>: View {
                         // Real device
                         //
                         Text("Default")
-                            .tag(Device?(nil))
+                            .tagDevice(nil)
 
                         Divider() // ----
 
@@ -524,7 +524,7 @@ public struct SimulatorView<Content: View>: View {
                         ForEach(deviceGroup.sorted(by: { $0.key.rawValue > $1.key.rawValue }), id: \.key.rawValue) { _, dx in
                             ForEach(dx, id: \.name) { device in
                                 Text(device.name)
-                                    .tag(Optional(device))
+                                    .tagDevice(device)
                             }
                             Divider() // ----
                         }
@@ -662,7 +662,11 @@ public struct SimulatorView<Content: View>: View {
     }
 }
 
-extension View {
+private extension View {
+    func tagDevice(_ value: Device?) -> some View {
+        tag(value)
+    }
+
     func overrideEnvironments(
         sizeClasses: SizeClasses?,
         locale: String,
