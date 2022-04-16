@@ -95,7 +95,6 @@ public struct SimulatorView<Content: View>: View {
                     simulatorIcon()
                 }
             }
-            .background(Color.white)
         }
     }
 
@@ -307,6 +306,7 @@ public struct SimulatorView<Content: View>: View {
                 }
                 .offset(y: -reader.safeAreaInsets.bottom)
             }
+            .background(Color.simulatorBackground)
             .edgesIgnoringSafeArea(.bottom)
         }
     }
@@ -406,7 +406,17 @@ public struct SimulatorView<Content: View>: View {
                 //
                 settingMenu()
 
+                //
+                // 􀏠 Dual mode
+                //
                 if horizontalSizeClass == .regular {
+                    Button {
+                        isDualMode.toggle()
+                    } label: {
+                        Icon(isDualMode ? "rectangle.portrait.on.rectangle.portrait.slash" : "rectangle.portrait.on.rectangle.portrait")
+                    }
+                    .disabled(userPreferences.device == nil)
+
                     //
                     // 􀕹 Cheet sheets
                     //
@@ -437,17 +447,6 @@ public struct SimulatorView<Content: View>: View {
             Spacer()
 
             HStack(spacing: spacing) {
-                if horizontalSizeClass == .regular {
-                    //
-                    // 􀏠 Dual mode
-                    //
-                    Button {
-                        isDualMode.toggle()
-                    } label: {
-                        Icon(isDualMode ? "rectangle.portrait.on.rectangle.portrait.slash" : "rectangle.portrait.on.rectangle.portrait")
-                    }
-                }
-
                 //
                 // 􀉉 Calendar
                 //
@@ -478,17 +477,6 @@ public struct SimulatorView<Content: View>: View {
                     Icon("a.circle")
                 }
 
-                if horizontalSizeClass == .regular {
-                    //
-                    // 􀎮 / 􀎰 Rotate
-                    //
-                    Button {
-                        isPortrait.toggle()
-                    } label: {
-                        Icon(isPortrait ? "rotate.left" : "rotate.right")
-                    }
-                }
-
                 //
                 // 􀀂 Light / Dark
                 //
@@ -498,6 +486,18 @@ public struct SimulatorView<Content: View>: View {
                     Icon(isDark ? "sun.max" : "moon")
                 }
                 .disabled(isDualMode == true)
+
+                //
+                // 􀎮 / 􀎰 Rotate
+                //
+                if horizontalSizeClass == .regular {
+                    Button {
+                        isPortrait.toggle()
+                    } label: {
+                        Icon(isPortrait ? "rotate.left" : "rotate.right")
+                    }
+                    .disabled(userPreferences.device == nil)
+                }
 
                 //
                 // 􀟝 Device
