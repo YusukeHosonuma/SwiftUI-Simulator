@@ -21,6 +21,12 @@ private let localeIdentifierPresets: Set<String> = ["en_US", "ja_JP"]
 private let calendarIdentifierPresets: Set<Calendar.Identifier> = [.iso8601, .japanese]
 
 final class UserPreferences: ObservableObject {
+    @Published var device: Device? {
+        didSet {
+            saveDevice()
+        }
+    }
+
     @Published var enableDevices: Set<Device> {
         didSet {
             saveEnableDevices()
@@ -44,9 +50,24 @@ final class UserPreferences: ObservableObject {
         defaultLocaleIdentifiers: Set<String>? = nil,
         defaultCalendarIdentifiers: Set<Calendar.Identifier>? = nil
     ) {
+        device = Self.loadDevice()
         enableDevices = defaultDevices ?? Self.loadEnableDevices() ?? devicePresets
         enableLocales = defaultLocaleIdentifiers ?? Self.loadEnableLocales() ?? localeIdentifierPresets
         enableCalendars = defaultCalendarIdentifiers ?? Self.loadEnableCalendars() ?? calendarIdentifierPresets
+    }
+
+    private func saveDevice() {
+        if let rawValue = device?.id {
+            UserDefaults.standard.set(rawValue, forKey: "\(storageKeyPrefix).deviceID")
+        }
+    }
+
+    private static func loadDevice() -> Device? {
+        if let rawValue = UserDefaults.standard.string(forKey: "\(storageKeyPrefix).deviceID") {
+            return Device(id: rawValue)
+        } else {
+            return nil
+        }
     }
 
     private func saveEnableDevices() {
