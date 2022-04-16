@@ -406,7 +406,17 @@ public struct SimulatorView<Content: View>: View {
                 //
                 settingMenu()
 
+                //
+                // 􀏠 Dual mode
+                //
                 if horizontalSizeClass == .regular {
+                    Button {
+                        isDualMode.toggle()
+                    } label: {
+                        Icon(isDualMode ? "rectangle.portrait.on.rectangle.portrait.slash" : "rectangle.portrait.on.rectangle.portrait")
+                    }
+                    .disabled(userPreferences.device == nil)
+
                     //
                     // 􀕹 Cheet sheets
                     //
@@ -438,18 +448,6 @@ public struct SimulatorView<Content: View>: View {
 
             HStack(spacing: spacing) {
                 //
-                // 􀏠 Dual mode
-                //
-                if horizontalSizeClass == .regular {
-                    Button {
-                        isDualMode.toggle()
-                    } label: {
-                        Icon(isDualMode ? "rectangle.portrait.on.rectangle.portrait.slash" : "rectangle.portrait.on.rectangle.portrait")
-                    }
-                    .disabled(userPreferences.device == nil)
-                }
-
-                //
                 // 􀉉 Calendar
                 //
                 Menu {
@@ -480,6 +478,16 @@ public struct SimulatorView<Content: View>: View {
                 }
 
                 //
+                // 􀀂 Light / Dark
+                //
+                Button {
+                    isDark.toggle()
+                } label: {
+                    Icon(isDark ? "sun.max" : "moon")
+                }
+                .disabled(isDualMode == true)
+
+                //
                 // 􀎮 / 􀎰 Rotate
                 //
                 if horizontalSizeClass == .regular {
@@ -490,16 +498,6 @@ public struct SimulatorView<Content: View>: View {
                     }
                     .disabled(userPreferences.device == nil)
                 }
-
-                //
-                // 􀀂 Light / Dark
-                //
-                Button {
-                    isDark.toggle()
-                } label: {
-                    Icon(isDark ? "sun.max" : "moon")
-                }
-                .disabled(isDualMode == true)
 
                 //
                 // 􀟝 Device
