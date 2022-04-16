@@ -7,20 +7,7 @@
 
 import SwiftUI
 
-//
-// Presets
-//
-public let devicePresets: Set<Device> = [
-    .iPodTouch,
-    .iPhoneSE,
-    .iPhone11,
-    .iPhone13ProMax,
-    .iPadMini_5th,
-]
-public let localeIdentifierPresets: Set<String> = ["en_US", "ja_JP"]
-public let calendarIdentifierPresets: Set<Calendar.Identifier> = [.iso8601, .japanese]
-
-private let storageKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator"
+internal let storageKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator"
 
 //
 // SimulatorView
@@ -57,7 +44,7 @@ public struct SimulatorView<Content: View>: View {
     private var calendar: Calendar.Identifier = .iso8601
 
     @AppStorage("\(storageKeyPrefix).isDualMode")
-    private var isDualMode = true
+    private var isDualMode = false
 
     @AppStorage("\(storageKeyPrefix).isPortrait")
     private var isPortrait = true
@@ -65,49 +52,14 @@ public struct SimulatorView<Content: View>: View {
     @AppStorage("\(storageKeyPrefix).isDisplayCheetSheet")
     private var isDisplayCheetSheet = false
 
+    @AppStorage("\(storageKeyPrefix).isHiddenControl")
+    private var isHiddenControl = false
+
     //
     // 💡 Note: save and restore by code.
     //
-    @State private var enableDevices: Set<Device>
-    @State private var enableLocales: Set<String>
-    @State private var enableCalendars: Set<Calendar.Identifier>
-
-    private func saveEnableDevices() {
-        let rawValues = Array(enableDevices.map(\.id))
-        UserDefaults.standard.set(rawValues, forKey: "\(storageKeyPrefix).enableDevices")
-    }
-
-    private static func loadEnableDevices() -> Set<Device>? {
-        if let rawValues = UserDefaults.standard.stringArray(forKey: "\(storageKeyPrefix).enableDevices") {
-            return Set(rawValues.compactMap { Device(id: $0) })
-        } else {
-            return nil
-        }
-    }
-
-    private func saveEnableLocales() {
-        UserDefaults.standard.set(Array(enableLocales), forKey: "\(storageKeyPrefix).enableLocales")
-    }
-
-    private static func loadEnableLocales() -> Set<String>? {
-        if let identifiers = UserDefaults.standard.stringArray(forKey: "\(storageKeyPrefix).enableLocales") {
-            return Set(identifiers)
-        } else {
-            return nil
-        }
-    }
-
-    private func saveEnableCalendars() {
-        UserDefaults.standard.set(Array(enableCalendars.map(\.rawValue)), forKey: "\(storageKeyPrefix).enableCalendars")
-    }
-
-    private static func loadEnableCalendars() -> Set<Calendar.Identifier>? {
-        if let rawValues = UserDefaults.standard.stringArray(forKey: "\(storageKeyPrefix).enableCalendars") {
-            return Set(rawValues.compactMap(Calendar.Identifier.init))
-        } else {
-            return nil
-        }
-    }
+    @ObservedObject
+    private var userPreferences: UserPreferences
 
     //
     // Sheets
@@ -116,45 +68,25 @@ public struct SimulatorView<Content: View>: View {
     @State private var isPresentedLocaleSelectSheet = false
     @State private var isPresentedCalendarSelectSheet = false
 
+    //
+    // Environments
+    //
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     private let content: () -> Content
 
     public init(
-        defaultDevices: Set<Device> = devicePresets,
-        defaultLocaleIdentifiers: Set<String> = localeIdentifierPresets,
-        defaultCalendarIdentifiers: Set<Calendar.Identifier> = calendarIdentifierPresets,
+        defaultDevices: Set<Device>? = nil,
+        defaultLocaleIdentifiers: Set<String>? = nil,
+        defaultCalendarIdentifiers: Set<Calendar.Identifier>? = nil,
         @ViewBuilder _ content: @escaping () -> Content
     ) {
         self.content = content
-
-        //
-        // Devices
-        //
-        if let devices = Self.loadEnableDevices() {
-            enableDevices = devices
-        } else {
-            enableDevices = defaultDevices
-            device = defaultDevices.first!
-        }
-
-        //
-        // Locale
-        //
-        if let localeIdentifiers = Self.loadEnableLocales() {
-            enableLocales = localeIdentifiers
-        } else {
-            enableLocales = defaultLocaleIdentifiers
-            locale = defaultLocaleIdentifiers.first!
-        }
-
-        //
-        // Calendar
-        //
-        if let calendarIdentifiers = Self.loadEnableCalendars() {
-            enableCalendars = calendarIdentifiers
-        } else {
-            enableCalendars = defaultCalendarIdentifiers
-            calendar = defaultCalendarIdentifiers.first!
-        }
+        userPreferences = UserPreferences(
+            defaultDevices: defaultDevices,
+            defaultLocaleIdentifiers: defaultLocaleIdentifiers,
+            defaultCalendarIdentifiers: defaultCalendarIdentifiers
+        )
     }
 
     public var body: some View {
@@ -260,19 +192,15 @@ public struct SimulatorView<Content: View>: View {
         // Select device sheet.
         //
         .sheet(isPresented: $isPresentedDeviceSelectSheet) {
-            saveEnableDevices()
-        } content: {
-            DeviceSelectView(selectedDevices: $enableDevices)
+            DeviceSelectView(selectedDevices: $userPreferences.enableDevices)
         }
         //
         // Select locale sheet.
         //
         .sheet(isPresented: $isPresentedLocaleSelectSheet) {
-            saveEnableLocales()
-        } content: {
             MultiItemSelectView(
                 title: "Select locales",
-                selectedItems: $enableLocales,
+                selectedItems: $userPreferences.enableLocales,
                 allItems: Locale.availableIdentifiers.filter { $0.contains("_") }.sorted(),
                 allowNoSelected: false,
                 searchableText: { $0 }
@@ -284,11 +212,9 @@ public struct SimulatorView<Content: View>: View {
         // Select calendar sheet.
         //
         .sheet(isPresented: $isPresentedCalendarSelectSheet) {
-            saveEnableCalendars()
-        } content: {
             MultiItemSelectView(
                 title: "Select calendars",
-                selectedItems: $enableCalendars,
+                selectedItems: $userPreferences.enableCalendars,
                 allItems: Calendar.Identifier.allCases,
                 allowNoSelected: false,
                 searchableText: { $0.rawValue }
@@ -302,7 +228,7 @@ public struct SimulatorView<Content: View>: View {
     private func simulatorContainer() -> some View {
         let orientation: DeviceOrientation = isPortrait ? .portrait : .landscape
         GeometryReader { reader in
-            ZStack(alignment: .bottomLeading) {
+            ZStack(alignment: .bottomTrailing) {
                 //
                 // Content
                 //
@@ -328,41 +254,22 @@ public struct SimulatorView<Content: View>: View {
                 .frame(width: reader.size.width, height: reader.size.height + reader.safeAreaInsets.bottom)
 
                 VStack(alignment: .trailing, spacing: 0) {
-                    ZStack(alignment: .bottomTrailing) {
-                        //
-                        // Device select
-                        //
-                        VStack(spacing: 0) {
+                    if horizontalSizeClass == .regular {
+                        ZStack(alignment: .bottomTrailing) {
                             //
-                            // 􀃿
+                            // Device select
                             //
-                            Button {
-                                if let prev = prevDevice() {
-                                    device = prev
-                                }
-                            } label: {
-                                Icon("chevron.up.square.fill")
-                            }
-                            .disabled(prevDevice() == nil)
+                            deviceSelectControl()
+                                .offset(x: isHiddenControl ? 50 : 0)
+                                .animation(.easeInOut(duration: 0.15), value: isHiddenControl)
 
                             //
-                            // 􀄁
+                            // Cheet sheets
                             //
-                            Button {
-                                if let next = nextDevice() {
-                                    device = next
-                                }
-                            } label: {
-                                Icon("chevron.down.square.fill")
-                            }
-                            .disabled(nextDevice() == nil)
+                            cheetSheetOvelay()
+                                .animation(.easeInOut(duration: 0.15), value: isHiddenControl)
+                                .animation(.easeInOut(duration: 0.15), value: isDisplayCheetSheet)
                         }
-                        .padding(4)
-
-                        //
-                        // Cheet sheets
-                        //
-                        cheetSheet()
                     }
 
                     //
@@ -371,35 +278,79 @@ public struct SimulatorView<Content: View>: View {
                     simulatorToolBar(realDeviceSize: reader.size, orientation: orientation)
                         .padding(.bottom, reader.safeAreaInsets.bottom)
                         .background(Color.toolbarBackground)
+                        //
+                        // ☑️ Prevent layout bug during animation at iPhone XS (iOS 15.4) real device.
+                        //
+                        .frame(height: 44 + reader.safeAreaInsets.bottom)
+                        .offset(y: isHiddenControl ? 100 : 0)
+                        .animation(.easeInOut(duration: 0.15), value: isHiddenControl)
                 }
+
+                //
+                // 􀁱 / 􀁯 Toggle Control
+                //
+                Button {
+                    isHiddenControl.toggle()
+                } label: {
+                    Icon(isHiddenControl ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
+                }
+                .offset(y: -reader.safeAreaInsets.bottom)
             }
             .edgesIgnoringSafeArea(.bottom)
         }
     }
 
+    private func deviceSelectControl() -> some View {
+        VStack(spacing: 0) {
+            //
+            // 􀃿
+            //
+            Button {
+                if let prev = prevDevice() {
+                    device = prev
+                }
+            } label: {
+                Icon("chevron.up.square.fill")
+            }
+            .disabled(prevDevice() == nil)
+
+            //
+            // 􀄁
+            //
+            Button {
+                if let next = nextDevice() {
+                    device = next
+                }
+            } label: {
+                Icon("chevron.down.square.fill")
+            }
+            .disabled(nextDevice() == nil)
+        }
+    }
+
     private func prevDevice() -> Device? {
-        enableDevices.sorted().prev(device)
+        userPreferences.enableDevices.sorted().prev(device)
     }
 
     private func nextDevice() -> Device? {
-        enableDevices.sorted().next(device)
+        userPreferences.enableDevices.sorted().next(device)
     }
 
-    private func cheetSheet() -> some View {
-        Group {
-            HStack(alignment: .top) {
-                textSampleView()
-                    .frame(width: 220)
-                    .offset(x: isDisplayCheetSheet ? 0 : -220)
+    private func cheetSheetOvelay() -> some View {
+        HStack(alignment: .top) {
+            let isDisplay = isDisplayCheetSheet && isHiddenControl == false
 
-                Spacer()
+            textSampleView()
+                .frame(width: 220)
+                .offset(x: isDisplay ? 0 : -220)
 
-                colorSampleView()
-                    .frame(width: 220)
-                    .offset(x: isDisplayCheetSheet ? 0 : +220)
-            }
-            .environment(\.colorScheme, isDark ? .dark : .light)
+            Spacer()
+
+            colorSampleView()
+                .frame(width: 220)
+                .offset(x: isDisplay ? 0 : +220)
         }
+        .environment(\.colorScheme, isDark ? .dark : .light)
     }
 
     private func textSampleView() -> some View {
@@ -433,22 +384,24 @@ public struct SimulatorView<Content: View>: View {
 
     @ViewBuilder
     private func simulatorToolBar(realDeviceSize _: CGSize, orientation _: DeviceOrientation) -> some View {
-        HStack {
-            HStack {
+        let spacing: CGFloat? = horizontalSizeClass == .compact ? 0 : nil
+
+        HStack(spacing: spacing) {
+            HStack(spacing: spacing) {
                 //
                 // 􀣌 Setting menu
                 //
                 settingMenu()
 
-                //
-                // 􀕹 Cheet sheets
-                //
-                Button {
-                    withAnimation {
+                if horizontalSizeClass == .regular {
+                    //
+                    // 􀕹 Cheet sheets
+                    //
+                    Button {
                         isDisplayCheetSheet.toggle()
+                    } label: {
+                        Icon("doc.text.magnifyingglass")
                     }
-                } label: {
-                    Icon("doc.text.magnifyingglass")
                 }
 
                 //
@@ -460,20 +413,26 @@ public struct SimulatorView<Content: View>: View {
                         in: DynamicTypeSizeWrapper.sliderRange,
                         step: 1
                     )
-                    .frame(width: 200)
+                    .frame(maxWidth: 200)
                 }
             }
+            //
+            // ☑️ Prevent layout bug during animation at iPhone XS (iOS 15.4) real device.
+            //
+            .frame(height: 44)
 
             Spacer()
 
-            HStack {
-                //
-                // 􀏠 Dual mode
-                //
-                Button {
-                    isDualMode.toggle()
-                } label: {
-                    Icon(isDualMode ? "rectangle.portrait.on.rectangle.portrait.slash" : "rectangle.portrait.on.rectangle.portrait")
+            HStack(spacing: spacing) {
+                if horizontalSizeClass == .regular {
+                    //
+                    // 􀏠 Dual mode
+                    //
+                    Button {
+                        isDualMode.toggle()
+                    } label: {
+                        Icon(isDualMode ? "rectangle.portrait.on.rectangle.portrait.slash" : "rectangle.portrait.on.rectangle.portrait")
+                    }
                 }
 
                 //
@@ -481,7 +440,7 @@ public struct SimulatorView<Content: View>: View {
                 //
                 Menu {
                     Picker(selection: $calendar) {
-                        ForEach(Array(enableCalendars.sorted().reversed())) { identifier in
+                        ForEach(Array(userPreferences.enableCalendars.sorted().reversed())) { identifier in
                             Text(identifier.id).tag(identifier)
                         }
                     } label: {
@@ -496,7 +455,7 @@ public struct SimulatorView<Content: View>: View {
                 //
                 Menu {
                     Picker(selection: $locale) {
-                        ForEach(Array(enableLocales.sorted().reversed()), id: \.self) { identifier in
+                        ForEach(Array(userPreferences.enableLocales.sorted().reversed()), id: \.self) { identifier in
                             Text(identifier).tag(identifier)
                         }
                     } label: {
@@ -506,13 +465,15 @@ public struct SimulatorView<Content: View>: View {
                     Icon("a.circle")
                 }
 
-                //
-                // 􀎮 / 􀎰 Rotate
-                //
-                Button {
-                    isPortrait.toggle()
-                } label: {
-                    Icon(isPortrait ? "rotate.left" : "rotate.right")
+                if horizontalSizeClass == .regular {
+                    //
+                    // 􀎮 / 􀎰 Rotate
+                    //
+                    Button {
+                        isPortrait.toggle()
+                    } label: {
+                        Icon(isPortrait ? "rotate.left" : "rotate.right")
+                    }
                 }
 
                 //
@@ -530,7 +491,7 @@ public struct SimulatorView<Content: View>: View {
                 //
                 Menu {
                     Picker(selection: $device) {
-                        let devices = enableDevices.sorted().reversed()
+                        let devices = userPreferences.enableDevices.sorted().reversed()
                         let deviceGroup = Dictionary(grouping: devices, by: \.type)
 
                         // e.g.
@@ -552,9 +513,14 @@ public struct SimulatorView<Content: View>: View {
                 } label: {
                     Icon("iphone")
                 }
+                .padding(.trailing, 44) // 💡 Space for toggle toolbar icon.
             }
+            //
+            // ☑️ Prevent layout bug during animation at iPhone XS (iOS 15.4) real device.
+            //
+            .frame(height: 44)
         }
-        .padding(4)
+        .padding(2)
         .border(.toolbarBorder, width: 1, edge: .top)
     }
 
