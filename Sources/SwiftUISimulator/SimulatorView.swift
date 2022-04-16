@@ -437,15 +437,16 @@ public struct SimulatorView<Content: View>: View {
             Spacer()
 
             HStack(spacing: spacing) {
+                //
+                // 􀏠 Dual mode
+                //
                 if horizontalSizeClass == .regular {
-                    //
-                    // 􀏠 Dual mode
-                    //
                     Button {
                         isDualMode.toggle()
                     } label: {
                         Icon(isDualMode ? "rectangle.portrait.on.rectangle.portrait.slash" : "rectangle.portrait.on.rectangle.portrait")
                     }
+                    .disabled(userPreferences.device == nil)
                 }
 
                 //
@@ -478,15 +479,16 @@ public struct SimulatorView<Content: View>: View {
                     Icon("a.circle")
                 }
 
+                //
+                // 􀎮 / 􀎰 Rotate
+                //
                 if horizontalSizeClass == .regular {
-                    //
-                    // 􀎮 / 􀎰 Rotate
-                    //
                     Button {
                         isPortrait.toggle()
                     } label: {
                         Icon(isPortrait ? "rotate.left" : "rotate.right")
                     }
+                    .disabled(userPreferences.device == nil)
                 }
 
                 //
