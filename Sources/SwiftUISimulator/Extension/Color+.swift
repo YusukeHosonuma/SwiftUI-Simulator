@@ -23,7 +23,7 @@ extension Color {
     static var toolbarBackground: Self {
         .init(red: 0.98, green: 0.98, blue: 0.98, opacity: 0.9)
     }
-    
+
     static var simulatorBackground: Self {
         .white
     }

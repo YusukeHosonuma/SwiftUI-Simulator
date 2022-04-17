@@ -16,6 +16,9 @@ public struct SimulatorView<Content: View>: View {
     @AppStorage("\(storageKeyPrefix).locale")
     private var locale: String = "en_US"
 
+    @AppStorage("\(storageKeyPrefix).legibilityWeight")
+    private var legibilityWeight: LegibilityWeight = .regular
+
     //
     // ☑️ `DynamicTypeSize` is supported in iOS 15+.
     //
@@ -127,56 +130,76 @@ public struct SimulatorView<Content: View>: View {
 
             Divider() // --------
 
-            //
-            // 􀉉 Locale select
-            //
-            Button {
-                isPresentedCalendarSelectSheet.toggle()
-            } label: {
-                Label("Select calendars", systemImage: "calendar")
-            }
+            Group {
+                //
+                // 􀉉 Locale select
+                //
+                Button {
+                    isPresentedCalendarSelectSheet.toggle()
+                } label: {
+                    Label("Select calendars", systemImage: "calendar")
+                }
 
-            //
-            // 􀆪 Locale select
-            //
-            Button {
-                isPresentedLocaleSelectSheet.toggle()
-            } label: {
-                Label("Select locales", systemImage: "globe")
-            }
+                //
+                // 􀆪 Locale select
+                //
+                Button {
+                    isPresentedLocaleSelectSheet.toggle()
+                } label: {
+                    Label("Select locales", systemImage: "globe")
+                }
 
-            //
-            // 􀟜 Device select
-            //
-            Button {
-                isPresentedDeviceSelectSheet.toggle()
-            } label: {
-                Label("Select devices", systemImage: "iphone")
+                //
+                // 􀟜 Device select
+                //
+                Button {
+                    isPresentedDeviceSelectSheet.toggle()
+                } label: {
+                    Label("Select devices", systemImage: "iphone")
+                }
             }
 
             Divider() // --------
 
-            //
-            // 􀂔 Dynamic Type Size
-            //
-            if #available(iOS 15, *) {
-                Toggle(isOn: $isDynamicTypeSizesEnabled) {
-                    Label("Dynamic Type Sizes", systemImage: "a.square")
+            Group {
+                // 🚫 `legibilityWeight` is not working currently. (Same for Xcode preview)
+                //
+                // 􀅓 Bold Text
+                //
+                // Toggle("Bold Text", isOn: .init(get: {
+                //     legibilityWeight == .bold
+                // }, set: {
+                //     legibilityWeight = $0 ? .bold : .regular
+                // }))
+
+                //
+                // 􀂔 Dynamic Type Size
+                //
+                if #available(iOS 15, *) {
+                    Toggle(isOn: $isDynamicTypeSizesEnabled) {
+                        Label("Dynamic Type Sizes", systemImage: "a.square")
+                    }
                 }
             }
 
-            //
-            // 􀪛 Locale
-            //
-            Toggle(isOn: $isDisplaySafeArea) {
-                Label("Safe Area", systemImage: "square.tophalf.filled")
-            }
+            Divider() // --------
 
-            //
-            // 􀅴
-            //
-            Toggle(isOn: $isDisplayInformation) {
-                Label("Information", systemImage: "info.circle")
+            Group {
+                //
+                // 􀪛 Safe Area
+                //
+                Toggle(isOn: $isDisplaySafeArea) {
+                    Label("Safe Area", systemImage: "square.tophalf.filled")
+                }
+                .disabled(userPreferences.device == nil)
+
+                //
+                // 􀅴
+                //
+                Toggle(isOn: $isDisplayInformation) {
+                    Label("Information", systemImage: "info.circle")
+                }
+                .disabled(userPreferences.device == nil)
             }
         } label: {
             //
@@ -254,6 +277,7 @@ public struct SimulatorView<Content: View>: View {
                         .overrideEnvironments(
                             sizeClasses: nil, // ☑️ Use real device size classes.
                             locale: locale,
+                            legibilityWeight: legibilityWeight,
                             colorScheme: isDark ? .dark : .light,
                             calendar: calendar,
                             dynamicTypeSize: dynamicTypeSize
@@ -632,6 +656,7 @@ public struct SimulatorView<Content: View>: View {
         .overrideEnvironments(
             sizeClasses: sizeClass,
             locale: locale,
+            legibilityWeight: legibilityWeight,
             colorScheme: colorScheme,
             calendar: calendar,
             dynamicTypeSize: dynamicTypeSize
@@ -670,11 +695,13 @@ private extension View {
     func overrideEnvironments(
         sizeClasses: SizeClasses?,
         locale: String,
+        legibilityWeight: LegibilityWeight,
         colorScheme: ColorScheme,
         calendar: Calendar.Identifier,
         dynamicTypeSize: DynamicTypeSizeWrapper?
     ) -> some View {
         environment(\.locale, .init(identifier: locale))
+            .environment(\.legibilityWeight, legibilityWeight) // 🚫 `legibilityWeight` is not working currently. (Same for Xcode preview)
             .environment(\.colorScheme, colorScheme)
             .environment(\.calendar, Calendar(identifier: calendar))
             .whenLet(sizeClasses) { content, sizeClasses in
