@@ -2,12 +2,13 @@
 
 Enables the following settings without settings or restarting the simulator or real device.
 
-- Any device screen
-- Light/Dark mode
-- Locale
-- Calendar
-- Dynamic Type Sizes
-- Rotate
+- [x] Any device screen
+- [x] Light/Dark mode
+- [x] Locale
+- [x] Calendar
+- [x] Dynamic Type Sizes
+- [x] Rotate
+- [ ] ~~Legibility Weight (Not working in latest iOS and Xcode preview)~~
 
 https://user-images.githubusercontent.com/2990285/163325330-13297947-7222-4cf7-a80b-d999094546d9.mov
 
