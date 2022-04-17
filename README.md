@@ -55,19 +55,20 @@ struct HelloApp: App {
 }
 ```
 
-3. Launch on any iPad. (Large screen is recommended)
+3. Launch on any simulator or device. (Large screen iPad is recommended)
 
 <img width="400" alt="image" src="https://user-images.githubusercontent.com/2990285/163323260-8e3955d2-185e-4e0e-a074-3cf2d2db743e.png">
 
 
 ## Requirements
 
-- iOS 14+ (Currently supports iPad only)
+- iOS 14+ (iPhone / iPad)
   - `Dynamic Type Sizes` is supports in iOS 15+
 
 ## Limitation
 
 This OSS supports **SwiftUI app** only.<br>
+
 For example, it may not work if you have resolve `locale` by yourself. (e.g. use [SwiftGen](https://github.com/SwiftGen/SwiftGen))
 
 ## Configurations
