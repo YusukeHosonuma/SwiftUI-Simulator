@@ -5,8 +5,8 @@
 //  Created by Yusuke Hosonuma on 2022/04/18.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 struct ContentView: View {
     @ObservedObject private var state: ContentState = .shared
@@ -16,15 +16,17 @@ struct ContentView: View {
 
     @Environment(\.locale) var locale
     @Environment(\.calendar) var calendar
+    @Environment(\.timeZone) var timeZone
 
     init() {}
-    
+
     private var dateFormatter: DateFormatter {
         let f = DateFormatter()
         f.dateStyle = dateStyle
         f.timeStyle = timeStyle
         f.locale = locale
         f.calendar = calendar
+        f.timeZone = timeZone
         return f
     }
 
@@ -35,8 +37,10 @@ struct ContentView: View {
                 // Message
                 //
                 Text(LocalizedStringKey("message"))
+                    .font(.title3)
+                    .bold()
                     .padding(.bottom, 64)
-                
+
                 //
                 // Date style
                 //
@@ -49,7 +53,7 @@ struct ContentView: View {
                     }
                     .pickerStyle(.segmented)
                 }
-                
+
                 //
                 // Time style
                 //
@@ -62,15 +66,13 @@ struct ContentView: View {
                     }
                     .pickerStyle(.segmented)
                 }
-                
+
                 //
                 // Current time
                 //
-                if let time = state.currentTime {
-                    Text("\(dateFormatter.string(from: time))")
-                        .font(.title2)
-                        .padding()
-                }
+                Text("\(dateFormatter.string(from: state.currentTime))")
+                    .font(.title2)
+                    .padding()
             }
             .padding()
             .navigationTitle("SwiftUI-Simulator")
@@ -83,12 +85,12 @@ struct ContentView: View {
 }
 
 final class ContentState: ObservableObject {
-    @Published var currentTime: Date?
-    
+    @Published var currentTime: Date = .init()
+
     private var cancellables: Set<AnyCancellable> = []
-    
+
     static let shared: ContentState = .init()
-    
+
     func onAppear() {
         Timer.publish(every: 1, on: .current, in: .common)
             .autoconnect()
@@ -105,11 +107,11 @@ extension DateFormatter.Style: CaseIterable, Identifiable {
         .short,
         .medium,
         .long,
-        .full
+        .full,
     ]
-    
+
     public var id: String { label }
-    
+
     var label: String {
         switch self {
         case .none: return "none"

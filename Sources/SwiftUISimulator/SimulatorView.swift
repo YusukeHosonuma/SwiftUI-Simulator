@@ -43,6 +43,9 @@ public struct SimulatorView<Content: View>: View {
     @AppStorage("\(storageKeyPrefix).calendar")
     private var calendar: Calendar.Identifier = .iso8601
 
+    @AppStorage("\(storageKeyPrefix).timeZoneIdentifier")
+    private var timeZone: TimeZones = .current
+
     @AppStorage("\(storageKeyPrefix).isDualMode")
     private var isDualMode = false
 
@@ -67,6 +70,7 @@ public struct SimulatorView<Content: View>: View {
     @State private var isPresentedDeviceSelectSheet = false
     @State private var isPresentedLocaleSelectSheet = false
     @State private var isPresentedCalendarSelectSheet = false
+    @State private var isPresentedTimeZoneSelectSheet = false
 
     //
     // Environments
@@ -79,13 +83,15 @@ public struct SimulatorView<Content: View>: View {
         defaultDevices: Set<Device>? = nil,
         defaultLocaleIdentifiers: Set<String>? = nil,
         defaultCalendarIdentifiers: Set<Calendar.Identifier>? = nil,
+        defaultTimeZones: Set<TimeZones>? = nil,
         @ViewBuilder _ content: @escaping () -> Content
     ) {
         self.content = content
         userPreferences = UserPreferences(
             defaultDevices: defaultDevices,
             defaultLocaleIdentifiers: defaultLocaleIdentifiers,
-            defaultCalendarIdentifiers: defaultCalendarIdentifiers
+            defaultCalendarIdentifiers: defaultCalendarIdentifiers,
+            defaultTimeZones: defaultTimeZones
         )
     }
 
@@ -132,21 +138,30 @@ public struct SimulatorView<Content: View>: View {
 
             Group {
                 //
-                // 􀉉 Locale select
+                // 􀐫 TimeZone select
+                //
+                Button {
+                    isPresentedTimeZoneSelectSheet.toggle()
+                } label: {
+                    Label("Select TimeZone", systemImage: "clock")
+                }
+
+                //
+                // 􀉉 Calendar select
                 //
                 Button {
                     isPresentedCalendarSelectSheet.toggle()
                 } label: {
-                    Label("Select calendars", systemImage: "calendar")
+                    Label("Select Calendars", systemImage: "calendar")
                 }
 
                 //
-                // 􀆪 Locale select
+                // 􀀄 Locale select
                 //
                 Button {
                     isPresentedLocaleSelectSheet.toggle()
                 } label: {
-                    Label("Select locales", systemImage: "globe")
+                    Label("Select Locales", systemImage: "a.circle")
                 }
 
                 //
@@ -155,7 +170,7 @@ public struct SimulatorView<Content: View>: View {
                 Button {
                     isPresentedDeviceSelectSheet.toggle()
                 } label: {
-                    Label("Select devices", systemImage: "iphone")
+                    Label("Select Devices", systemImage: "iphone")
                 }
             }
 
@@ -208,17 +223,17 @@ public struct SimulatorView<Content: View>: View {
             Icon("gearshape.fill")
         }
         //
-        // Select device sheet.
+        // 􀋲 Select device sheet.
         //
         .sheet(isPresented: $isPresentedDeviceSelectSheet) {
             DeviceSelectView(selectedDevices: $userPreferences.enableDevices)
         }
         //
-        // Select locale sheet.
+        // 􀋲 Select locale sheet.
         //
         .sheet(isPresented: $isPresentedLocaleSelectSheet) {
             MultiItemSelectView(
-                title: "Select locales",
+                title: "Select Locales",
                 selectedItems: $userPreferences.enableLocales,
                 allItems: Locale.availableIdentifiers.filter { $0.contains("_") }.sorted(),
                 allowNoSelected: false,
@@ -228,17 +243,31 @@ public struct SimulatorView<Content: View>: View {
             }
         }
         //
-        // Select calendar sheet.
+        // 􀋲 Select calendar sheet.
         //
         .sheet(isPresented: $isPresentedCalendarSelectSheet) {
             MultiItemSelectView(
-                title: "Select calendars",
+                title: "Select Calendars",
                 selectedItems: $userPreferences.enableCalendars,
                 allItems: Calendar.Identifier.allCases,
                 allowNoSelected: false,
                 searchableText: { $0.rawValue }
             ) {
                 Text($0.rawValue)
+            }
+        }
+        //
+        // 􀋲 Select TimeZone sheet.
+        //
+        .sheet(isPresented: $isPresentedTimeZoneSelectSheet) {
+            MultiItemSelectView(
+                title: "Select TimeZones",
+                selectedItems: $userPreferences.enableTimeZones,
+                allItems: TimeZones.allCases.filter { $0 != .current }, // ☑️ Remove `current` from select.
+                allowNoSelected: false,
+                searchableText: { $0.rawValue }
+            ) {
+                Text($0.label)
             }
         }
     }
@@ -280,6 +309,7 @@ public struct SimulatorView<Content: View>: View {
                             legibilityWeight: legibilityWeight,
                             colorScheme: isDark ? .dark : .light,
                             calendar: calendar,
+                            timeZone: timeZone,
                             dynamicTypeSize: dynamicTypeSize
                         )
                 }
@@ -472,9 +502,12 @@ public struct SimulatorView<Content: View>: View {
 
             HStack(spacing: spacing) {
                 //
-                // 􀉉 Calendar
+                // 􀧞 Calendar / TimeZone
                 //
                 Menu {
+                    //
+                    // Calendar
+                    //
                     Picker(selection: $calendar) {
                         ForEach(Array(userPreferences.enableCalendars.sorted().reversed())) { identifier in
                             Text(identifier.id).tag(identifier)
@@ -482,8 +515,27 @@ public struct SimulatorView<Content: View>: View {
                     } label: {
                         EmptyView()
                     }
+
+                    Divider() // ----
+
+                    //
+                    // TimeZone
+                    //
+                    // e.g.
+                    // - America/New_York
+                    // - Asia/Tokyo
+                    // - Current
+                    //
+                    Picker(selection: $timeZone) {
+                        Label("Default", systemImage: "iphone").tag(TimeZones.current)
+                        ForEach(Array(userPreferences.enableTimeZones.sorted().reversed())) { timeZone in
+                            Text(timeZone.label).tag(timeZone)
+                        }
+                    } label: {
+                        EmptyView()
+                    }
                 } label: {
-                    Icon("calendar")
+                    Icon("calendar.badge.clock")
                 }
 
                 //
@@ -597,7 +649,7 @@ public struct SimulatorView<Content: View>: View {
             simulatedScreen(device: device, colorScheme: colorScheme, orientation: orientation)
 
             //
-            // Footer: e.g. "xSmall" and "ja_JP / iso8601"
+            // Footer: e.g. "xSmall" and "ja_JP / iso8601 / Asia/Tokyo"
             //
             if isDisplayInformation {
                 HStack {
@@ -605,7 +657,7 @@ public struct SimulatorView<Content: View>: View {
                         Text(dynamicTypeSize.label)
                     }
                     Spacer()
-                    Text("\(locale) / \(calendar.rawValue)")
+                    Text("\(locale) / \(calendar.rawValue) / \(timeZone.rawValue)")
                 }
                 .foregroundColor(.info)
                 .font(.caption)
@@ -659,6 +711,7 @@ public struct SimulatorView<Content: View>: View {
             legibilityWeight: legibilityWeight,
             colorScheme: colorScheme,
             calendar: calendar,
+            timeZone: timeZone,
             dynamicTypeSize: dynamicTypeSize
         )
     }
@@ -698,12 +751,14 @@ private extension View {
         legibilityWeight: LegibilityWeight,
         colorScheme: ColorScheme,
         calendar: Calendar.Identifier,
+        timeZone: TimeZones,
         dynamicTypeSize: DynamicTypeSizeWrapper?
     ) -> some View {
         environment(\.locale, .init(identifier: locale))
             .environment(\.legibilityWeight, legibilityWeight) // 🚫 `legibilityWeight` is not working currently. (Same for Xcode preview)
             .environment(\.colorScheme, colorScheme)
             .environment(\.calendar, Calendar(identifier: calendar))
+            .environment(\.timeZone, timeZone.toTimeZone())
             .whenLet(sizeClasses) { content, sizeClasses in
                 content
                     .environment(\.horizontalSizeClass, sizeClasses.width)

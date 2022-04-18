@@ -19,6 +19,10 @@ private let devicePresets: Set<Device> = [
 ]
 private let localeIdentifierPresets: Set<String> = ["en_US", "ja_JP"]
 private let calendarIdentifierPresets: Set<Calendar.Identifier> = [.iso8601, .japanese]
+private let timeZonePresetes: Set<TimeZones> = [
+    .asiaTokyo,
+    .americaNewYork,
+]
 
 final class UserPreferences: ObservableObject {
     @Published var device: Device? {
@@ -45,15 +49,23 @@ final class UserPreferences: ObservableObject {
         }
     }
 
+    @Published var enableTimeZones: Set<TimeZones> {
+        didSet {
+            saveEnableTimeZones()
+        }
+    }
+
     public init(
         defaultDevices: Set<Device>? = nil,
         defaultLocaleIdentifiers: Set<String>? = nil,
-        defaultCalendarIdentifiers: Set<Calendar.Identifier>? = nil
+        defaultCalendarIdentifiers: Set<Calendar.Identifier>? = nil,
+        defaultTimeZones: Set<TimeZones>? = nil
     ) {
         device = Self.loadDevice()
         enableDevices = defaultDevices ?? Self.loadEnableDevices() ?? devicePresets
         enableLocales = defaultLocaleIdentifiers ?? Self.loadEnableLocales() ?? localeIdentifierPresets
         enableCalendars = defaultCalendarIdentifiers ?? Self.loadEnableCalendars() ?? calendarIdentifierPresets
+        enableTimeZones = defaultTimeZones ?? Self.loadEnableTimeZones() ?? timeZonePresetes
     }
 
     private func saveDevice() {
@@ -104,6 +116,19 @@ final class UserPreferences: ObservableObject {
     private static func loadEnableCalendars() -> Set<Calendar.Identifier>? {
         if let rawValues = UserDefaults.standard.stringArray(forKey: "\(storageKeyPrefix).enableCalendars") {
             return Set(rawValues.compactMap(Calendar.Identifier.init))
+        } else {
+            return nil
+        }
+    }
+
+    private func saveEnableTimeZones() {
+        let rawValues = Array(enableTimeZones.map(\.rawValue))
+        UserDefaults.standard.set(rawValues, forKey: "\(storageKeyPrefix).enableTimeZones")
+    }
+
+    private static func loadEnableTimeZones() -> Set<TimeZones>? {
+        if let rawValues = UserDefaults.standard.stringArray(forKey: "\(storageKeyPrefix).enableTimeZones") {
+            return Set(rawValues.compactMap { TimeZones(rawValue: $0) })
         } else {
             return nil
         }
