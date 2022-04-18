@@ -6,6 +6,7 @@ Enables the following settings without settings or restarting the simulator or r
 - [x] Light/Dark mode
 - [x] Locale
 - [x] Calendar
+- [x] TimeZone
 - [x] Dynamic Type Sizes
 - [x] Rotate
 - [ ] ~~Legibility Weight (Not working in latest iOS and Xcode preview)~~
@@ -74,13 +75,14 @@ For example, it may not work if you have resolve `locale` by yourself. (e.g. use
 
 ## Configurations
 
-You can specify default `devices`, `locale identifiers` and `calendar identifiers`.
+You can specify default `devices`, `locale identifiers`, `calendar identifiers` and `timezone`.
 
 ```swift
 SimulatorView(
-    defaultDevices: [.iPhone11, .iPhone13ProMax],      // Set<Device>
-    defaultLocaleIdentifiers: ["it", "fr"],            // Set<String>
-    defaultCalendarIdentifiers: [.gregorian, .iso8601] // Set<Calendar.Identifier>
+    defaultDevices: [.iPhone11, .iPhone13ProMax],       // Set<Device>
+    defaultLocaleIdentifiers: ["it", "fr"],             // Set<String>
+    defaultCalendarIdentifiers: [.gregorian, .iso8601], // Set<Calendar.Identifier>
+    defaultTimeZones: [.europeParis, .europeBerlin]     // Set<TimeZones>
 ) {
     RootView()
 }
