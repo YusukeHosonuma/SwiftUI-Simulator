@@ -46,7 +46,7 @@ let package = Package(
 import SwiftUISimulator
 
 @main
-struct HelloApp: App {
+struct ExampleApp: App {
     var body: some Scene {
         WindowGroup {
             SimulatorView { // ✅ Please surround the your app's root view with `SimulatorView`.
@@ -57,9 +57,11 @@ struct HelloApp: App {
 }
 ```
 
-3. Launch on any simulator or device. (Large screen iPad is recommended)
+3. Launch on any simulator or device. (Large screen is recommended)
 
-<img width="400" alt="image" src="https://user-images.githubusercontent.com/2990285/163323260-8e3955d2-185e-4e0e-a074-3cf2d2db743e.png">
+| iPhone 13 Pro Max | iPad Pro (12.9-inch) |
+|--|--|
+|<img width="356" alt="image" src="https://user-images.githubusercontent.com/2990285/163754076-46be83af-f220-4009-8228-bcd64d34a0ab.png">|<img width="651" alt="image" src="https://user-images.githubusercontent.com/2990285/163754087-cd4ce210-6698-4b47-a969-d1a129c239ca.png">|
 
 
 ## Requirements
@@ -98,7 +100,7 @@ Issues and PRs are welcome, even for minor improvements and corrections.
 Q. How to disable this simulator?<br>
 A. `Disable simulator` in setting menu.
 
-<img width="186" alt="image" src="https://user-images.githubusercontent.com/2990285/163336996-16864267-5a01-446b-afe8-33b613be671d.png">
+<img width="244" alt="image" src="https://user-images.githubusercontent.com/2990285/163753616-b62d616b-bbf4-4e28-bd2d-a058d5537fad.png">
 
 Q. How it works?<br>
 A. Perhaps as you might imagine, this is achieved by overriding SwiftUI's [Environment](https://developer.apple.com/documentation/swiftui/environment).
