@@ -1,0 +1,10 @@
+/* 
+  Localizable.strings
+  Example
+
+  Created by Yusuke Hosonuma on 2022/04/18.
+  
+*/
+"message" = "Welcome the SwiftUI-Simulator.";
+"date" = "Date";
+"time" = "Time";
