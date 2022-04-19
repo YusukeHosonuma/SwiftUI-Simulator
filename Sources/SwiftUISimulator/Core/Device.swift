@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public enum Device: Int, CaseIterable, Comparable {
+public enum Device: Int, CaseIterable, Comparable, Identifiable {
     //
     // ⚡️ Note: `rawValue` is used for sort.
     //
@@ -33,7 +33,7 @@ public enum Device: Int, CaseIterable, Comparable {
         lhs.rawValue < rhs.rawValue
     }
 
-    var id: String {
+    public var id: String {
         switch self {
         case .iPodTouch: return "iPodTouch"
         case .iPhoneSE: return "iPhoneSE"

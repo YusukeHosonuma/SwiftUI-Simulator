@@ -67,10 +67,7 @@ public struct SimulatorView<Content: View>: View {
     //
     // Sheets
     //
-    @State private var isPresentedDeviceSelectSheet = false
-    @State private var isPresentedLocaleSelectSheet = false
-    @State private var isPresentedCalendarSelectSheet = false
-    @State private var isPresentedTimeZoneSelectSheet = false
+    @State private var isPresentedSettingSheet = false
 
     //
     // Environments
@@ -126,52 +123,22 @@ public struct SimulatorView<Content: View>: View {
     private func settingMenu() -> some View {
         Menu {
             //
-            // 􀆨
+            // 􀆨 Disable Simulator
             //
             Button {
                 isSimulatorEnabled.toggle()
             } label: {
-                Label("Disable simulator", systemImage: "power")
+                Label("Disable Simulator", systemImage: "power")
             }
-
             Divider() // --------
 
-            Group {
-                //
-                // 􀐫 TimeZone select
-                //
-                Button {
-                    isPresentedTimeZoneSelectSheet.toggle()
-                } label: {
-                    Label("Select TimeZone", systemImage: "clock")
-                }
-
-                //
-                // 􀉉 Calendar select
-                //
-                Button {
-                    isPresentedCalendarSelectSheet.toggle()
-                } label: {
-                    Label("Select Calendars", systemImage: "calendar")
-                }
-
-                //
-                // 􀀄 Locale select
-                //
-                Button {
-                    isPresentedLocaleSelectSheet.toggle()
-                } label: {
-                    Label("Select Locales", systemImage: "a.circle")
-                }
-
-                //
-                // 􀟜 Device select
-                //
-                Button {
-                    isPresentedDeviceSelectSheet.toggle()
-                } label: {
-                    Label("Select Devices", systemImage: "iphone")
-                }
+            //
+            // 􀍟 Settings
+            //
+            Button {
+                isPresentedSettingSheet.toggle()
+            } label: {
+                Label("Settings", systemImage: "gear")
             }
 
             Divider() // --------
@@ -223,52 +190,15 @@ public struct SimulatorView<Content: View>: View {
             Icon("gearshape.fill")
         }
         //
-        // 􀋲 Select device sheet.
+        // 􀋲 Settings
         //
-        .sheet(isPresented: $isPresentedDeviceSelectSheet) {
-            DeviceSelectView(selectedDevices: $userPreferences.enableDevices)
-        }
-        //
-        // 􀋲 Select locale sheet.
-        //
-        .sheet(isPresented: $isPresentedLocaleSelectSheet) {
-            MultiItemSelectView(
-                title: "Select Locales",
-                selectedItems: $userPreferences.enableLocales,
-                allItems: Locale.availableIdentifiers.filter { $0.contains("_") }.sorted(),
-                allowNoSelected: false,
-                searchableText: { $0 }
-            ) {
-                Text($0)
-            }
-        }
-        //
-        // 􀋲 Select calendar sheet.
-        //
-        .sheet(isPresented: $isPresentedCalendarSelectSheet) {
-            MultiItemSelectView(
-                title: "Select Calendars",
-                selectedItems: $userPreferences.enableCalendars,
-                allItems: Calendar.Identifier.allCases,
-                allowNoSelected: false,
-                searchableText: { $0.rawValue }
-            ) {
-                Text($0.rawValue)
-            }
-        }
-        //
-        // 􀋲 Select TimeZone sheet.
-        //
-        .sheet(isPresented: $isPresentedTimeZoneSelectSheet) {
-            MultiItemSelectView(
-                title: "Select TimeZones",
-                selectedItems: $userPreferences.enableTimeZones,
-                allItems: TimeZones.allCases.filter { $0 != .current }, // ☑️ Remove `current` from select.
-                allowNoSelected: false,
-                searchableText: { $0.rawValue }
-            ) {
-                Text($0.label)
-            }
+        .sheet(isPresented: $isPresentedSettingSheet) {
+            SettingView(
+                sourceDevices: $userPreferences.enableDevices,
+                sourceLocales: $userPreferences.enableLocales,
+                sourceCalendars: $userPreferences.enableCalendars,
+                sourceTimeZones: $userPreferences.enableTimeZones
+            )
         }
     }
 
