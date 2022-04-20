@@ -71,9 +71,10 @@ struct ExampleApp: App {
 
 ## Limitation
 
-This OSS supports **SwiftUI app** only.<br>
-
-For example, it may not work if you have resolve `locale` by yourself. (e.g. use [SwiftGen](https://github.com/SwiftGen/SwiftGen))
+- This OSS supports **SwiftUI app** only.<br>
+  - For example, it may not work if you have resolve `locale` by yourself. (e.g. use [SwiftGen](https://github.com/SwiftGen/SwiftGen))
+- AccentColor
+  - Where `Color.accentColor` is used directly, `AccentColor` simulation does not work.
 
 ## Configurations
 
