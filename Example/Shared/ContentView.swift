@@ -42,6 +42,12 @@ struct ContentView: View {
                     .padding(.bottom, 64)
 
                 //
+                // Test for accentColor
+                //
+                Button("Hello") {}
+                    .font(.title3)
+
+                //
                 // Date style
                 //
                 HStack {
