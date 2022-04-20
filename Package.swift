@@ -11,9 +11,13 @@ let package = Package(
     products: [
         .library(name: "SwiftUISimulator", targets: ["SwiftUISimulator"]),
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/sindresorhus/Defaults.git", from: "6.2.0"),
+    ],
     targets: [
-        .target(name: "SwiftUISimulator", dependencies: []),
+        .target(name: "SwiftUISimulator", dependencies: [
+            "Defaults"
+        ]),
         .testTarget(name: "SwiftUISimulatorTests", dependencies: ["SwiftUISimulator"]),
     ]
 )
