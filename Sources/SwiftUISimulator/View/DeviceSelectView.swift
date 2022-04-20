@@ -19,12 +19,6 @@ struct DeviceSelectView: View {
 
     var body: some View {
         List(selection: selectedDevices) {
-            //
-            // 💡 iOS 15+
-            //
-            // `Section("xxx") { ... }`
-            // https://developer.apple.com/documentation/swiftui/section/init(_:content:)-90be4
-            //
             Section {
                 ForEach(Device.iPhones, id: \.name) { device in
                     row(device: device).tag(device)
@@ -35,10 +29,6 @@ struct DeviceSelectView: View {
                     Spacer()
                     Button("Select All") {
                         selectedDevices.wrappedValue = selectedDevices.wrappedValue.union(Device.iPhones)
-                    }
-                    .padding(.horizontal)
-                    Button("Clear") {
-                        selectedDevices.wrappedValue = []
                     }
                 }
             }
@@ -53,10 +43,6 @@ struct DeviceSelectView: View {
                     Spacer()
                     Button("Select All") {
                         selectedDevices.wrappedValue = selectedDevices.wrappedValue.union(Device.iPads)
-                    }
-                    .padding(.horizontal)
-                    Button("Clear") {
-                        selectedDevices.wrappedValue = []
                     }
                 }
             }
