@@ -8,10 +8,14 @@
 import SwiftUI
 
 struct SettingView: View {
-    var sourceDevices: Binding<Set<Device>>
-    var sourceLocales: Binding<Set<String>>
-    var sourceCalendars: Binding<Set<Calendar.Identifier>>
-    var sourceTimeZones: Binding<Set<TimeZones>>
+    @Binding var sourceDevices: Set<Device>
+    @Binding var sourceLocales: Set<String>
+    @Binding var sourceCalendars: Set<Calendar.Identifier>
+    @Binding var sourceTimeZones: Set<TimeZones>
+    let defaultDevices: Set<Device>
+    let defaultLocales: Set<String>
+    let defaultCalendars: Set<Calendar.Identifier>
+    let defaultTimeZones: Set<TimeZones>
 
     @AppStorage("\(storageKeyPrefix).SettingView.isExpandedDevice")
     private var isExpandedDevice = true
@@ -24,24 +28,26 @@ struct SettingView: View {
 
     @AppStorage("\(storageKeyPrefix).SettingView.isExpandedTimeZone")
     private var isExpandedTimeZone = true
-    
+
     // 💡 iOS 15+: `\.dismiss`
     @Environment(\.presentationMode) private var presentationMode
 
+    @State private var isPresentedResetAlert = false
+
     private var devices: [Device] {
-        sourceDevices.wrappedValue.sorted()
+        sourceDevices.sorted()
     }
 
     private var locales: [String] {
-        sourceLocales.wrappedValue.sorted()
+        sourceLocales.sorted()
     }
 
     private var calendars: [Calendar.Identifier] {
-        sourceCalendars.wrappedValue.sorted()
+        sourceCalendars.sorted()
     }
 
     private var timeZones: [TimeZones] {
-        sourceTimeZones.wrappedValue.sorted()
+        sourceTimeZones.sorted()
     }
 
     var body: some View {
@@ -56,7 +62,7 @@ struct SettingView: View {
                             Text(device.name)
                         }
                         editLink {
-                            DeviceSelectView(selectedDevices: sourceDevices)
+                            DeviceSelectView(selectedDevices: $sourceDevices)
                                 .navigationTitle("Select Devices")
                         }
                     } label: {
@@ -73,7 +79,7 @@ struct SettingView: View {
                         }
                         editLink {
                             MultiItemSelectView(
-                                selectedItems: sourceLocales,
+                                selectedItems: $sourceLocales,
                                 allItems: Locale.availableIdentifiers.filter { $0.contains("_") }.sorted(),
                                 searchableText: { $0 }
                             ) {
@@ -95,7 +101,7 @@ struct SettingView: View {
                         }
                         editLink {
                             MultiItemSelectView(
-                                selectedItems: sourceCalendars,
+                                selectedItems: $sourceCalendars,
                                 allItems: Calendar.Identifier.allCases,
                                 searchableText: { $0.rawValue }
                             ) {
@@ -117,7 +123,7 @@ struct SettingView: View {
                         }
                         editLink {
                             MultiItemSelectView(
-                                selectedItems: sourceTimeZones,
+                                selectedItems: $sourceTimeZones,
                                 allItems: TimeZones.allCases.filter { $0 != .current }, // ☑️ Remove `current` from select.
                                 searchableText: { $0.rawValue }
                             ) {
@@ -129,6 +135,16 @@ struct SettingView: View {
                         Label("TimeZone", systemImage: "clock")
                     }
                 }
+                Section {
+                    HStack {
+                        Spacer()
+                        Button("Reset to default") {
+                            isPresentedResetAlert.toggle()
+                        }
+                        .foregroundColor(.red) // Destructive color
+                        Spacer()
+                    }
+                }
             }
             .navigationTitle("Settings")
             .toolbar {
@@ -137,6 +153,18 @@ struct SettingView: View {
                         presentationMode.wrappedValue.dismiss()
                     }
                 }
+            }
+            .alert(isPresented: $isPresentedResetAlert) {
+                Alert(
+                    title: Text("Reset to default values?"),
+                    primaryButton: .default(Text("Cancel")),
+                    secondaryButton: .destructive(
+                        Text("Reset"),
+                        action: {
+                            resetToDefaults()
+                        }
+                    )
+                )
             }
         }
     }
@@ -149,5 +177,14 @@ struct SettingView: View {
             Text("Edit")
                 .foregroundColor(.accentColor)
         }
+    }
+
+    // MARK: Action
+
+    func resetToDefaults() {
+        sourceDevices = defaultDevices
+        sourceLocales = defaultLocales
+        sourceCalendars = defaultCalendars
+        sourceTimeZones = defaultTimeZones
     }
 }

@@ -7,23 +7,6 @@
 
 import SwiftUI
 
-//
-// Presets
-//
-private let devicePresets: Set<Device> = [
-    .iPodTouch,
-    .iPhoneSE,
-    .iPhone11,
-    .iPhone13ProMax,
-    .iPadMini_5th,
-]
-private let localeIdentifierPresets: Set<String> = ["en_US", "ja_JP"]
-private let calendarIdentifierPresets: Set<Calendar.Identifier> = [.iso8601, .japanese]
-private let timeZonePresetes: Set<TimeZones> = [
-    .asiaTokyo,
-    .americaNewYork,
-]
-
 final class UserPreferences: ObservableObject {
     @Published var device: Device? {
         didSet {
@@ -62,10 +45,18 @@ final class UserPreferences: ObservableObject {
         defaultTimeZones: Set<TimeZones>? = nil
     ) {
         device = Self.loadDevice()
-        enableDevices = defaultDevices ?? Self.loadEnableDevices() ?? devicePresets
-        enableLocales = defaultLocaleIdentifiers ?? Self.loadEnableLocales() ?? localeIdentifierPresets
-        enableCalendars = defaultCalendarIdentifiers ?? Self.loadEnableCalendars() ?? calendarIdentifierPresets
-        enableTimeZones = defaultTimeZones ?? Self.loadEnableTimeZones() ?? timeZonePresetes
+
+        //
+        // 💡 The following priority order.
+        //
+        // 1. Saved user settings.
+        // 2. Specified user settings on SimulatorView's initializer.
+        // 3. Default presets.
+        //
+        enableDevices = Self.loadEnableDevices() ?? defaultDevices ?? Presets.devices
+        enableLocales = Self.loadEnableLocales() ?? defaultLocaleIdentifiers ?? Presets.locales
+        enableCalendars = Self.loadEnableCalendars() ?? defaultCalendarIdentifiers ?? Presets.calendars
+        enableTimeZones = Self.loadEnableTimeZones() ?? defaultTimeZones ?? Presets.timeZones
     }
 
     private func saveDevice() {
