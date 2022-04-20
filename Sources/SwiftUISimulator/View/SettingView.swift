@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct SettingView: View {
-    let sourceDevices: Binding<Set<Device>>
-    let sourceLocales: Binding<Set<String>>
-    let sourceCalendars: Binding<Set<Calendar.Identifier>>
-    let sourceTimeZones: Binding<Set<TimeZones>>
+    @Binding var sourceDevices: Set<Device>
+    @Binding var sourceLocales: Set<String>
+    @Binding var sourceCalendars: Set<Calendar.Identifier>
+    @Binding var sourceTimeZones: Set<TimeZones>
     let defaultDevices: Set<Device>
     let defaultLocales: Set<String>
     let defaultCalendars: Set<Calendar.Identifier>
@@ -33,19 +33,19 @@ struct SettingView: View {
     @Environment(\.presentationMode) private var presentationMode
 
     private var devices: [Device] {
-        sourceDevices.wrappedValue.sorted()
+        sourceDevices.sorted()
     }
 
     private var locales: [String] {
-        sourceLocales.wrappedValue.sorted()
+        sourceLocales.sorted()
     }
 
     private var calendars: [Calendar.Identifier] {
-        sourceCalendars.wrappedValue.sorted()
+        sourceCalendars.sorted()
     }
 
     private var timeZones: [TimeZones] {
-        sourceTimeZones.wrappedValue.sorted()
+        sourceTimeZones.sorted()
     }
 
     var body: some View {
@@ -60,7 +60,7 @@ struct SettingView: View {
                             Text(device.name)
                         }
                         editLink {
-                            DeviceSelectView(selectedDevices: sourceDevices)
+                            DeviceSelectView(selectedDevices: $sourceDevices)
                                 .navigationTitle("Select Devices")
                         }
                     } label: {
@@ -77,7 +77,7 @@ struct SettingView: View {
                         }
                         editLink {
                             MultiItemSelectView(
-                                selectedItems: sourceLocales,
+                                selectedItems: $sourceLocales,
                                 allItems: Locale.availableIdentifiers.filter { $0.contains("_") }.sorted(),
                                 searchableText: { $0 }
                             ) {
@@ -99,7 +99,7 @@ struct SettingView: View {
                         }
                         editLink {
                             MultiItemSelectView(
-                                selectedItems: sourceCalendars,
+                                selectedItems: $sourceCalendars,
                                 allItems: Calendar.Identifier.allCases,
                                 searchableText: { $0.rawValue }
                             ) {
@@ -121,7 +121,7 @@ struct SettingView: View {
                         }
                         editLink {
                             MultiItemSelectView(
-                                selectedItems: sourceTimeZones,
+                                selectedItems: $sourceTimeZones,
                                 allItems: TimeZones.allCases.filter { $0 != .current }, // ☑️ Remove `current` from select.
                                 searchableText: { $0.rawValue }
                             ) {
@@ -182,9 +182,9 @@ struct SettingView: View {
     // MARK: Action
 
     func resetToDefaults() {
-        sourceDevices.wrappedValue = defaultDevices
-        sourceLocales.wrappedValue = defaultLocales
-        sourceCalendars.wrappedValue = defaultCalendars
-        sourceTimeZones.wrappedValue = defaultTimeZones
+        sourceDevices = defaultDevices
+        sourceLocales = defaultLocales
+        sourceCalendars = defaultCalendars
+        sourceTimeZones = defaultTimeZones
     }
 }

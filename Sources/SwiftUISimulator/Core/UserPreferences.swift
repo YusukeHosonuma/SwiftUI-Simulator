@@ -7,25 +7,6 @@
 
 import SwiftUI
 
-//
-// Presets
-//
-final class Presets {
-    static let devices: Set<Device> = [
-        .iPodTouch,
-        .iPhoneSE,
-        .iPhone11,
-        .iPhone13ProMax,
-        .iPadMini_5th,
-    ]
-    static let locales: Set<String> = ["en_US", "ja_JP"]
-    static let calendars: Set<Calendar.Identifier> = [.iso8601, .japanese]
-    static let timeZones: Set<TimeZones> = [
-        .asiaTokyo,
-        .americaNewYork,
-    ]
-}
-
 final class UserPreferences: ObservableObject {
     @Published var device: Device? {
         didSet {
