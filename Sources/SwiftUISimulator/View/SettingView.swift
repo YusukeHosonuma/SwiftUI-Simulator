@@ -8,10 +8,14 @@
 import SwiftUI
 
 struct SettingView: View {
-    var sourceDevices: Binding<Set<Device>>
-    var sourceLocales: Binding<Set<String>>
-    var sourceCalendars: Binding<Set<Calendar.Identifier>>
-    var sourceTimeZones: Binding<Set<TimeZones>>
+    let sourceDevices: Binding<Set<Device>>
+    let sourceLocales: Binding<Set<String>>
+    let sourceCalendars: Binding<Set<Calendar.Identifier>>
+    let sourceTimeZones: Binding<Set<TimeZones>>
+    let defaultDevices: Set<Device>
+    let defaultLocales: Set<String>
+    let defaultCalendars: Set<Calendar.Identifier>
+    let defaultTimeZones: Set<TimeZones>
 
     @AppStorage("\(storageKeyPrefix).SettingView.isExpandedDevice")
     private var isExpandedDevice = true
@@ -24,7 +28,7 @@ struct SettingView: View {
 
     @AppStorage("\(storageKeyPrefix).SettingView.isExpandedTimeZone")
     private var isExpandedTimeZone = true
-    
+
     // 💡 iOS 15+: `\.dismiss`
     @Environment(\.presentationMode) private var presentationMode
 
@@ -129,6 +133,16 @@ struct SettingView: View {
                         Label("TimeZone", systemImage: "clock")
                     }
                 }
+                Section {
+                    HStack {
+                        Spacer()
+                        Button("Reset to default") {
+                            isPresentedResetAlert.toggle()
+                        }
+                        .foregroundColor(.red) // Destructive color
+                        Spacer()
+                    }
+                }
             }
             .navigationTitle("Settings")
             .toolbar {
@@ -138,8 +152,22 @@ struct SettingView: View {
                     }
                 }
             }
+            .alert(isPresented: $isPresentedResetAlert) {
+                Alert(
+                    title: Text("Reset to default values?"),
+                    primaryButton: .default(Text("Cancel")),
+                    secondaryButton: .destructive(
+                        Text("Reset"),
+                        action: {
+                            resetToDefaults()
+                        }
+                    )
+                )
+            }
         }
     }
+
+    @State private var isPresentedResetAlert = false
 
     func editLink<V: View>(_ destination: () -> V) -> some View {
         //
@@ -149,5 +177,14 @@ struct SettingView: View {
             Text("Edit")
                 .foregroundColor(.accentColor)
         }
+    }
+
+    // MARK: Action
+
+    func resetToDefaults() {
+        sourceDevices.wrappedValue = defaultDevices
+        sourceLocales.wrappedValue = defaultLocales
+        sourceCalendars.wrappedValue = defaultCalendars
+        sourceTimeZones.wrappedValue = defaultTimeZones
     }
 }

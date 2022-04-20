@@ -75,6 +75,10 @@ public struct SimulatorView<Content: View>: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     private let content: () -> Content
+    private let defaultDevices: Set<Device>
+    private let defaultLocales: Set<String>
+    private let defaultCalendars: Set<Calendar.Identifier>
+    private let defaultTimeZones: Set<TimeZones>
 
     public init(
         defaultDevices: Set<Device>? = nil,
@@ -90,6 +94,10 @@ public struct SimulatorView<Content: View>: View {
             defaultCalendarIdentifiers: defaultCalendarIdentifiers,
             defaultTimeZones: defaultTimeZones
         )
+        self.defaultDevices = defaultDevices ?? Presets.devices
+        defaultLocales = defaultLocaleIdentifiers ?? Presets.locales
+        defaultCalendars = defaultCalendarIdentifiers ?? Presets.calendars
+        self.defaultTimeZones = defaultTimeZones ?? Presets.timeZones
     }
 
     public var body: some View {
@@ -197,7 +205,11 @@ public struct SimulatorView<Content: View>: View {
                 sourceDevices: $userPreferences.enableDevices,
                 sourceLocales: $userPreferences.enableLocales,
                 sourceCalendars: $userPreferences.enableCalendars,
-                sourceTimeZones: $userPreferences.enableTimeZones
+                sourceTimeZones: $userPreferences.enableTimeZones,
+                defaultDevices: defaultDevices,
+                defaultLocales: defaultLocales,
+                defaultCalendars: defaultCalendars,
+                defaultTimeZones: defaultTimeZones
             )
         }
     }
