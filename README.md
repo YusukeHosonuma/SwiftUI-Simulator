@@ -85,6 +85,7 @@ SimulatorView(
     defaultLocaleIdentifiers: ["it", "fr"],             // Set<String>
     defaultCalendarIdentifiers: [.gregorian, .iso8601], // Set<Calendar.Identifier>
     defaultTimeZones: [.europeParis, .europeBerlin]     // Set<TimeZones>
+    accentColorName: "MyAccentColor",                   // when not use default accent color name in Assets.
 ) {
     RootView()
 }
