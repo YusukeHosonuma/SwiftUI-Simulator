@@ -79,12 +79,15 @@ public struct SimulatorView<Content: View>: View {
     private let defaultLocales: Set<String>
     private let defaultCalendars: Set<Calendar.Identifier>
     private let defaultTimeZones: Set<TimeZones>
+    private let accentColorLight: Color?
+    private let accentColorDark: Color?
 
     public init(
         defaultDevices: Set<Device>? = nil,
         defaultLocaleIdentifiers: Set<String>? = nil,
         defaultCalendarIdentifiers: Set<Calendar.Identifier>? = nil,
         defaultTimeZones: Set<TimeZones>? = nil,
+        accentColorName: String = "AccentColor",
         @ViewBuilder _ content: @escaping () -> Content
     ) {
         self.content = content
@@ -98,6 +101,14 @@ public struct SimulatorView<Content: View>: View {
         defaultLocales = defaultLocaleIdentifiers ?? Presets.locales
         defaultCalendars = defaultCalendarIdentifiers ?? Presets.calendars
         self.defaultTimeZones = defaultTimeZones ?? Presets.timeZones
+
+        if let accentColor = UIColor(named: accentColorName) {
+            accentColorLight = Color(accentColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)))
+            accentColorDark = Color(accentColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark)))
+        } else {
+            accentColorLight = nil
+            accentColorDark = nil
+        }
     }
 
     public var body: some View {
@@ -250,6 +261,7 @@ public struct SimulatorView<Content: View>: View {
                             locale: locale,
                             legibilityWeight: legibilityWeight,
                             colorScheme: isDark ? .dark : .light,
+                            accentColor: isDark ? accentColorDark : accentColorLight,
                             calendar: calendar,
                             timeZone: timeZone,
                             dynamicTypeSize: dynamicTypeSize
@@ -259,48 +271,51 @@ public struct SimulatorView<Content: View>: View {
                 //
                 // Controls
                 //
-                VStack(alignment: .trailing, spacing: 0) {
-                    if horizontalSizeClass == .regular {
-                        ZStack(alignment: .bottomTrailing) {
-                            //
-                            // Device select
-                            //
-                            deviceSelectControl()
-                                .offset(x: isHiddenControl ? 50 : 0)
-                                .animation(.easeInOut(duration: 0.15), value: isHiddenControl)
+                Group {
+                    VStack(alignment: .trailing, spacing: 0) {
+                        if horizontalSizeClass == .regular {
+                            ZStack(alignment: .bottomTrailing) {
+                                //
+                                // Device select
+                                //
+                                deviceSelectControl()
+                                    .offset(x: isHiddenControl ? 50 : 0)
+                                    .animation(.easeInOut(duration: 0.15), value: isHiddenControl)
 
-                            //
-                            // Cheet sheets
-                            //
-                            cheetSheetOvelay()
-                                .animation(.easeInOut(duration: 0.15), value: isHiddenControl)
-                                .animation(.easeInOut(duration: 0.15), value: isDisplayCheetSheet)
+                                //
+                                // Cheet sheets
+                                //
+                                cheetSheetOvelay()
+                                    .animation(.easeInOut(duration: 0.15), value: isHiddenControl)
+                                    .animation(.easeInOut(duration: 0.15), value: isDisplayCheetSheet)
+                            }
                         }
+
+                        //
+                        // Toolbar
+                        //
+                        simulatorToolBar(realDeviceSize: reader.size, orientation: orientation)
+                            .padding(.bottom, reader.safeAreaInsets.bottom)
+                            .background(Color.toolbarBackground)
+                            //
+                            // ☑️ Prevent layout bug during animation at iPhone XS (iOS 15.4) real device.
+                            //
+                            .frame(height: 44 + reader.safeAreaInsets.bottom)
+                            .offset(y: isHiddenControl ? 100 : 0)
+                            .animation(.easeInOut(duration: 0.15), value: isHiddenControl)
                     }
 
                     //
-                    // Toolbar
+                    // 􀁱 / 􀁯 Toggle Control
                     //
-                    simulatorToolBar(realDeviceSize: reader.size, orientation: orientation)
-                        .padding(.bottom, reader.safeAreaInsets.bottom)
-                        .background(Color.toolbarBackground)
-                        //
-                        // ☑️ Prevent layout bug during animation at iPhone XS (iOS 15.4) real device.
-                        //
-                        .frame(height: 44 + reader.safeAreaInsets.bottom)
-                        .offset(y: isHiddenControl ? 100 : 0)
-                        .animation(.easeInOut(duration: 0.15), value: isHiddenControl)
+                    Button {
+                        isHiddenControl.toggle()
+                    } label: {
+                        Icon(isHiddenControl ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
+                    }
+                    .offset(y: -reader.safeAreaInsets.bottom)
                 }
-
-                //
-                // 􀁱 / 􀁯 Toggle Control
-                //
-                Button {
-                    isHiddenControl.toggle()
-                } label: {
-                    Icon(isHiddenControl ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
-                }
-                .offset(y: -reader.safeAreaInsets.bottom)
+                .accentColor(.blue)
             }
             .background(Color.simulatorBackground)
             .edgesIgnoringSafeArea(.bottom)
@@ -652,6 +667,7 @@ public struct SimulatorView<Content: View>: View {
             locale: locale,
             legibilityWeight: legibilityWeight,
             colorScheme: colorScheme,
+            accentColor: colorScheme == .dark ? accentColorDark : accentColorLight,
             calendar: calendar,
             timeZone: timeZone,
             dynamicTypeSize: dynamicTypeSize
@@ -692,6 +708,7 @@ private extension View {
         locale: String,
         legibilityWeight: LegibilityWeight,
         colorScheme: ColorScheme,
+        accentColor: Color?,
         calendar: Calendar.Identifier,
         timeZone: TimeZones,
         dynamicTypeSize: DynamicTypeSizeWrapper?
@@ -712,6 +729,9 @@ private extension View {
                 } else {
                     $0
                 }
+            }
+            .whenLet(accentColor) { content, color in
+                content.accentColor(color)
             }
     }
 }
