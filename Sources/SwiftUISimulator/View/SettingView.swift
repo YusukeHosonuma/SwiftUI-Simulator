@@ -32,6 +32,8 @@ struct SettingView: View {
     // 💡 iOS 15+: `\.dismiss`
     @Environment(\.presentationMode) private var presentationMode
 
+    @State private var isPresentedResetAlert = false
+
     private var devices: [Device] {
         sourceDevices.sorted()
     }
@@ -166,8 +168,6 @@ struct SettingView: View {
             }
         }
     }
-
-    @State private var isPresentedResetAlert = false
 
     func editLink<V: View>(_ destination: () -> V) -> some View {
         //
