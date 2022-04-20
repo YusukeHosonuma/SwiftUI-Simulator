@@ -18,57 +18,50 @@ struct DeviceSelectView: View {
     }
 
     var body: some View {
-        NavigationView {
-            List(selection: selectedDevices) {
-                //
-                // 💡 iOS 15+
-                //
-                // `Section("xxx") { ... }`
-                // https://developer.apple.com/documentation/swiftui/section/init(_:content:)-90be4
-                //
-                Section {
-                    ForEach(Device.iPhones, id: \.name) { device in
-                        row(device: device).tag(device)
-                    }
-                } header: {
-                    HStack {
-                        Text("iPhone")
-                        Spacer()
-                        Button("Select All") {
-                            selectedDevices.wrappedValue = selectedDevices.wrappedValue.union(Device.iPhones)
-                        }
-                    }
+        List(selection: selectedDevices) {
+            //
+            // 💡 iOS 15+
+            //
+            // `Section("xxx") { ... }`
+            // https://developer.apple.com/documentation/swiftui/section/init(_:content:)-90be4
+            //
+            Section {
+                ForEach(Device.iPhones, id: \.name) { device in
+                    row(device: device).tag(device)
                 }
-
-                Section {
-                    ForEach(Device.iPads, id: \.name) { device in
-                        row(device: device).tag(device)
+            } header: {
+                HStack {
+                    Text("iPhone")
+                    Spacer()
+                    Button("Select All") {
+                        selectedDevices.wrappedValue = selectedDevices.wrappedValue.union(Device.iPhones)
                     }
-                } header: {
-                    HStack {
-                        Text("iPad")
-                        Spacer()
-                        Button("Select All") {
-                            selectedDevices.wrappedValue = selectedDevices.wrappedValue.union(Device.iPads)
-                        }
+                    .padding(.horizontal)
+                    Button("Clear") {
+                        selectedDevices.wrappedValue = []
                     }
                 }
             }
-            .environment(\.editMode, .constant(.active))
-            .toolbar {
-                ToolbarItem(placement: .destructiveAction) {
-                    Button("Done") {
-                        presentationMode.wrappedValue.dismiss()
-                    }
-                    .disabled(selectedDevices.wrappedValue.isEmpty)
+
+            Section {
+                ForEach(Device.iPads, id: \.name) { device in
+                    row(device: device).tag(device)
                 }
-                ToolbarItem(placement: .cancellationAction) {
+            } header: {
+                HStack {
+                    Text("iPad")
+                    Spacer()
+                    Button("Select All") {
+                        selectedDevices.wrappedValue = selectedDevices.wrappedValue.union(Device.iPads)
+                    }
+                    .padding(.horizontal)
                     Button("Clear") {
                         selectedDevices.wrappedValue = []
                     }
                 }
             }
         }
+        .environment(\.editMode, .constant(.active))
     }
 
     @ViewBuilder
