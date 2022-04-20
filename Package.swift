@@ -16,7 +16,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "SwiftUISimulator", dependencies: [
-            "Defaults"
+            "Defaults",
         ]),
         .testTarget(name: "SwiftUISimulatorTests", dependencies: ["SwiftUISimulator"]),
     ]

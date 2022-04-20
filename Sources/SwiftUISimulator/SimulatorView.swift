@@ -5,6 +5,7 @@
 //  Created by Yusuke Hosonuma on 2022/04/10.
 //
 
+import Defaults
 import SwiftUI
 
 internal let storageKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator"
@@ -13,56 +14,48 @@ internal let storageKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator"
 // SimulatorView
 //
 public struct SimulatorView<Content: View>: View {
-    @AppStorage("\(storageKeyPrefix).locale")
-    private var locale: String = "en_US"
-
-    @AppStorage("\(storageKeyPrefix).legibilityWeight")
-    private var legibilityWeight: LegibilityWeight = .regular
+    //
+    // Device and Appearance
+    //
+    @Default(.device) var device
+    @Default(.isDark) var isDark
+    @Default(.isDualMode) var isDualMode
+    @Default(.isPortrait) var isPortrait
 
     //
-    // ☑️ `DynamicTypeSize` is supported in iOS 15+.
+    // Presets
     //
-    @AppStorage("\(storageKeyPrefix).dynamicTypeSize")
-    private var dynamicTypeSize: DynamicTypeSizeWrapper = .medium
-
-    @AppStorage("\(storageKeyPrefix).isDynamicTypeSizesEnabled")
-    private var isDynamicTypeSizesEnabled = true
-
-    @AppStorage("\(storageKeyPrefix).isDark")
-    private var isDark = false
-
-    @AppStorage("\(storageKeyPrefix).isDisplayInformation")
-    private var isDisplayInformation = true
-
-    @AppStorage("\(storageKeyPrefix).isDisplaySafeArea")
-    private var isDisplaySafeArea = true
-
-    @AppStorage("\(storageKeyPrefix).isSimulatorEnabled")
-    private var isSimulatorEnabled = true
-
-    @AppStorage("\(storageKeyPrefix).calendar")
-    private var calendar: Calendar.Identifier = .iso8601
-
-    @AppStorage("\(storageKeyPrefix).timeZoneIdentifier")
-    private var timeZone: TimeZones = .current
-
-    @AppStorage("\(storageKeyPrefix).isDualMode")
-    private var isDualMode = false
-
-    @AppStorage("\(storageKeyPrefix).isPortrait")
-    private var isPortrait = true
-
-    @AppStorage("\(storageKeyPrefix).isDisplayCheetSheet")
-    private var isDisplayCheetSheet = false
-
-    @AppStorage("\(storageKeyPrefix).isHiddenControl")
-    private var isHiddenControl = false
+    @Default(.enableDevices) var enableDevices
+    @Default(.enableLocales) var enableLocales
+    @Default(.enableCalendars) var enableCalendars
+    @Default(.enableTimeZones) var enableTimeZones
 
     //
-    // 💡 Note: save and restore by code.
+    // Fonts
     //
-    @ObservedObject
-    private var userPreferences: UserPreferences
+    @Default(.legibilityWeight) var legibilityWeight
+    @Default(.dynamicTypeSize) var dynamicTypeSize
+    @Default(.isDynamicTypeSizesEnabled) var isDynamicTypeSizesEnabled
+
+    //
+    // International
+    //
+    @Default(.locale) var locale
+    @Default(.calendar) var calendar
+    @Default(.timeZone) var timeZone
+
+    //
+    // Debug information
+    //
+    @Default(.isDisplayInformation) var isDisplayInformation
+    @Default(.isDisplaySafeArea) var isDisplaySafeArea
+
+    //
+    // Simultor state
+    //
+    @Default(.isSimulatorEnabled) var isSimulatorEnabled
+    @Default(.isDisplayCheetSheet) var isDisplayCheetSheet
+    @Default(.isHiddenControl) var isHiddenControl
 
     //
     // Sheets
@@ -74,6 +67,9 @@ public struct SimulatorView<Content: View>: View {
     //
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
+    //
+    // Private properties
+    //
     private let content: () -> Content
     private let defaultDevices: Set<Device>
     private let defaultLocales: Set<String>
@@ -82,6 +78,9 @@ public struct SimulatorView<Content: View>: View {
     private let accentColorLight: Color?
     private let accentColorDark: Color?
 
+    //
+    // Initializer
+    //
     public init(
         defaultDevices: Set<Device>? = nil,
         defaultLocaleIdentifiers: Set<String>? = nil,
@@ -91,23 +90,47 @@ public struct SimulatorView<Content: View>: View {
         @ViewBuilder _ content: @escaping () -> Content
     ) {
         self.content = content
-        userPreferences = UserPreferences(
-            defaultDevices: defaultDevices,
-            defaultLocaleIdentifiers: defaultLocaleIdentifiers,
-            defaultCalendarIdentifiers: defaultCalendarIdentifiers,
-            defaultTimeZones: defaultTimeZones
-        )
+
+        //
+        // Presets
+        //
         self.defaultDevices = defaultDevices ?? Presets.devices
         defaultLocales = defaultLocaleIdentifiers ?? Presets.locales
         defaultCalendars = defaultCalendarIdentifiers ?? Presets.calendars
         self.defaultTimeZones = defaultTimeZones ?? Presets.timeZones
 
+        //
+        // AccentColor
+        //
         if let accentColor = UIColor(named: accentColorName) {
             accentColorLight = Color(accentColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)))
             accentColorDark = Color(accentColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark)))
         } else {
             accentColorLight = nil
             accentColorDark = nil
+        }
+
+        //
+        // 💡 The following priority order.
+        //
+        // 1. Saved user settings. (if not empty)
+        // 2. Specified user settings on SimulatorView's initializer.
+        // 3. Default presets.
+        //
+        if enableDevices.isEmpty {
+            enableDevices = defaultDevices ?? Presets.devices
+        }
+
+        if enableLocales.isEmpty {
+            enableLocales = defaultLocaleIdentifiers ?? Presets.locales
+        }
+
+        if enableCalendars.isEmpty {
+            enableCalendars = defaultCalendarIdentifiers ?? Presets.calendars
+        }
+
+        if enableTimeZones.isEmpty {
+            enableTimeZones = defaultTimeZones ?? Presets.timeZones
         }
     }
 
@@ -192,7 +215,7 @@ public struct SimulatorView<Content: View>: View {
                 Toggle(isOn: $isDisplaySafeArea) {
                     Label("Safe Area", systemImage: "square.tophalf.filled")
                 }
-                .disabled(userPreferences.device == nil)
+                .disabled(device == nil)
 
                 //
                 // 􀅴
@@ -200,7 +223,7 @@ public struct SimulatorView<Content: View>: View {
                 Toggle(isOn: $isDisplayInformation) {
                     Label("Information", systemImage: "info.circle")
                 }
-                .disabled(userPreferences.device == nil)
+                .disabled(device == nil)
             }
         } label: {
             //
@@ -213,10 +236,10 @@ public struct SimulatorView<Content: View>: View {
         //
         .sheet(isPresented: $isPresentedSettingSheet) {
             SettingView(
-                sourceDevices: $userPreferences.enableDevices,
-                sourceLocales: $userPreferences.enableLocales,
-                sourceCalendars: $userPreferences.enableCalendars,
-                sourceTimeZones: $userPreferences.enableTimeZones,
+                sourceDevices: $enableDevices,
+                sourceLocales: $enableLocales,
+                sourceCalendars: $enableCalendars,
+                sourceTimeZones: $enableTimeZones,
                 defaultDevices: defaultDevices,
                 defaultLocales: defaultLocales,
                 defaultCalendars: defaultCalendars,
@@ -233,7 +256,7 @@ public struct SimulatorView<Content: View>: View {
                 //
                 // Content
                 //
-                if let device = userPreferences.device {
+                if let device = device {
                     Group {
                         if isDualMode {
                             if isPortrait {
@@ -329,7 +352,7 @@ public struct SimulatorView<Content: View>: View {
             //
             Button {
                 if let prev = prevDevice() {
-                    userPreferences.device = prev
+                    device = prev
                 }
             } label: {
                 Icon("chevron.up.square.fill")
@@ -341,7 +364,7 @@ public struct SimulatorView<Content: View>: View {
             //
             Button {
                 if let next = nextDevice() {
-                    userPreferences.device = next
+                    device = next
                 }
             } label: {
                 Icon("chevron.down.square.fill")
@@ -351,13 +374,13 @@ public struct SimulatorView<Content: View>: View {
     }
 
     private func prevDevice() -> Device? {
-        guard let device = userPreferences.device else { return nil }
-        return userPreferences.enableDevices.sorted().prev(device)
+        guard let device = device else { return nil }
+        return enableDevices.sorted().prev(device)
     }
 
     private func nextDevice() -> Device? {
-        guard let device = userPreferences.device else { return nil }
-        return userPreferences.enableDevices.sorted().next(device)
+        guard let device = device else { return nil }
+        return enableDevices.sorted().next(device)
     }
 
     private func cheetSheetOvelay() -> some View {
@@ -426,7 +449,7 @@ public struct SimulatorView<Content: View>: View {
                     } label: {
                         Icon(isDualMode ? "rectangle.portrait.on.rectangle.portrait.slash" : "rectangle.portrait.on.rectangle.portrait")
                     }
-                    .disabled(userPreferences.device == nil)
+                    .disabled(device == nil)
 
                     //
                     // 􀕹 Cheet sheets
@@ -466,7 +489,7 @@ public struct SimulatorView<Content: View>: View {
                     // Calendar
                     //
                     Picker(selection: $calendar) {
-                        ForEach(Array(userPreferences.enableCalendars.sorted().reversed())) { identifier in
+                        ForEach(Array(enableCalendars.sorted().reversed())) { identifier in
                             Text(identifier.id).tag(identifier)
                         }
                     } label: {
@@ -485,7 +508,7 @@ public struct SimulatorView<Content: View>: View {
                     //
                     Picker(selection: $timeZone) {
                         Label("Default", systemImage: "iphone").tag(TimeZones.current)
-                        ForEach(Array(userPreferences.enableTimeZones.sorted().reversed())) { timeZone in
+                        ForEach(Array(enableTimeZones.sorted().reversed())) { timeZone in
                             Text(timeZone.label).tag(timeZone)
                         }
                     } label: {
@@ -500,7 +523,7 @@ public struct SimulatorView<Content: View>: View {
                 //
                 Menu {
                     Picker(selection: $locale) {
-                        ForEach(Array(userPreferences.enableLocales.sorted().reversed()), id: \.self) { identifier in
+                        ForEach(Array(enableLocales.sorted().reversed()), id: \.self) { identifier in
                             Text(identifier).tag(identifier)
                         }
                     } label: {
@@ -529,15 +552,15 @@ public struct SimulatorView<Content: View>: View {
                     } label: {
                         Icon(isPortrait ? "rotate.left" : "rotate.right")
                     }
-                    .disabled(userPreferences.device == nil)
+                    .disabled(device == nil)
                 }
 
                 //
                 // 􀟝 Device
                 //
                 Menu {
-                    Picker(selection: $userPreferences.device) {
-                        let devices = userPreferences.enableDevices.sorted().reversed()
+                    Picker(selection: $device) {
+                        let devices = enableDevices.sorted().reversed()
                         let deviceGroup = Dictionary(grouping: devices, by: \.type)
 
                         //
