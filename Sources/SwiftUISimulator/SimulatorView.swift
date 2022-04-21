@@ -234,9 +234,9 @@ public struct SimulatorView<Content: View>: View {
             }
         } label: {
             //
-            // 􀣌
+            // 􀪏
             //
-            Icon("gearshape.fill")
+            Icon("terminal.fill")
         }
         //
         // 􀋲 Settings

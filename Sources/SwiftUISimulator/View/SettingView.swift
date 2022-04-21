@@ -135,6 +135,9 @@ struct SettingView: View {
                         Label("TimeZone", systemImage: "clock")
                     }
                 }
+                //
+                // 􀩼 Simulator
+                //
                 Section {
                     DisclosureGroup(isExpanded: $isExpandedSimulator) {
                         ColorPicker("Accent Color", selection: $sourceSimulatorAccentColor)
