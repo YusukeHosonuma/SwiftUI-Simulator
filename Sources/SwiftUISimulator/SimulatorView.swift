@@ -53,6 +53,7 @@ public struct SimulatorView<Content: View>: View {
     //
     // Simultor state
     //
+    @Default(.simulatorAccentColor) private var simulatorAccentColor
     @Default(.isSimulatorEnabled) private var isSimulatorEnabled
     @Default(.isDisplayCheetSheet) private var isDisplayCheetSheet
     @Default(.isHiddenControl) private var isHiddenControl
@@ -240,11 +241,13 @@ public struct SimulatorView<Content: View>: View {
                 sourceLocales: $enableLocales,
                 sourceCalendars: $enableCalendars,
                 sourceTimeZones: $enableTimeZones,
+                sourceColor: $simulatorAccentColor.rawValue,
                 defaultDevices: defaultDevices,
                 defaultLocales: defaultLocales,
                 defaultCalendars: defaultCalendars,
                 defaultTimeZones: defaultTimeZones
             )
+            .accentColor(simulatorAccentColor.rawValue)
         }
     }
 
@@ -338,7 +341,7 @@ public struct SimulatorView<Content: View>: View {
                     }
                     .offset(y: -reader.safeAreaInsets.bottom)
                 }
-                .accentColor(.blue)
+                .accentColor(simulatorAccentColor.rawValue)
             }
             .background(Color.simulatorBackground)
             .edgesIgnoringSafeArea(.bottom)

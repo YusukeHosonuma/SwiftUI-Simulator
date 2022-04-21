@@ -19,3 +19,12 @@ extension Binding where Value: SliderValue {
         )
     }
 }
+
+extension Binding where Value: ValueWrapper {
+    var rawValue: Binding<Value.RawValue> {
+        .init(
+            get: { self.wrappedValue.rawValue },
+            set: { self.wrappedValue = .init($0) }
+        )
+    }
+}

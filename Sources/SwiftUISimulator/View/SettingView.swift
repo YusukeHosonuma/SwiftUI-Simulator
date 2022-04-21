@@ -13,6 +13,7 @@ struct SettingView: View {
     @Binding var sourceLocales: Set<String>
     @Binding var sourceCalendars: Set<Calendar.Identifier>
     @Binding var sourceTimeZones: Set<TimeZones>
+    @Binding var sourceColor: Color
     let defaultDevices: Set<Device>
     let defaultLocales: Set<String>
     let defaultCalendars: Set<Calendar.Identifier>
@@ -128,6 +129,9 @@ struct SettingView: View {
                     } label: {
                         Label("TimeZone", systemImage: "clock")
                     }
+                }
+                Section {
+                    ColorPicker("Simulator Accent Color", selection: $sourceColor)
                 }
                 Section {
                     HStack {

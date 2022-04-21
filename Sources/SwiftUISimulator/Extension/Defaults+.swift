@@ -51,6 +51,7 @@ extension Defaults.Keys {
     //
     // Simultor state
     //
+    static let simulatorAccentColor = Key<ColorWrapper>("\(prefix).simulatorAccentColor", default: ColorWrapper(.blue))
     static let isSimulatorEnabled = Key<Bool>("\(prefix).isSimulatorEnabled", default: true)
     static let isDisplayCheetSheet = Key<Bool>("\(prefix).isDisplayCheetSheet", default: false)
     static let isHiddenControl = Key<Bool>("\(prefix).isHiddenControl", default: false)
@@ -64,6 +65,7 @@ extension Defaults.Keys {
     static let isExpandedTimeZone = Key<Bool>("\(prefix).Setting.isExpandedTimeZone", default: false)
 }
 
+extension ColorWrapper: Defaults.Serializable {}
 extension Device: Defaults.Serializable {}
 extension LegibilityWeight: Defaults.Serializable {}
 extension DynamicTypeSizeWrapper: Defaults.Serializable {}
