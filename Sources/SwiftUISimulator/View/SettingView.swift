@@ -5,6 +5,7 @@
 //  Created by Yusuke Hosonuma on 2022/04/19.
 //
 
+import Defaults
 import SwiftUI
 
 struct SettingView: View {
@@ -17,17 +18,10 @@ struct SettingView: View {
     let defaultCalendars: Set<Calendar.Identifier>
     let defaultTimeZones: Set<TimeZones>
 
-    @AppStorage("\(storageKeyPrefix).SettingView.isExpandedDevice")
-    private var isExpandedDevice = true
-
-    @AppStorage("\(storageKeyPrefix).SettingView.isExpandedLocale")
-    private var isExpandedLocale = true
-
-    @AppStorage("\(storageKeyPrefix).SettingView.isExpandedCalendar")
-    private var isExpandedCalendar = true
-
-    @AppStorage("\(storageKeyPrefix).SettingView.isExpandedTimeZone")
-    private var isExpandedTimeZone = true
+    @Default(.isExpandedDevice) private var isExpandedDevice
+    @Default(.isExpandedLocale) private var isExpandedLocale
+    @Default(.isExpandedCalendar) private var isExpandedCalendar
+    @Default(.isExpandedTimeZone) private var isExpandedTimeZone
 
     // 💡 iOS 15+: `\.dismiss`
     @Environment(\.presentationMode) private var presentationMode
