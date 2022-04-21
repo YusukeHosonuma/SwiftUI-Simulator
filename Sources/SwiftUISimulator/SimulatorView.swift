@@ -281,11 +281,11 @@ public struct SimulatorView<Content: View>: View {
                     content()
                         .overrideEnvironments(
                             sizeClasses: nil, // ☑️ Use real device size classes.
-                            locale: locale,
+                            locale: locale.map(Locale.init) ?? Locale.current,
                             legibilityWeight: legibilityWeight,
                             colorScheme: isDark ? .dark : .light,
                             accentColor: isDark ? accentColorDark : accentColorLight,
-                            calendar: calendar,
+                            calendar: calendar.map(Calendar.init) ?? Calendar.current,
                             timeZone: timeZone,
                             dynamicTypeSize: dynamicTypeSize
                         )
@@ -489,8 +489,13 @@ public struct SimulatorView<Content: View>: View {
                     // Calendar
                     //
                     Picker(selection: $calendar) {
+                        //
+                        // Device default
+                        //
+                        Label("Default", systemImage: "iphone").tagCalendar(nil)
+
                         ForEach(Array(enableCalendars.sorted().reversed())) { identifier in
-                            Text(identifier.id).tag(identifier)
+                            Text(identifier.id).tagCalendar(identifier)
                         }
                     } label: {
                         EmptyView()
@@ -507,7 +512,11 @@ public struct SimulatorView<Content: View>: View {
                     // - Current
                     //
                     Picker(selection: $timeZone) {
+                        //
+                        // Device default
+                        //
                         Label("Default", systemImage: "iphone").tag(TimeZones.current)
+
                         ForEach(Array(enableTimeZones.sorted().reversed())) { timeZone in
                             Text(timeZone.label).tag(timeZone)
                         }
@@ -523,8 +532,14 @@ public struct SimulatorView<Content: View>: View {
                 //
                 Menu {
                     Picker(selection: $locale) {
+                        //
+                        // Device default
+                        //
+                        Label("Default", systemImage: "iphone").tagLocale(nil)
+
                         ForEach(Array(enableLocales.sorted().reversed()), id: \.self) { identifier in
-                            Text(identifier).tag(identifier)
+                            Text(identifier)
+                                .tagLocale(identifier)
                         }
                     } label: {
                         EmptyView()
@@ -637,13 +652,41 @@ public struct SimulatorView<Content: View>: View {
                         Text(dynamicTypeSize.label)
                     }
                     Spacer()
-                    Text("\(locale) / \(calendar.rawValue) / \(timeZone.rawValue)")
+
+                    Text("\(localeText) / \(calendarText) / \(timeZoneText)")
                 }
                 .foregroundColor(.info)
                 .font(.caption)
             }
         }
         .frame(width: width)
+    }
+
+    private var localeText: String {
+        if let locale = locale {
+            return locale
+        } else {
+            // e.g.
+            // "en_US@calendar=japanese" -> "en_US"
+            let identifier = Locale.current.identifier.split(separator: "@").first ?? "-"
+            return "Default (\(identifier))"
+        }
+    }
+
+    private var calendarText: String {
+        if let calendar = calendar {
+            return calendar.rawValue
+        } else {
+            return "Default (\(Calendar.current.identifier.rawValue))"
+        }
+    }
+
+    private var timeZoneText: String {
+        if timeZone != .current {
+            return timeZone.rawValue
+        } else {
+            return "Default (\(TimeZone.current.identifier))"
+        }
     }
 
     @ViewBuilder
@@ -687,11 +730,11 @@ public struct SimulatorView<Content: View>: View {
         .border(.blue)
         .overrideEnvironments(
             sizeClasses: sizeClass,
-            locale: locale,
+            locale: locale.map(Locale.init) ?? Locale.current,
             legibilityWeight: legibilityWeight,
             colorScheme: colorScheme,
             accentColor: colorScheme == .dark ? accentColorDark : accentColorLight,
-            calendar: calendar,
+            calendar: calendar.map(Calendar.init) ?? Calendar.current,
             timeZone: timeZone,
             dynamicTypeSize: dynamicTypeSize
         )
@@ -726,20 +769,28 @@ private extension View {
         tag(value)
     }
 
+    func tagLocale(_ value: String?) -> some View {
+        tag(value)
+    }
+
+    func tagCalendar(_ value: Calendar.Identifier?) -> some View {
+        tag(value)
+    }
+
     func overrideEnvironments(
         sizeClasses: SizeClasses?,
-        locale: String,
+        locale: Locale,
         legibilityWeight: LegibilityWeight,
         colorScheme: ColorScheme,
         accentColor: Color?,
-        calendar: Calendar.Identifier,
+        calendar: Calendar,
         timeZone: TimeZones,
         dynamicTypeSize: DynamicTypeSizeWrapper?
     ) -> some View {
-        environment(\.locale, .init(identifier: locale))
+        environment(\.locale, locale)
             .environment(\.legibilityWeight, legibilityWeight) // 🚫 `legibilityWeight` is not working currently. (Same for Xcode preview)
             .environment(\.colorScheme, colorScheme)
-            .environment(\.calendar, Calendar(identifier: calendar))
+            .environment(\.calendar, calendar)
             .environment(\.timeZone, timeZone.toTimeZone())
             .whenLet(sizeClasses) { content, sizeClasses in
                 content
