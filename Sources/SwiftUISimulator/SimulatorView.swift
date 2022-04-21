@@ -58,6 +58,13 @@ public struct SimulatorView<Content: View>: View {
     @Default(.isHiddenControl) private var isHiddenControl
 
     //
+    // Simulator appearance
+    //
+    @Default(.simulatorAccentColor) private var simulatorAccentColor
+    @Default(.simulatorBorderColor) private var simulatorBorderColor
+    @Default(.simulatorSafeAreaColor) private var simulatorSafeAreaColor
+
+    //
     // Sheets
     //
     @State private var isPresentedSettingSheet = false
@@ -227,9 +234,9 @@ public struct SimulatorView<Content: View>: View {
             }
         } label: {
             //
-            // 􀣌
+            // 􀪏
             //
-            Icon("gearshape.fill")
+            Icon("terminal.fill")
         }
         //
         // 􀋲 Settings
@@ -240,11 +247,15 @@ public struct SimulatorView<Content: View>: View {
                 sourceLocales: $enableLocales,
                 sourceCalendars: $enableCalendars,
                 sourceTimeZones: $enableTimeZones,
+                sourceSimulatorAccentColor: $simulatorAccentColor.rawValue,
+                sourceSimulatorBorderColor: $simulatorBorderColor.rawValue,
+                sourceSimulatorSafeAreaColorr: $simulatorSafeAreaColor.rawValue,
                 defaultDevices: defaultDevices,
                 defaultLocales: defaultLocales,
                 defaultCalendars: defaultCalendars,
                 defaultTimeZones: defaultTimeZones
             )
+            .accentColor(simulatorAccentColor.rawValue)
         }
     }
 
@@ -338,7 +349,7 @@ public struct SimulatorView<Content: View>: View {
                     }
                     .offset(y: -reader.safeAreaInsets.bottom)
                 }
-                .accentColor(.blue)
+                .accentColor(simulatorAccentColor.rawValue)
             }
             .background(Color.simulatorBackground)
             .edgesIgnoringSafeArea(.bottom)
@@ -727,7 +738,7 @@ public struct SimulatorView<Content: View>: View {
             safeAreaMargin(.vertical, size: safeArea.bottom)
         }
         .frame(width: frameSize.width, height: frameSize.height)
-        .border(.blue)
+        .border(simulatorBorderColor.rawValue)
         .overrideEnvironments(
             sizeClasses: sizeClass,
             locale: locale.map(Locale.init) ?? Locale.current,
@@ -753,7 +764,7 @@ public struct SimulatorView<Content: View>: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.safeArea)
+            .background(simulatorSafeAreaColor.rawValue)
             .when(axis == .vertical) {
                 $0.frame(height: size)
             }

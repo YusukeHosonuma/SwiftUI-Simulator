@@ -12,7 +12,15 @@ extension Color {
         .gray.opacity(0.9)
     }
 
-    static var safeArea: Self {
+    static var defaultSimulatorAccent: Self {
+        .blue
+    }
+
+    static var defaultSimulatorBorder: Self {
+        .blue
+    }
+
+    static var defaultSimulatorSafeArea: Self {
         .pink.opacity(0.1)
     }
 
