@@ -39,7 +39,7 @@ extension Defaults.Keys {
     // International
     //
     static let locale = Key<String?>("\(prefix).locale", default: nil)
-    static let calendar = Key<Calendar.Identifier>("\(prefix).calendar", default: .iso8601)
+    static let calendar = Key<Calendar.Identifier?>("\(prefix).calendar", default: nil)
     static let timeZone = Key<TimeZones>("\(prefix).timeZone", default: .current)
 
     //

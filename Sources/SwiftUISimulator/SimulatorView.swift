@@ -285,7 +285,7 @@ public struct SimulatorView<Content: View>: View {
                             legibilityWeight: legibilityWeight,
                             colorScheme: isDark ? .dark : .light,
                             accentColor: isDark ? accentColorDark : accentColorLight,
-                            calendar: calendar,
+                            calendar: calendar.map(Calendar.init) ?? Calendar.current,
                             timeZone: timeZone,
                             dynamicTypeSize: dynamicTypeSize
                         )
@@ -489,8 +489,13 @@ public struct SimulatorView<Content: View>: View {
                     // Calendar
                     //
                     Picker(selection: $calendar) {
+                        //
+                        // Device default
+                        //
+                        Label("Default", systemImage: "iphone").tagCalendar(nil)
+
                         ForEach(Array(enableCalendars.sorted().reversed())) { identifier in
-                            Text(identifier.id).tag(identifier)
+                            Text(identifier.id).tagCalendar(identifier)
                         }
                     } label: {
                         EmptyView()
@@ -511,7 +516,7 @@ public struct SimulatorView<Content: View>: View {
                         // Device default
                         //
                         Label("Default", systemImage: "iphone").tag(TimeZones.current)
-                        
+
                         ForEach(Array(enableTimeZones.sorted().reversed())) { timeZone in
                             Text(timeZone.label).tag(timeZone)
                         }
@@ -531,7 +536,7 @@ public struct SimulatorView<Content: View>: View {
                         // Device default
                         //
                         Label("Default", systemImage: "iphone").tagLocale(nil)
-                        
+
                         ForEach(Array(enableLocales.sorted().reversed()), id: \.self) { identifier in
                             Text(identifier)
                                 .tagLocale(identifier)
@@ -647,8 +652,8 @@ public struct SimulatorView<Content: View>: View {
                         Text(dynamicTypeSize.label)
                     }
                     Spacer()
-                                        
-                    Text("\(localeText) / \(calendar.rawValue) / \(timeZone.rawValue)")
+
+                    Text("\(localeText) / \(calendarText) / \(timeZoneText)")
                 }
                 .foregroundColor(.info)
                 .font(.caption)
@@ -661,10 +666,29 @@ public struct SimulatorView<Content: View>: View {
         if let locale = locale {
             return locale
         } else {
-            return "default"
+            // e.g.
+            // "en_US@calendar=japanese" -> "en_US"
+            let identifier = Locale.current.identifier.split(separator: "@").first ?? "-"
+            return "Default (\(identifier))"
         }
     }
-    
+
+    private var calendarText: String {
+        if let calendar = calendar {
+            return calendar.rawValue
+        } else {
+            return "Default (\(Calendar.current.identifier.rawValue))"
+        }
+    }
+
+    private var timeZoneText: String {
+        if timeZone != .current {
+            return timeZone.rawValue
+        } else {
+            return "Default (\(TimeZone.current.identifier))"
+        }
+    }
+
     @ViewBuilder
     private func simulatedScreen(device: Device, colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
         let deviceSize = device.size(orientation: orientation)
@@ -672,7 +696,7 @@ public struct SimulatorView<Content: View>: View {
         let contentSize = safeArea.contentSize
         let sizeClass = device.sizeClass(orientation: orientation)
         let frameSize = isDisplaySafeArea ? deviceSize : contentSize
-        
+
         VStack(spacing: 0) {
             //
             // Safe area - Top
@@ -710,12 +734,12 @@ public struct SimulatorView<Content: View>: View {
             legibilityWeight: legibilityWeight,
             colorScheme: colorScheme,
             accentColor: colorScheme == .dark ? accentColorDark : accentColorLight,
-            calendar: calendar,
+            calendar: calendar.map(Calendar.init) ?? Calendar.current,
             timeZone: timeZone,
             dynamicTypeSize: dynamicTypeSize
         )
     }
-    
+
     @ViewBuilder
     private func safeAreaMargin(_ axis: Axis, size: CGFloat) -> some View {
         if isDisplaySafeArea {
@@ -749,20 +773,24 @@ private extension View {
         tag(value)
     }
 
+    func tagCalendar(_ value: Calendar.Identifier?) -> some View {
+        tag(value)
+    }
+
     func overrideEnvironments(
         sizeClasses: SizeClasses?,
         locale: Locale,
         legibilityWeight: LegibilityWeight,
         colorScheme: ColorScheme,
         accentColor: Color?,
-        calendar: Calendar.Identifier,
+        calendar: Calendar,
         timeZone: TimeZones,
         dynamicTypeSize: DynamicTypeSizeWrapper?
     ) -> some View {
         environment(\.locale, locale)
             .environment(\.legibilityWeight, legibilityWeight) // 🚫 `legibilityWeight` is not working currently. (Same for Xcode preview)
             .environment(\.colorScheme, colorScheme)
-            .environment(\.calendar, Calendar(identifier: calendar))
+            .environment(\.calendar, calendar)
             .environment(\.timeZone, timeZone.toTimeZone())
             .whenLet(sizeClasses) { content, sizeClasses in
                 content
