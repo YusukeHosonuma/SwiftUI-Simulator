@@ -17,45 +17,45 @@ public struct SimulatorView<Content: View>: View {
     //
     // Device and Appearance
     //
-    @Default(.device) var device
-    @Default(.isDark) var isDark
-    @Default(.isDualMode) var isDualMode
-    @Default(.isPortrait) var isPortrait
+    @Default(.device) private var device
+    @Default(.isDark) private var isDark
+    @Default(.isDualMode) private var isDualMode
+    @Default(.isPortrait) private var isPortrait
 
     //
     // Presets
     //
-    @Default(.enableDevices) var enableDevices
-    @Default(.enableLocales) var enableLocales
-    @Default(.enableCalendars) var enableCalendars
-    @Default(.enableTimeZones) var enableTimeZones
+    @Default(.enableDevices) private var enableDevices
+    @Default(.enableLocales) private var enableLocales
+    @Default(.enableCalendars) private var enableCalendars
+    @Default(.enableTimeZones) private var enableTimeZones
 
     //
     // Fonts
     //
-    @Default(.legibilityWeight) var legibilityWeight
-    @Default(.dynamicTypeSize) var dynamicTypeSize
-    @Default(.isDynamicTypeSizesEnabled) var isDynamicTypeSizesEnabled
+    @Default(.legibilityWeight) private var legibilityWeight
+    @Default(.dynamicTypeSize) private var dynamicTypeSize
+    @Default(.isDynamicTypeSizesEnabled) private var isDynamicTypeSizesEnabled
 
     //
     // International
     //
-    @Default(.locale) var locale
-    @Default(.calendar) var calendar
-    @Default(.timeZone) var timeZone
+    @Default(.locale) private var locale
+    @Default(.calendar) private var calendar
+    @Default(.timeZone) private var timeZone
 
     //
     // Debug information
     //
-    @Default(.isDisplayInformation) var isDisplayInformation
-    @Default(.isDisplaySafeArea) var isDisplaySafeArea
+    @Default(.isDisplayInformation) private var isDisplayInformation
+    @Default(.isDisplaySafeArea) private var isDisplaySafeArea
 
     //
     // Simultor state
     //
-    @Default(.isSimulatorEnabled) var isSimulatorEnabled
-    @Default(.isDisplayCheetSheet) var isDisplayCheetSheet
-    @Default(.isHiddenControl) var isHiddenControl
+    @Default(.isSimulatorEnabled) private var isSimulatorEnabled
+    @Default(.isDisplayCheetSheet) private var isDisplayCheetSheet
+    @Default(.isHiddenControl) private var isHiddenControl
 
     //
     // Sheets

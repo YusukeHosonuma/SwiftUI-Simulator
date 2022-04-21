@@ -54,10 +54,17 @@ extension Defaults.Keys {
     static let isSimulatorEnabled = Key<Bool>("\(prefix).isSimulatorEnabled", default: true)
     static let isDisplayCheetSheet = Key<Bool>("\(prefix).isDisplayCheetSheet", default: false)
     static let isHiddenControl = Key<Bool>("\(prefix).isHiddenControl", default: false)
+
+    //
+    // Setting view
+    //
+    static let isExpandedDevice = Key<Bool>("\(prefix).Setting.isExpandedDevice", default: false)
+    static let isExpandedLocale = Key<Bool>("\(prefix).Setting.isExpandedLocale", default: false)
+    static let isExpandedCalendar = Key<Bool>("\(prefix).Setting.isExpandedCalendar", default: false)
+    static let isExpandedTimeZone = Key<Bool>("\(prefix).Setting.isExpandedTimeZone", default: false)
 }
 
 extension Device: Defaults.Serializable {}
-
 extension LegibilityWeight: Defaults.Serializable {}
 extension DynamicTypeSizeWrapper: Defaults.Serializable {}
 extension Calendar.Identifier: Defaults.Serializable {}
