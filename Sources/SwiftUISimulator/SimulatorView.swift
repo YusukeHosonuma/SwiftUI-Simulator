@@ -281,7 +281,7 @@ public struct SimulatorView<Content: View>: View {
                     content()
                         .overrideEnvironments(
                             sizeClasses: nil, // ☑️ Use real device size classes.
-                            locale: locale,
+                            locale: locale.map(Locale.init) ?? Locale.current,
                             legibilityWeight: legibilityWeight,
                             colorScheme: isDark ? .dark : .light,
                             accentColor: isDark ? accentColorDark : accentColorLight,
@@ -507,7 +507,11 @@ public struct SimulatorView<Content: View>: View {
                     // - Current
                     //
                     Picker(selection: $timeZone) {
+                        //
+                        // Device default
+                        //
                         Label("Default", systemImage: "iphone").tag(TimeZones.current)
+                        
                         ForEach(Array(enableTimeZones.sorted().reversed())) { timeZone in
                             Text(timeZone.label).tag(timeZone)
                         }
@@ -523,8 +527,14 @@ public struct SimulatorView<Content: View>: View {
                 //
                 Menu {
                     Picker(selection: $locale) {
+                        //
+                        // Device default
+                        //
+                        Label("Default", systemImage: "iphone").tagLocale(nil)
+                        
                         ForEach(Array(enableLocales.sorted().reversed()), id: \.self) { identifier in
-                            Text(identifier).tag(identifier)
+                            Text(identifier)
+                                .tagLocale(identifier)
                         }
                     } label: {
                         EmptyView()
@@ -637,7 +647,8 @@ public struct SimulatorView<Content: View>: View {
                         Text(dynamicTypeSize.label)
                     }
                     Spacer()
-                    Text("\(locale) / \(calendar.rawValue) / \(timeZone.rawValue)")
+                                        
+                    Text("\(localeText) / \(calendar.rawValue) / \(timeZone.rawValue)")
                 }
                 .foregroundColor(.info)
                 .font(.caption)
@@ -646,6 +657,14 @@ public struct SimulatorView<Content: View>: View {
         .frame(width: width)
     }
 
+    private var localeText: String {
+        if let locale = locale {
+            return locale
+        } else {
+            return "default"
+        }
+    }
+    
     @ViewBuilder
     private func simulatedScreen(device: Device, colorScheme: ColorScheme, orientation: DeviceOrientation) -> some View {
         let deviceSize = device.size(orientation: orientation)
@@ -653,7 +672,7 @@ public struct SimulatorView<Content: View>: View {
         let contentSize = safeArea.contentSize
         let sizeClass = device.sizeClass(orientation: orientation)
         let frameSize = isDisplaySafeArea ? deviceSize : contentSize
-
+        
         VStack(spacing: 0) {
             //
             // Safe area - Top
@@ -687,7 +706,7 @@ public struct SimulatorView<Content: View>: View {
         .border(.blue)
         .overrideEnvironments(
             sizeClasses: sizeClass,
-            locale: locale,
+            locale: locale.map(Locale.init) ?? Locale.current,
             legibilityWeight: legibilityWeight,
             colorScheme: colorScheme,
             accentColor: colorScheme == .dark ? accentColorDark : accentColorLight,
@@ -696,7 +715,7 @@ public struct SimulatorView<Content: View>: View {
             dynamicTypeSize: dynamicTypeSize
         )
     }
-
+    
     @ViewBuilder
     private func safeAreaMargin(_ axis: Axis, size: CGFloat) -> some View {
         if isDisplaySafeArea {
@@ -726,9 +745,13 @@ private extension View {
         tag(value)
     }
 
+    func tagLocale(_ value: String?) -> some View {
+        tag(value)
+    }
+
     func overrideEnvironments(
         sizeClasses: SizeClasses?,
-        locale: String,
+        locale: Locale,
         legibilityWeight: LegibilityWeight,
         colorScheme: ColorScheme,
         accentColor: Color?,
@@ -736,7 +759,7 @@ private extension View {
         timeZone: TimeZones,
         dynamicTypeSize: DynamicTypeSizeWrapper?
     ) -> some View {
-        environment(\.locale, .init(identifier: locale))
+        environment(\.locale, locale)
             .environment(\.legibilityWeight, legibilityWeight) // 🚫 `legibilityWeight` is not working currently. (Same for Xcode preview)
             .environment(\.colorScheme, colorScheme)
             .environment(\.calendar, Calendar(identifier: calendar))
