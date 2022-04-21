@@ -82,10 +82,10 @@ public struct SimulatorView<Content: View>: View {
     // Initializer
     //
     public init(
-        defaultDevices: Set<Device>? = nil,
-        defaultLocaleIdentifiers: Set<String>? = nil,
-        defaultCalendarIdentifiers: Set<Calendar.Identifier>? = nil,
-        defaultTimeZones: Set<TimeZones>? = nil,
+        defaultDevices userDevices: Set<Device>? = nil,
+        defaultLocaleIdentifiers userLocaleIdentifiers: Set<String>? = nil,
+        defaultCalendarIdentifiers userCalendarIdentifiers: Set<Calendar.Identifier>? = nil,
+        defaultTimeZones userTimeZones: Set<TimeZones>? = nil,
         accentColorName: String = "AccentColor",
         @ViewBuilder _ content: @escaping () -> Content
     ) {
@@ -94,10 +94,10 @@ public struct SimulatorView<Content: View>: View {
         //
         // Presets
         //
-        self.defaultDevices = defaultDevices ?? Presets.devices
-        defaultLocales = defaultLocaleIdentifiers ?? Presets.locales
-        defaultCalendars = defaultCalendarIdentifiers ?? Presets.calendars
-        self.defaultTimeZones = defaultTimeZones ?? Presets.timeZones
+        defaultDevices = userDevices ?? Presets.devices
+        defaultLocales = userLocaleIdentifiers ?? Presets.locales
+        defaultCalendars = userCalendarIdentifiers ?? Presets.calendars
+        defaultTimeZones = userTimeZones ?? Presets.timeZones
 
         //
         // AccentColor
@@ -118,19 +118,19 @@ public struct SimulatorView<Content: View>: View {
         // 3. Default presets.
         //
         if enableDevices.isEmpty {
-            enableDevices = defaultDevices ?? Presets.devices
+            enableDevices = userDevices ?? Presets.devices
         }
 
         if enableLocales.isEmpty {
-            enableLocales = defaultLocaleIdentifiers ?? Presets.locales
+            enableLocales = userLocaleIdentifiers ?? Presets.locales
         }
 
         if enableCalendars.isEmpty {
-            enableCalendars = defaultCalendarIdentifiers ?? Presets.calendars
+            enableCalendars = userCalendarIdentifiers ?? Presets.calendars
         }
 
         if enableTimeZones.isEmpty {
-            enableTimeZones = defaultTimeZones ?? Presets.timeZones
+            enableTimeZones = userTimeZones ?? Presets.timeZones
         }
     }
 
