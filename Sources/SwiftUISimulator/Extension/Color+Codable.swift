@@ -1,10 +1,9 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Yusuke Hosonuma on 2022/04/21.
 //
-
 
 import SwiftUI
 
@@ -19,19 +18,19 @@ import WatchKit
 import AppKit
 #endif
 
-fileprivate extension Color {
+private extension Color {
     #if os(macOS)
     typealias SystemColor = NSColor
     #else
     typealias SystemColor = UIColor
     #endif
-    
+
     var colorComponents: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)? {
         var r: CGFloat = 0
         var g: CGFloat = 0
         var b: CGFloat = 0
         var a: CGFloat = 0
-        
+
         #if os(macOS)
         SystemColor(self).getRed(&r, green: &g, blue: &b, alpha: &a)
         // Note that non RGB color will raise an exception, that I don't now how to catch because it is an Objc exception.
@@ -42,7 +41,7 @@ fileprivate extension Color {
             return nil
         }
         #endif
-        
+
         return (r, g, b, a)
     }
 }
@@ -51,7 +50,7 @@ extension Color: Codable {
     enum CodingKeys: String, CodingKey {
         case red, green, blue, alpha
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let r = try container.decode(Double.self, forKey: .red)
@@ -63,12 +62,12 @@ extension Color: Codable {
     }
 
     public func encode(to encoder: Encoder) throws {
-        guard let colorComponents = self.colorComponents else {
+        guard let colorComponents = colorComponents else {
             return
         }
-        
+
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         try container.encode(colorComponents.red, forKey: .red)
         try container.encode(colorComponents.green, forKey: .green)
         try container.encode(colorComponents.blue, forKey: .blue)

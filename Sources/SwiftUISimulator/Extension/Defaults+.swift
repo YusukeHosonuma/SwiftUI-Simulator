@@ -54,7 +54,7 @@ extension Defaults.Keys {
     static let isSimulatorEnabled = Key<Bool>("\(prefix).isSimulatorEnabled", default: true)
     static let isDisplayCheetSheet = Key<Bool>("\(prefix).isDisplayCheetSheet", default: false)
     static let isHiddenControl = Key<Bool>("\(prefix).isHiddenControl", default: false)
-    
+
     //
     // Simulator appearance
     //

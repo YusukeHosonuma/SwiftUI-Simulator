@@ -13,7 +13,7 @@ struct SettingView: View {
     @Binding var sourceLocales: Set<String>
     @Binding var sourceCalendars: Set<Calendar.Identifier>
     @Binding var sourceTimeZones: Set<TimeZones>
-    
+
     @Binding var sourceSimulatorAccentColor: Color
     @Binding var sourceSimulatorBorderColor: Color
     @Binding var sourceSimulatorSafeAreaColorr: Color
@@ -49,7 +49,7 @@ struct SettingView: View {
     private var timeZones: [TimeZones] {
         sourceTimeZones.sorted()
     }
-    
+
     var body: some View {
         NavigationView {
             Form {
@@ -142,7 +142,6 @@ struct SettingView: View {
                         ColorPicker("SafeArea Color", selection: $sourceSimulatorSafeAreaColorr)
                     } label: {
                         Label("Simulator", systemImage: "terminal")
-
                     }
                 }
                 Section {

@@ -15,7 +15,7 @@ extension Color {
     static var defaultSimulatorAccent: Self {
         .blue
     }
-    
+
     static var defaultSimulatorBorder: Self {
         .blue
     }
