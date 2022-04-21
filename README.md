@@ -30,7 +30,7 @@ And following:
 ```swift
 let package = Package(
     dependencies: [
-        .package(url: "https://github.com/YusukeHosonuma/SwiftUI-Simulator.git", from: "1.2.0"),
+        .package(url: "https://github.com/YusukeHosonuma/SwiftUI-Simulator.git", from: "1.3.0"),
     ],
     targets: [
         .target(name: "<your-target-name>", dependencies: [
@@ -73,6 +73,7 @@ struct ExampleApp: App {
 
 - This OSS supports **SwiftUI app** only.<br>
   - For example, it may not work if you have resolve `locale` by yourself. (e.g. use [SwiftGen](https://github.com/SwiftGen/SwiftGen))
+- `sheet()` and `fullScreenCover()` are not working currently. [#37](https://github.com/YusukeHosonuma/SwiftUI-Simulator/issues/37)
 
 ## Configurations
 
@@ -97,13 +98,13 @@ Issues and PRs are welcome, even for minor improvements and corrections.
 
 ## FAQ
 
-Q. How to disable this simulator?<br>
-A. `Disable simulator` in setting menu.
-
-<img width="244" alt="image" src="https://user-images.githubusercontent.com/2990285/163753616-b62d616b-bbf4-4e28-bd2d-a058d5537fad.png">
-
 Q. How it works?<br>
 A. Perhaps as you might imagine, this is achieved by overriding SwiftUI's [Environment](https://developer.apple.com/documentation/swiftui/environment).
+
+Q. How to disable this simulator?<br>
+A. `Disable Simulator` in setting menu.
+
+<img width="205" alt="image" src="https://user-images.githubusercontent.com/2990285/164544318-18b2f547-44ef-46da-8a29-6744d1c27990.png">
 
 ## Author
 
