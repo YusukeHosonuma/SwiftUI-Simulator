@@ -51,10 +51,16 @@ extension Defaults.Keys {
     //
     // Simultor state
     //
-    static let simulatorAccentColor = Key<ColorWrapper>("\(prefix).simulatorAccentColor", default: ColorWrapper(.blue))
     static let isSimulatorEnabled = Key<Bool>("\(prefix).isSimulatorEnabled", default: true)
     static let isDisplayCheetSheet = Key<Bool>("\(prefix).isDisplayCheetSheet", default: false)
     static let isHiddenControl = Key<Bool>("\(prefix).isHiddenControl", default: false)
+    
+    //
+    // Simulator appearance
+    //
+    static let simulatorAccentColor = Key<ColorWrapper>("\(prefix).simulatorAccentColor", default: ColorWrapper(.defaultSimulatorAccent))
+    static let simulatorBorderColor = Key<ColorWrapper>("\(prefix).simulatorBorderColor", default: ColorWrapper(.defaultSimulatorBorder))
+    static let simulatorSafeAreaColor = Key<ColorWrapper>("\(prefix).simulatorSafeAreaColor", default: ColorWrapper(.defaultSimulatorSafeArea))
 
     //
     // Setting view
@@ -63,6 +69,7 @@ extension Defaults.Keys {
     static let isExpandedLocale = Key<Bool>("\(prefix).Setting.isExpandedLocale", default: false)
     static let isExpandedCalendar = Key<Bool>("\(prefix).Setting.isExpandedCalendar", default: false)
     static let isExpandedTimeZone = Key<Bool>("\(prefix).Setting.isExpandedTimeZone", default: false)
+    static let isExpandedSimulator = Key<Bool>("\(prefix).Setting.isExpandedSimulator", default: false)
 }
 
 extension ColorWrapper: Defaults.Serializable {}

@@ -13,7 +13,11 @@ struct SettingView: View {
     @Binding var sourceLocales: Set<String>
     @Binding var sourceCalendars: Set<Calendar.Identifier>
     @Binding var sourceTimeZones: Set<TimeZones>
-    @Binding var sourceColor: Color
+    
+    @Binding var sourceSimulatorAccentColor: Color
+    @Binding var sourceSimulatorBorderColor: Color
+    @Binding var sourceSimulatorSafeAreaColorr: Color
+
     let defaultDevices: Set<Device>
     let defaultLocales: Set<String>
     let defaultCalendars: Set<Calendar.Identifier>
@@ -23,6 +27,7 @@ struct SettingView: View {
     @Default(.isExpandedLocale) private var isExpandedLocale
     @Default(.isExpandedCalendar) private var isExpandedCalendar
     @Default(.isExpandedTimeZone) private var isExpandedTimeZone
+    @Default(.isExpandedSimulator) private var isExpandedSimulator
 
     // 💡 iOS 15+: `\.dismiss`
     @Environment(\.presentationMode) private var presentationMode
@@ -44,7 +49,7 @@ struct SettingView: View {
     private var timeZones: [TimeZones] {
         sourceTimeZones.sorted()
     }
-
+    
     var body: some View {
         NavigationView {
             Form {
@@ -131,15 +136,21 @@ struct SettingView: View {
                     }
                 }
                 Section {
-                    ColorPicker("Simulator Accent Color", selection: $sourceColor)
+                    DisclosureGroup(isExpanded: $isExpandedSimulator) {
+                        ColorPicker("Accent Color", selection: $sourceSimulatorAccentColor)
+                        ColorPicker("Border Color", selection: $sourceSimulatorBorderColor)
+                        ColorPicker("SafeArea Color", selection: $sourceSimulatorSafeAreaColorr)
+                    } label: {
+                        Label("Simulator", systemImage: "terminal")
+
+                    }
                 }
                 Section {
                     HStack {
                         Spacer()
-                        Button("Reset to default") {
+                        Button("Reset") {
                             isPresentedResetAlert.toggle()
                         }
-                        .foregroundColor(.red) // Destructive color
                         Spacer()
                     }
                 }
@@ -153,6 +164,10 @@ struct SettingView: View {
                 }
             }
             .alert(isPresented: $isPresentedResetAlert) {
+                //
+                // ⚠️ Accent color is not reflected to Alert. (However, it is not fatal, so it is a compromise)
+                // https://stackoverflow.com/questions/64186014/swiftui-how-can-i-change-the-color-of-alert-button-and-navigationlink-back-butt
+                //
                 Alert(
                     title: Text("Reset to default values?"),
                     primaryButton: .default(Text("Cancel")),
@@ -184,5 +199,8 @@ struct SettingView: View {
         sourceLocales = defaultLocales
         sourceCalendars = defaultCalendars
         sourceTimeZones = defaultTimeZones
+        sourceSimulatorAccentColor = .defaultSimulatorAccent
+        sourceSimulatorBorderColor = .defaultSimulatorBorder
+        sourceSimulatorSafeAreaColorr = .defaultSimulatorSafeArea
     }
 }

@@ -53,10 +53,16 @@ public struct SimulatorView<Content: View>: View {
     //
     // Simultor state
     //
-    @Default(.simulatorAccentColor) private var simulatorAccentColor
     @Default(.isSimulatorEnabled) private var isSimulatorEnabled
     @Default(.isDisplayCheetSheet) private var isDisplayCheetSheet
     @Default(.isHiddenControl) private var isHiddenControl
+
+    //
+    // Simulator appearance
+    //
+    @Default(.simulatorAccentColor) private var simulatorAccentColor
+    @Default(.simulatorBorderColor) private var simulatorBorderColor
+    @Default(.simulatorSafeAreaColor) private var simulatorSafeAreaColor
 
     //
     // Sheets
@@ -241,7 +247,9 @@ public struct SimulatorView<Content: View>: View {
                 sourceLocales: $enableLocales,
                 sourceCalendars: $enableCalendars,
                 sourceTimeZones: $enableTimeZones,
-                sourceColor: $simulatorAccentColor.rawValue,
+                sourceSimulatorAccentColor: $simulatorAccentColor.rawValue,
+                sourceSimulatorBorderColor: $simulatorBorderColor.rawValue,
+                sourceSimulatorSafeAreaColorr: $simulatorSafeAreaColor.rawValue,
                 defaultDevices: defaultDevices,
                 defaultLocales: defaultLocales,
                 defaultCalendars: defaultCalendars,
@@ -730,7 +738,7 @@ public struct SimulatorView<Content: View>: View {
             safeAreaMargin(.vertical, size: safeArea.bottom)
         }
         .frame(width: frameSize.width, height: frameSize.height)
-        .border(.blue)
+        .border(simulatorBorderColor.rawValue)
         .overrideEnvironments(
             sizeClasses: sizeClass,
             locale: locale.map(Locale.init) ?? Locale.current,
@@ -756,7 +764,7 @@ public struct SimulatorView<Content: View>: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.safeArea)
+            .background(simulatorSafeAreaColor.rawValue)
             .when(axis == .vertical) {
                 $0.frame(height: size)
             }
