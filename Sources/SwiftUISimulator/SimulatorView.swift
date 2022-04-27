@@ -13,7 +13,29 @@ internal let storageKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator"
 //
 // SimulatorView
 //
-public struct SimulatorView<Content: View>: View {
+
+public extension SimulatorView where DebugMenu == EmptyView {
+    init(
+        defaultDevices userDevices: Set<Device>? = nil,
+        defaultLocaleIdentifiers userLocaleIdentifiers: Set<String>? = nil,
+        defaultCalendarIdentifiers userCalendarIdentifiers: Set<Calendar.Identifier>? = nil,
+        defaultTimeZones userTimeZones: Set<TimeZones>? = nil,
+        accentColorName: String = "AccentColor",
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.init(
+            defaultDevices: userDevices,
+            defaultLocaleIdentifiers: userLocaleIdentifiers,
+            defaultCalendarIdentifiers: userCalendarIdentifiers,
+            defaultTimeZones: userTimeZones,
+            accentColorName: accentColorName,
+            debugMenu: { EmptyView() },
+            content: content
+        )
+    }
+}
+
+public struct SimulatorView<Content: View, DebugMenu: View>: View {
     //
     // Device and Appearance
     //
@@ -68,7 +90,7 @@ public struct SimulatorView<Content: View>: View {
     // Sheets
     //
     @State private var isPresentedSettingSheet = false
-
+    
     //
     // Environments
     //
@@ -78,6 +100,7 @@ public struct SimulatorView<Content: View>: View {
     // Private properties
     //
     private let content: () -> Content
+    private let debugMenu: () -> DebugMenu
     private let defaultDevices: Set<Device>
     private let defaultLocales: Set<String>
     private let defaultCalendars: Set<Calendar.Identifier>
@@ -94,9 +117,11 @@ public struct SimulatorView<Content: View>: View {
         defaultCalendarIdentifiers userCalendarIdentifiers: Set<Calendar.Identifier>? = nil,
         defaultTimeZones userTimeZones: Set<TimeZones>? = nil,
         accentColorName: String = "AccentColor",
-        @ViewBuilder _ content: @escaping () -> Content
+        @ViewBuilder debugMenu: @escaping () -> DebugMenu,
+        @ViewBuilder content: @escaping () -> Content
     ) {
         self.content = content
+        self.debugMenu = debugMenu
 
         //
         // Presets
@@ -189,6 +214,13 @@ public struct SimulatorView<Content: View>: View {
             } label: {
                 Label("Settings", systemImage: "gear")
             }
+
+            Divider() // --------
+
+            //
+            // User custom debug menu
+            //
+            debugMenu()
 
             Divider() // --------
 
