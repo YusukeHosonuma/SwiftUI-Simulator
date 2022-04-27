@@ -36,10 +36,7 @@ struct ContentView: View {
                 //
                 // Message
                 //
-                Text(LocalizedStringKey("message"))
-                    .font(.title3)
-                    .bold()
-                    .padding(.bottom, 64)
+                MessageView()
 
                 //
                 // Test for accentColor
@@ -87,6 +84,7 @@ struct ContentView: View {
         .onAppear {
             state.onAppear()
         }
+        .debugFilename()
     }
 }
 
