@@ -11,9 +11,93 @@ import SwiftUI
 internal let storageKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator"
 
 //
+// Initializer without `debugMenu`.
+//
+public extension SimulatorView where DebugMenu == EmptyView {
+    init(
+        defaultDevices userDevices: Set<Device>? = nil,
+        defaultLocaleIdentifiers userLocaleIdentifiers: Set<String>? = nil,
+        defaultCalendarIdentifiers userCalendarIdentifiers: Set<Calendar.Identifier>? = nil,
+        defaultTimeZones userTimeZones: Set<TimeZones>? = nil,
+        accentColorName: String = "AccentColor",
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.init(
+            defaultDevices: userDevices,
+            defaultLocaleIdentifiers: userLocaleIdentifiers,
+            defaultCalendarIdentifiers: userCalendarIdentifiers,
+            defaultTimeZones: userTimeZones,
+            accentColorName: accentColorName,
+            debugMenu: { EmptyView() },
+            content: content
+        )
+    }
+}
+
+//
+// Full qualified initializer.
+//
+public extension SimulatorView {
+    init(
+        defaultDevices userDevices: Set<Device>? = nil,
+        defaultLocaleIdentifiers userLocaleIdentifiers: Set<String>? = nil,
+        defaultCalendarIdentifiers userCalendarIdentifiers: Set<Calendar.Identifier>? = nil,
+        defaultTimeZones userTimeZones: Set<TimeZones>? = nil,
+        accentColorName: String = "AccentColor",
+        @ViewBuilder debugMenu: @escaping () -> DebugMenu,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.content = content
+        self.debugMenu = debugMenu
+
+        //
+        // Presets
+        //
+        defaultDevices = userDevices ?? Presets.devices
+        defaultLocales = userLocaleIdentifiers ?? Presets.locales
+        defaultCalendars = userCalendarIdentifiers ?? Presets.calendars
+        defaultTimeZones = userTimeZones ?? Presets.timeZones
+
+        //
+        // AccentColor
+        //
+        if let accentColor = UIColor(named: accentColorName) {
+            accentColorLight = Color(accentColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)))
+            accentColorDark = Color(accentColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark)))
+        } else {
+            accentColorLight = nil
+            accentColorDark = nil
+        }
+
+        //
+        // 💡 The following priority order.
+        //
+        // 1. Saved user settings. (if not empty)
+        // 2. Specified user settings on SimulatorView's initializer.
+        // 3. Default presets.
+        //
+        if enableDevices.isEmpty {
+            enableDevices = userDevices ?? Presets.devices
+        }
+
+        if enableLocales.isEmpty {
+            enableLocales = userLocaleIdentifiers ?? Presets.locales
+        }
+
+        if enableCalendars.isEmpty {
+            enableCalendars = userCalendarIdentifiers ?? Presets.calendars
+        }
+
+        if enableTimeZones.isEmpty {
+            enableTimeZones = userTimeZones ?? Presets.timeZones
+        }
+    }
+}
+
+//
 // SimulatorView
 //
-public struct SimulatorView<Content: View>: View {
+public struct SimulatorView<Content: View, DebugMenu: View>: View {
     //
     // Device and Appearance
     //
@@ -68,7 +152,7 @@ public struct SimulatorView<Content: View>: View {
     // Sheets
     //
     @State private var isPresentedSettingSheet = false
-
+    
     //
     // Environments
     //
@@ -78,68 +162,13 @@ public struct SimulatorView<Content: View>: View {
     // Private properties
     //
     private let content: () -> Content
+    private let debugMenu: () -> DebugMenu
     private let defaultDevices: Set<Device>
     private let defaultLocales: Set<String>
     private let defaultCalendars: Set<Calendar.Identifier>
     private let defaultTimeZones: Set<TimeZones>
     private let accentColorLight: Color?
     private let accentColorDark: Color?
-
-    //
-    // Initializer
-    //
-    public init(
-        defaultDevices userDevices: Set<Device>? = nil,
-        defaultLocaleIdentifiers userLocaleIdentifiers: Set<String>? = nil,
-        defaultCalendarIdentifiers userCalendarIdentifiers: Set<Calendar.Identifier>? = nil,
-        defaultTimeZones userTimeZones: Set<TimeZones>? = nil,
-        accentColorName: String = "AccentColor",
-        @ViewBuilder _ content: @escaping () -> Content
-    ) {
-        self.content = content
-
-        //
-        // Presets
-        //
-        defaultDevices = userDevices ?? Presets.devices
-        defaultLocales = userLocaleIdentifiers ?? Presets.locales
-        defaultCalendars = userCalendarIdentifiers ?? Presets.calendars
-        defaultTimeZones = userTimeZones ?? Presets.timeZones
-
-        //
-        // AccentColor
-        //
-        if let accentColor = UIColor(named: accentColorName) {
-            accentColorLight = Color(accentColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)))
-            accentColorDark = Color(accentColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark)))
-        } else {
-            accentColorLight = nil
-            accentColorDark = nil
-        }
-
-        //
-        // 💡 The following priority order.
-        //
-        // 1. Saved user settings. (if not empty)
-        // 2. Specified user settings on SimulatorView's initializer.
-        // 3. Default presets.
-        //
-        if enableDevices.isEmpty {
-            enableDevices = userDevices ?? Presets.devices
-        }
-
-        if enableLocales.isEmpty {
-            enableLocales = userLocaleIdentifiers ?? Presets.locales
-        }
-
-        if enableCalendars.isEmpty {
-            enableCalendars = userCalendarIdentifiers ?? Presets.calendars
-        }
-
-        if enableTimeZones.isEmpty {
-            enableTimeZones = userTimeZones ?? Presets.timeZones
-        }
-    }
 
     public var body: some View {
         VStack {
@@ -189,6 +218,13 @@ public struct SimulatorView<Content: View>: View {
             } label: {
                 Label("Settings", systemImage: "gear")
             }
+
+            Divider() // --------
+
+            //
+            // User custom debug menu
+            //
+            debugMenu()
 
             Divider() // --------
 
