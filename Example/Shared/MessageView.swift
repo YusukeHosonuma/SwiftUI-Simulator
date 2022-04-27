@@ -8,10 +8,6 @@
 import SwiftUI
 
 struct MessageView: View {
-    init() {
-        print()
-    }
-
     var body: some View {
         Text(LocalizedStringKey("message"))
             .font(.title3)
