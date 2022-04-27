@@ -152,7 +152,7 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
     // Sheets
     //
     @State private var isPresentedSettingSheet = false
-    
+
     //
     // Environments
     //

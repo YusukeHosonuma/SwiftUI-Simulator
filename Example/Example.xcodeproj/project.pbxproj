@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		70064E2E28198C0900365BAC /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70064E2D28198C0900365BAC /* MessageView.swift */; };
+		70064E2F28198C0900365BAC /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70064E2D28198C0900365BAC /* MessageView.swift */; };
 		7036CD6C280CEC07007EB7F8 /* SwiftUISimulator in Frameworks */ = {isa = PBXBuildFile; productRef = 7036CD6B280CEC07007EB7F8 /* SwiftUISimulator */; };
 		7036CD70280CF107007EB7F8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7036CD73280CF107007EB7F8 /* Localizable.strings */; };
 		7036CD71280CF107007EB7F8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7036CD73280CF107007EB7F8 /* Localizable.strings */; };
@@ -19,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		70064E2D28198C0900365BAC /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 		7036CD69280CEBF1007EB7F8 /* SwiftUI-Simulator */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "SwiftUI-Simulator"; path = ..; sourceTree = "<group>"; };
 		7036CD72280CF107007EB7F8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		7036CD74280CF108007EB7F8 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -82,6 +85,7 @@
 				705C42C7280CE8D200441A8C /* ContentView.swift */,
 				705C42C8280CE8D400441A8C /* Assets.xcassets */,
 				7036CD73280CF107007EB7F8 /* Localizable.strings */,
+				70064E2D28198C0900365BAC /* MessageView.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -207,6 +211,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70064E2E28198C0900365BAC /* MessageView.swift in Sources */,
 				705C42D8280CE8D400441A8C /* ContentView.swift in Sources */,
 				705C42D6280CE8D400441A8C /* ExampleApp.swift in Sources */,
 			);
@@ -216,6 +221,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70064E2F28198C0900365BAC /* MessageView.swift in Sources */,
 				705C42D9280CE8D400441A8C /* ContentView.swift in Sources */,
 				705C42D7280CE8D400441A8C /* ExampleApp.swift in Sources */,
 			);
