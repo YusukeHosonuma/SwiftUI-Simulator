@@ -11,9 +11,8 @@ import SwiftUI
 internal let storageKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator"
 
 //
-// SimulatorView
+// Initializer without `debugMenu`.
 //
-
 public extension SimulatorView where DebugMenu == EmptyView {
     init(
         defaultDevices userDevices: Set<Device>? = nil,
@@ -35,6 +34,69 @@ public extension SimulatorView where DebugMenu == EmptyView {
     }
 }
 
+//
+// Full qualified initializer.
+//
+public extension SimulatorView {
+    init(
+        defaultDevices userDevices: Set<Device>? = nil,
+        defaultLocaleIdentifiers userLocaleIdentifiers: Set<String>? = nil,
+        defaultCalendarIdentifiers userCalendarIdentifiers: Set<Calendar.Identifier>? = nil,
+        defaultTimeZones userTimeZones: Set<TimeZones>? = nil,
+        accentColorName: String = "AccentColor",
+        @ViewBuilder debugMenu: @escaping () -> DebugMenu,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.content = content
+        self.debugMenu = debugMenu
+
+        //
+        // Presets
+        //
+        defaultDevices = userDevices ?? Presets.devices
+        defaultLocales = userLocaleIdentifiers ?? Presets.locales
+        defaultCalendars = userCalendarIdentifiers ?? Presets.calendars
+        defaultTimeZones = userTimeZones ?? Presets.timeZones
+
+        //
+        // AccentColor
+        //
+        if let accentColor = UIColor(named: accentColorName) {
+            accentColorLight = Color(accentColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)))
+            accentColorDark = Color(accentColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark)))
+        } else {
+            accentColorLight = nil
+            accentColorDark = nil
+        }
+
+        //
+        // 💡 The following priority order.
+        //
+        // 1. Saved user settings. (if not empty)
+        // 2. Specified user settings on SimulatorView's initializer.
+        // 3. Default presets.
+        //
+        if enableDevices.isEmpty {
+            enableDevices = userDevices ?? Presets.devices
+        }
+
+        if enableLocales.isEmpty {
+            enableLocales = userLocaleIdentifiers ?? Presets.locales
+        }
+
+        if enableCalendars.isEmpty {
+            enableCalendars = userCalendarIdentifiers ?? Presets.calendars
+        }
+
+        if enableTimeZones.isEmpty {
+            enableTimeZones = userTimeZones ?? Presets.timeZones
+        }
+    }
+}
+
+//
+// SimulatorView
+//
 public struct SimulatorView<Content: View, DebugMenu: View>: View {
     //
     // Device and Appearance
@@ -107,64 +169,6 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
     private let defaultTimeZones: Set<TimeZones>
     private let accentColorLight: Color?
     private let accentColorDark: Color?
-
-    //
-    // Initializer
-    //
-    public init(
-        defaultDevices userDevices: Set<Device>? = nil,
-        defaultLocaleIdentifiers userLocaleIdentifiers: Set<String>? = nil,
-        defaultCalendarIdentifiers userCalendarIdentifiers: Set<Calendar.Identifier>? = nil,
-        defaultTimeZones userTimeZones: Set<TimeZones>? = nil,
-        accentColorName: String = "AccentColor",
-        @ViewBuilder debugMenu: @escaping () -> DebugMenu,
-        @ViewBuilder content: @escaping () -> Content
-    ) {
-        self.content = content
-        self.debugMenu = debugMenu
-
-        //
-        // Presets
-        //
-        defaultDevices = userDevices ?? Presets.devices
-        defaultLocales = userLocaleIdentifiers ?? Presets.locales
-        defaultCalendars = userCalendarIdentifiers ?? Presets.calendars
-        defaultTimeZones = userTimeZones ?? Presets.timeZones
-
-        //
-        // AccentColor
-        //
-        if let accentColor = UIColor(named: accentColorName) {
-            accentColorLight = Color(accentColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)))
-            accentColorDark = Color(accentColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark)))
-        } else {
-            accentColorLight = nil
-            accentColorDark = nil
-        }
-
-        //
-        // 💡 The following priority order.
-        //
-        // 1. Saved user settings. (if not empty)
-        // 2. Specified user settings on SimulatorView's initializer.
-        // 3. Default presets.
-        //
-        if enableDevices.isEmpty {
-            enableDevices = userDevices ?? Presets.devices
-        }
-
-        if enableLocales.isEmpty {
-            enableLocales = userLocaleIdentifiers ?? Presets.locales
-        }
-
-        if enableCalendars.isEmpty {
-            enableCalendars = userCalendarIdentifiers ?? Presets.calendars
-        }
-
-        if enableTimeZones.isEmpty {
-            enableTimeZones = userTimeZones ?? Presets.timeZones
-        }
-    }
 
     public var body: some View {
         VStack {
