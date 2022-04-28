@@ -9,8 +9,12 @@ import SwiftUI
 
 public extension View {
     func simulatorDebugFilename(_ file: StaticString = #file) -> some View {
-        let filename = String(String(file).split(separator: "/").last ?? "")
-        return modifier(DebugFilenameModifier(filename: filename))
+        let name = String(String(file).split(separator: "/").last?.replacingOccurrences(of: ".swift", with: "") ?? "")
+        return simulatorDebugFilename(name)
+    }
+    
+    func simulatorDebugFilename(_ name: String) -> some View {
+        modifier(DebugFilenameModifier(filename: name))
     }
 }
 
@@ -21,7 +25,7 @@ struct DebugFilenameModifier: ViewModifier {
         self.filename = filename
     }
 
-    @Environment(\.debugFilename) private var debugFilename
+    @Environment(\.simulatorDebugFilename) private var debugFilename
 
     func body(content: Content) -> some View {
         if debugFilename {
@@ -49,7 +53,7 @@ struct DebugFilenameEnvironmentKey: EnvironmentKey {
 }
 
 public extension EnvironmentValues {
-    var debugFilename: Bool {
+    var simulatorDebugFilename: Bool {
         get {
             self[DebugFilenameEnvironmentKey.self]
         }
