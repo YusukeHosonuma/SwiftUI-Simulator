@@ -30,7 +30,7 @@ And following:
 ```swift
 let package = Package(
     dependencies: [
-        .package(url: "https://github.com/YusukeHosonuma/SwiftUI-Simulator.git", from: "1.3.0"),
+        .package(url: "https://github.com/YusukeHosonuma/SwiftUI-Simulator.git", from: "1.4.0"),
     ],
     targets: [
         .target(name: "<your-target-name>", dependencies: [
@@ -43,15 +43,21 @@ let package = Package(
 2. Surround the your app's root view with `SimulatorView`.
 
 ```swift
+#if DEBUG
 import SwiftUISimulator
+#endif
 
 @main
 struct ExampleApp: App {
     var body: some Scene {
         WindowGroup {
+            #if DEBUG
             SimulatorView { // ✅ Please surround the your app's root view with `SimulatorView`.
                 ContentView()
             }
+            #else
+            ContentView()
+            #endif
         }
     }
 }
@@ -74,6 +80,110 @@ struct ExampleApp: App {
 - This OSS supports **SwiftUI app** only.<br>
   - For example, it may not work if you have resolve `locale` by yourself. (e.g. use [SwiftGen](https://github.com/SwiftGen/SwiftGen))
 - `sheet()` and `fullScreenCover()` are not working currently. [#37](https://github.com/YusukeHosonuma/SwiftUI-Simulator/issues/37)
+
+## Custom Debug Menu
+
+You can add custom debug menu.
+
+```swift
+SimulatorView {
+    // 💡 Add custom debug menu.
+    Button {
+        print("Hello!")
+    } label: {
+        Label("Custom Debug", systemImage: "ant.circle")
+    }
+} content: {
+    ContentView()
+}
+```
+
+This makes it easy to run custom debug action.
+
+<img width="267" alt="image" src="https://user-images.githubusercontent.com/2990285/165664233-758912e1-2aa3-4028-b1a0-43182329d02f.png">
+
+## Built-in Modifier (Experimental)
+
+As a built-in, we provide a modifier that displays the file name of the View.
+
+<img width="379" alt="image" src="https://user-images.githubusercontent.com/2990285/165665379-79b3570a-d207-4f41-a621-0254e4d55da3.png">
+
+The installation procedure is as follows. (recommended)
+
+1. Add `View+Debug.swift`.
+
+```swift
+import SwiftUI
+
+#if DEBUG
+import SwiftUISimulator
+#endif
+
+public extension View {
+    func debugFilename(_ file: StaticString = #file) -> some View {
+        #if DEBUG
+        simulatorDebugFilename(file) // 💡 Enabled when debug build only.
+        #else
+        self
+        #endif
+    }
+}
+```
+
+2. Add custom debug menu and environment.
+
+```swift
+struct ExampleApp: App {
+    //
+    // ✅ To show/hide
+    //
+    #if DEBUG
+    @State private var isEnabledDebugFilename = false
+    #endif
+
+    var body: some Scene {
+        WindowGroup {
+            #if DEBUG
+            SimulatorView {
+                //
+                // ✅ Add debug menu.
+                //
+                Menu {
+                    Toggle(isOn: $isEnabledDebugFilename) {
+                        Label("Filename", systemImage: "doc.text.magnifyingglass")
+                    }
+                } label: {
+                    Label("Debug", systemImage: "ant.circle")
+                }
+            } content: {
+                RootView()
+                    //
+                    // ✅ Add `debugFilename` environment value to root view.
+                    //
+                    .environment(\.debugFilename, isEnabledDebugFilename)
+            }
+            #else
+            ContentView()
+            #endif
+        }
+    }
+}
+```
+
+3. Add `debugFilename()` modifier to any views. (where you needed)
+
+```swift
+struct FooView: View {
+    var body: some View {
+        Text("Foo")
+            .debugFilename() // ✅
+    }
+}
+```
+
+Note:  
+As you can probably imagine, it is easy to make this yourself.
+Please refer to [DebugFilenameModifier.swift)](https://github.com/YusukeHosonuma/SwiftUI-Simulator/blob/main/Sources/SwiftUISimulator/DebugFilenameModifier.swift).
 
 ## Configurations
 
