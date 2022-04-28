@@ -106,7 +106,9 @@ This makes it easy to run custom debug action.
 
 As a built-in, we provide a modifier that displays the file name of the View.
 
-<img width="379" alt="image" src="https://user-images.githubusercontent.com/2990285/165665379-79b3570a-d207-4f41-a621-0254e4d55da3.png">
+| Debug enabled | Debug disabled |
+| -- | -- |
+| <img width="300" alt="image" src="https://user-images.githubusercontent.com/2990285/165674830-b4167811-162c-4d9b-985c-eb8a22ff83e5.png"> | <img width="300" alt="image" src="https://user-images.githubusercontent.com/2990285/165674861-1b473561-c164-4d5e-8bb1-8a7bf77780a1.png"> |
 
 The installation procedure is as follows. (recommended)
 
@@ -121,8 +123,9 @@ import SwiftUISimulator
 
 public extension View {
     func debugFilename(_ file: StaticString = #file) -> some View {
+        // ✅ Enabled when debug build only.
         #if DEBUG
-        simulatorDebugFilename(file) // 💡 Enabled when debug build only.
+        simulatorDebugFilename(file) // 💡 or any `String`.
         #else
         self
         #endif
@@ -158,9 +161,9 @@ struct ExampleApp: App {
             } content: {
                 RootView()
                     //
-                    // ✅ Add `debugFilename` environment value to root view.
+                    // ✅ Add `simulatorDebugFilename` environment value to root view.
                     //
-                    .environment(\.debugFilename, isEnabledDebugFilename)
+                    .environment(\.simulatorDebugFilename, isEnabledDebugFilename)
             }
             #else
             ContentView()
