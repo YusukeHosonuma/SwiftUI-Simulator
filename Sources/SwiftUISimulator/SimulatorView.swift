@@ -534,12 +534,8 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
                 // 􀀅 Dynamic Type Sizes slider
                 //
                 if isDynamicTypeSizesEnabled {
-                    Slider(
-                        value: $dynamicTypeSize.sliderBinding(),
-                        in: DynamicTypeSizeWrapper.sliderRange,
-                        step: 1
-                    )
-                    .frame(maxWidth: 200)
+                    DynamicTypeSizeSlider(dynamicTypeSize: $dynamicTypeSize)
+                        .frame(maxWidth: 200)
                 }
             }
             //

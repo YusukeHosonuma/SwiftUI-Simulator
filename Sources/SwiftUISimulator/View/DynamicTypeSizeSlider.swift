@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct DynamicTypeSlider: View {
+struct DynamicTypeSizeSlider: View {
     @Binding var dynamicTypeSize: DynamicTypeSizeWrapper
 
     var body: some View {

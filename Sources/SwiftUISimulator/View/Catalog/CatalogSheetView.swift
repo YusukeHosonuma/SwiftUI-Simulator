@@ -70,7 +70,7 @@ struct CatalogListView: View {
                     // Dynamic Type Sizes
                     //
                     HStack {
-                        DynamicTypeSlider(dynamicTypeSize: $dynamicTypeSize)
+                        DynamicTypeSizeSlider(dynamicTypeSize: $dynamicTypeSize)
                             .frame(width: 200)
                         Spacer()
                         Text(dynamicTypeSize.label)
