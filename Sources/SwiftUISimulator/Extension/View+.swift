@@ -8,6 +8,10 @@
 import SwiftUI
 
 extension View {
+    func extend<V: View>(@ViewBuilder transform: (Self) -> V) -> some View {
+        transform(self)
+    }
+
     @ViewBuilder
     func when<Content: View>(_ condition: Bool, @ViewBuilder transform: (Self) -> Content) -> some View {
         if condition {

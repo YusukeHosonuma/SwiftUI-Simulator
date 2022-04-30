@@ -18,31 +18,34 @@ struct ExampleApp: App {
     var body: some Scene {
         WindowGroup {
             #if DEBUG
-            SimulatorView(debugMenu: {
-                //
-                // Debug 􀌜
-                //
-                Menu {
+            SimulatorView(
+                catalogItems: catalogItems,
+                debugMenu: {
                     //
-                    // Filename 􀈷
+                    // Debug 􀌜
                     //
-                    Toggle(isOn: $isEnableDebugFilename) {
-                        Label("Filename", systemImage: "doc")
-                    }
-                    //
-                    // Show Alert 􀫊
-                    //
-                    Button {
-                        isPresentAlert.toggle()
+                    Menu {
+                        //
+                        // Filename 􀈷
+                        //
+                        Toggle(isOn: $isEnableDebugFilename) {
+                            Label("Filename", systemImage: "doc")
+                        }
+                        //
+                        // Show Alert 􀫊
+                        //
+                        Button {
+                            isPresentAlert.toggle()
+                        } label: {
+                            Label("Show Alert", systemImage: "swift")
+                        }
                     } label: {
-                        Label("Show Alert", systemImage: "swift")
+                        Label("Debug", systemImage: "ant.circle")
                     }
-                } label: {
-                    Label("Debug", systemImage: "ant.circle")
                 }
-            }) {
+            ) {
                 ContentView()
-                    .environment(\.debugFilename, isEnableDebugFilename)
+                    .environment(\.simulatorDebugFilename, isEnableDebugFilename)
                     .alert(isPresented: $isPresentAlert) {
                         Alert(
                             title: Text("Custom Debug Action"),
@@ -56,6 +59,54 @@ struct ExampleApp: App {
         }
     }
 }
+
+//
+// Catalog data.
+//
+#if DEBUG
+fileprivate extension ExampleApp {
+    var catalogItems: [CatalogItem] {
+        [
+            .init(title: "Text", description: "sample") {
+                AnyView(
+                    Text("Hello, SwiftUI-Simulator.")
+                )
+            },
+            .init(title: "Button", description: "sample") {
+                AnyView(
+                    Button("Button") {}
+                )
+            },
+            .init(title: "Toggle", description: "sample") {
+                AnyView(
+                    Toggle("Toggle", isOn: .constant(true))
+                )
+            },
+            .init(title: "StarButton", description: "original") {
+                AnyView(
+                    StarButton()
+                )
+            },
+            .init(title: "Row", description: "original") {
+                AnyView(
+                    List {
+                        Row()
+                    }
+                )
+            },
+            .init(
+                title: "ImageThumbnail",
+                description: "original",
+                template: "ImageThumbnail(imageName: <#String#>, title: <#String#>)"
+            ) {
+                AnyView(
+                    ImageThumbnail(imageName: "sea", title: "Sea")
+                )
+            },
+        ]
+    }
+}
+#endif
 
 extension View {
     func debugFilename(_ file: StaticString = #file) -> some View {

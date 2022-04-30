@@ -44,10 +44,12 @@ public extension SimulatorView {
         defaultCalendarIdentifiers userCalendarIdentifiers: Set<Calendar.Identifier>? = nil,
         defaultTimeZones userTimeZones: Set<TimeZones>? = nil,
         accentColorName: String = "AccentColor",
+        catalogItems: [CatalogItem] = [],
         @ViewBuilder debugMenu: @escaping () -> DebugMenu,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.content = content
+        self.catalogItems = catalogItems
         self.debugMenu = debugMenu
 
         //
@@ -152,6 +154,7 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
     // Sheets
     //
     @State private var isPresentedSettingSheet = false
+    @State private var isPresentedCatalogSheet = false
 
     //
     // Environments
@@ -162,6 +165,7 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
     // Private properties
     //
     private let content: () -> Content
+    private let catalogItems: [CatalogItem]
     private let debugMenu: () -> DebugMenu
     private let defaultDevices: Set<Device>
     private let defaultLocales: Set<String>
@@ -208,15 +212,27 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
             } label: {
                 Label("Disable Simulator", systemImage: "power")
             }
+
             Divider() // --------
 
-            //
-            // 􀍟 Settings
-            //
-            Button {
-                isPresentedSettingSheet.toggle()
-            } label: {
-                Label("Settings", systemImage: "gear")
+            Group {
+                //
+                // 􀍟 Settings
+                //
+                Button {
+                    isPresentedSettingSheet.toggle()
+                } label: {
+                    Label("Settings", systemImage: "gear")
+                }
+
+                //
+                // 􀉚 Catalog
+                //
+                Button {
+                    isPresentedCatalogSheet.toggle()
+                } label: {
+                    Label("Catalog", systemImage: "book")
+                }
             }
 
             Divider() // --------
@@ -292,6 +308,12 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
                 defaultTimeZones: defaultTimeZones
             )
             .accentColor(simulatorAccentColor.rawValue)
+        }
+        //
+        // 􀉚 Catalog
+        //
+        .fullScreenCover(isPresented: $isPresentedCatalogSheet) {
+            CatalogListView(items: catalogItems, devices: enableDevices.sorted())
         }
     }
 

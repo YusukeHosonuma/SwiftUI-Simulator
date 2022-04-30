@@ -18,6 +18,12 @@
 		705C42D9280CE8D400441A8C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 705C42C7280CE8D200441A8C /* ContentView.swift */; };
 		705C42DA280CE8D400441A8C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 705C42C8280CE8D400441A8C /* Assets.xcassets */; };
 		705C42DB280CE8D400441A8C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 705C42C8280CE8D400441A8C /* Assets.xcassets */; };
+		70898FC1281D11CB005EFB08 /* StarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70898FBE281D11CB005EFB08 /* StarButton.swift */; };
+		70898FC2281D11CB005EFB08 /* StarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70898FBE281D11CB005EFB08 /* StarButton.swift */; };
+		70898FC3281D11CB005EFB08 /* ImageThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70898FBF281D11CB005EFB08 /* ImageThumbnail.swift */; };
+		70898FC4281D11CC005EFB08 /* ImageThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70898FBF281D11CB005EFB08 /* ImageThumbnail.swift */; };
+		70898FC5281D11CC005EFB08 /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70898FC0281D11CB005EFB08 /* Row.swift */; };
+		70898FC6281D11CC005EFB08 /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70898FC0281D11CB005EFB08 /* Row.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +37,10 @@
 		705C42CD280CE8D400441A8C /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		705C42D3280CE8D400441A8C /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		705C42D5280CE8D400441A8C /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
+		70848D30281CD72800132E49 /* SwiftUI-Simulator */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "SwiftUI-Simulator"; path = ..; sourceTree = "<group>"; };
+		70898FBE281D11CB005EFB08 /* StarButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StarButton.swift; sourceTree = "<group>"; };
+		70898FBF281D11CB005EFB08 /* ImageThumbnail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageThumbnail.swift; sourceTree = "<group>"; };
+		70898FC0281D11CB005EFB08 /* Row.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Row.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +80,7 @@
 		705C42C0280CE8D200441A8C = {
 			isa = PBXGroup;
 			children = (
+				70848D30281CD72800132E49 /* SwiftUI-Simulator */,
 				7036CD68280CEBF1007EB7F8 /* Packages */,
 				705C42C5280CE8D200441A8C /* Shared */,
 				705C42D4280CE8D400441A8C /* macOS */,
@@ -81,6 +92,7 @@
 		705C42C5280CE8D200441A8C /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				70898FAC281D11A3005EFB08 /* CatalogView */,
 				705C42C6280CE8D200441A8C /* ExampleApp.swift */,
 				705C42C7280CE8D200441A8C /* ContentView.swift */,
 				705C42C8280CE8D400441A8C /* Assets.xcassets */,
@@ -105,6 +117,16 @@
 				705C42D5280CE8D400441A8C /* macOS.entitlements */,
 			);
 			path = macOS;
+			sourceTree = "<group>";
+		};
+		70898FAC281D11A3005EFB08 /* CatalogView */ = {
+			isa = PBXGroup;
+			children = (
+				70898FBF281D11CB005EFB08 /* ImageThumbnail.swift */,
+				70898FC0281D11CB005EFB08 /* Row.swift */,
+				70898FBE281D11CB005EFB08 /* StarButton.swift */,
+			);
+			path = CatalogView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -211,9 +233,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70898FC5281D11CC005EFB08 /* Row.swift in Sources */,
 				70064E2E28198C0900365BAC /* MessageView.swift in Sources */,
 				705C42D8280CE8D400441A8C /* ContentView.swift in Sources */,
 				705C42D6280CE8D400441A8C /* ExampleApp.swift in Sources */,
+				70898FC3281D11CB005EFB08 /* ImageThumbnail.swift in Sources */,
+				70898FC1281D11CB005EFB08 /* StarButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,9 +246,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70898FC6281D11CC005EFB08 /* Row.swift in Sources */,
 				70064E2F28198C0900365BAC /* MessageView.swift in Sources */,
 				705C42D9280CE8D400441A8C /* ContentView.swift in Sources */,
 				705C42D7280CE8D400441A8C /* ExampleApp.swift in Sources */,
+				70898FC4281D11CC005EFB08 /* ImageThumbnail.swift in Sources */,
+				70898FC2281D11CB005EFB08 /* StarButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
