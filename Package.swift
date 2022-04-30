@@ -13,10 +13,12 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/sindresorhus/Defaults.git", from: "6.2.0"),
+        .package(url: "https://github.com/YusukeHosonuma/SwiftPrettyPrint.git", from: "1.2.0"),
     ],
     targets: [
         .target(name: "SwiftUISimulator", dependencies: [
             "Defaults",
+            "SwiftPrettyPrint",
         ]),
         .testTarget(name: "SwiftUISimulatorTests", dependencies: ["SwiftUISimulator"]),
     ]

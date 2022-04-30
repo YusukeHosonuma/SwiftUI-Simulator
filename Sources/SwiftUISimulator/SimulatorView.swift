@@ -6,6 +6,7 @@
 //
 
 import Defaults
+import SwiftPrettyPrint
 import SwiftUI
 
 internal let storageKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator"
@@ -152,6 +153,7 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
     // Sheets
     //
     @State private var isPresentedSettingSheet = false
+    @State private var isPresentedUserDefaultsSheet = false
 
     //
     // Environments
@@ -203,23 +205,38 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
             //
             // 􀆨 Disable Simulator
             //
-            Button {
-                isSimulatorEnabled.toggle()
-            } label: {
-                Label("Disable Simulator", systemImage: "power")
+            Group {
+                Button {
+                    isSimulatorEnabled.toggle()
+                } label: {
+                    Label("Disable Simulator", systemImage: "power")
+                }
+                Divider() // --------
             }
-            Divider() // --------
 
             //
             // 􀍟 Settings
             //
-            Button {
-                isPresentedSettingSheet.toggle()
-            } label: {
-                Label("Settings", systemImage: "gear")
+            Group {
+                Button {
+                    isPresentedSettingSheet.toggle()
+                } label: {
+                    Label("Settings", systemImage: "gear")
+                }
+                Divider() // --------
             }
 
-            Divider() // --------
+            //
+            // 􀤄 UserDefaults
+            //
+            Group {
+                Button {
+                    isPresentedUserDefaultsSheet.toggle()
+                } label: {
+                    Label("UserDefaults", systemImage: "opticaldiscdrive")
+                }
+                Divider() // --------
+            }
 
             //
             // User custom debug menu
@@ -292,6 +309,13 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
                 defaultTimeZones: defaultTimeZones
             )
             .accentColor(simulatorAccentColor.rawValue)
+        }
+        //
+        // 􀤄 UserDefaults
+        //
+        .fullScreenCover(isPresented: $isPresentedUserDefaultsSheet) {
+            UserDefaultsSheet()
+                .accentColor(simulatorAccentColor.rawValue)
         }
     }
 
