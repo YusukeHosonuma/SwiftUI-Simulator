@@ -1,27 +1,29 @@
 # SwiftUI-Simulator
 
-Enables the following settings without settings or restarting the simulator or real device.
+Simulate device configurations in real-time (and useful tools for development).
+
+https://user-images.githubusercontent.com/2990285/163325330-13297947-7222-4cf7-a80b-d999094546d9.mov
+
+## Feature
+
+### Simulation
 
 - [x] Any device screen
 - [x] Light/Dark mode
 - [x] Locale
 - [x] Calendar
 - [x] TimeZone
-- [x] Dynamic Type Sizes
+- [x] Dynamic Type Sizes (iOS 15+)
 - [x] Rotate
 - [ ] ~~Legibility Weight (Not working in latest iOS and Xcode preview)~~
 
-https://user-images.githubusercontent.com/2990285/163325330-13297947-7222-4cf7-a80b-d999094546d9.mov
-
-No more restarting or settings!
-
-And following:
-
-- Show safe area and size.
-- Show device information.
-- Show cheet sheets. (useful for development)
-
 **Note: This is only a simulation and may differ from how it looks on a simulator or real device.**
+
+### UserDefaults browser
+
+You can browse UserDefaults on simulator.
+
+<img width="600" alt="image" src="https://user-images.githubusercontent.com/2990285/166129997-1211925c-504e-40c1-9578-d8a9975d70b7.png">
 
 ## Quick Start
 
@@ -67,7 +69,7 @@ struct ExampleApp: App {
 
 | iPhone 13 Pro Max | iPad Pro (12.9-inch) |
 |--|--|
-|<img width="356" alt="image" src="https://user-images.githubusercontent.com/2990285/163754076-46be83af-f220-4009-8228-bcd64d34a0ab.png">|<img width="651" alt="image" src="https://user-images.githubusercontent.com/2990285/163754087-cd4ce210-6698-4b47-a969-d1a129c239ca.png">|
+|<img width="250" alt="image" src="https://user-images.githubusercontent.com/2990285/163754076-46be83af-f220-4009-8228-bcd64d34a0ab.png">|<img width="400" alt="image" src="https://user-images.githubusercontent.com/2990285/163754087-cd4ce210-6698-4b47-a969-d1a129c239ca.png">|
 
 
 ## Requirements
