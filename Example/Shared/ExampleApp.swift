@@ -42,7 +42,7 @@ struct ExampleApp: App {
                 }
             }) {
                 ContentView()
-                    .environment(\.debugFilename, isEnableDebugFilename)
+                    .environment(\.simulatorDebugFilename, isEnableDebugFilename)
                     .alert(isPresented: $isPresentAlert) {
                         Alert(
                             title: Text("Custom Debug Action"),

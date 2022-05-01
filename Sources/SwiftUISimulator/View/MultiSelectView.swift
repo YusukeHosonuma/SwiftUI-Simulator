@@ -54,26 +54,7 @@ struct MultiItemSelectView<Item, Row>: View where Item: Hashable, Row: View {
                 //
                 // Text field
                 //
-                HStack {
-                    Image(systemName: "magnifyingglass")
-
-                    TextField("Search", text: $searchText, onEditingChanged: { _ in
-                        self.showCancelButton = true
-                    })
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-
-                    Button {
-                        searchText = ""
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .opacity(searchText == "" ? 0 : 1)
-                    }
-                }
-                .padding(8)
-                .foregroundColor(.secondary)
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(10.0)
+                SearchTextField("Search", text: $searchText)
 
                 //
                 // Cancel button

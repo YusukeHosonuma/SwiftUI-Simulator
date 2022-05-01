@@ -12,7 +12,7 @@ public extension View {
         let name = String(String(file).split(separator: "/").last?.replacingOccurrences(of: ".swift", with: "") ?? "")
         return simulatorDebugFilename(name)
     }
-    
+
     func simulatorDebugFilename(_ name: String) -> some View {
         modifier(DebugFilenameModifier(filename: name))
     }
