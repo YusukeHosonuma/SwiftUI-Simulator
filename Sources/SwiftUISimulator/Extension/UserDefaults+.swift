@@ -47,6 +47,6 @@ extension UserDefaults {
     
     private func isSystemKey(_ key: String) -> Bool {
         userDefaultsSystemKeys.contains(key) ||
-            userDefaultsSystemKeyPrefixes.matchAny { key.hasPrefix($0) }
+            userDefaultsSystemKeyPrefixes.contains { key.hasPrefix($0) }
     }
 }
