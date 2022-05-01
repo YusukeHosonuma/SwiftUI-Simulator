@@ -1,6 +1,6 @@
 # SwiftUI-Simulator
 
-Simulate device configurations in real-time (and useful tools for development).
+Simulate device configurations in real-time. (and useful tools for development)
 
 https://user-images.githubusercontent.com/2990285/163325330-13297947-7222-4cf7-a80b-d999094546d9.mov
 
