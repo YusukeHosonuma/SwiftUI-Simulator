@@ -8,7 +8,4 @@
 import Foundation
 
 extension Sequence {
-    func matchAny(_ matcher: (Element) -> Bool) -> Bool {
-        reduce(false) { $0 || matcher($1) }
-    }
 }

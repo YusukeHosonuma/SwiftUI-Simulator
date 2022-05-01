@@ -60,7 +60,12 @@ struct UserDefaultsView: View {
             raw = rawString
         }
 
-        let exportString = pretty + (raw.map { "\n" + $0 } ?? "")
+        let exportString = """
+        
+        \(key)
+        
+        \(pretty + (raw.map { "\n" + $0 } ?? ""))
+        """
 
         return GroupBox {
             HStack {
