@@ -30,7 +30,6 @@ struct UserDefaultsSheet: View {
                 )
             }
             .tabItem {
-                // iphone
                 Label("System", systemImage: "iphone")
             }
         }
