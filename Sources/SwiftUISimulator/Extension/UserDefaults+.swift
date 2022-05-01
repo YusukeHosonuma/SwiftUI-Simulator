@@ -23,6 +23,7 @@ private let userDefaultsSystemKeyPrefixes: [String] = [
     "AK",
     "NS",
     "PK",
+    "WebKit"
 ]
 
 extension UserDefaults {
@@ -33,10 +34,8 @@ extension UserDefaults {
     var userKeys: [String] {
         allKeys.filter { isSystemKey($0) == false }
     }
-
-    // MARK: Private
     
-    private var allKeys: [String] {
+    var allKeys: [String] {
         Array(
             dictionaryRepresentation().keys.filter { isOSSKey($0) == false }
         )
