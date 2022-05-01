@@ -27,17 +27,25 @@ private let userDefaultsSystemKeyPrefixes: [String] = [
 
 extension UserDefaults {
     var systemKeys: [String] {
-        allKeys.filter(isSystemKey)
+        allKeys.filter { isSystemKey($0) }
     }
 
     var userKeys: [String] {
         allKeys.filter { isSystemKey($0) == false }
     }
 
-    private var allKeys: Dictionary<String, Any>.Keys {
-        dictionaryRepresentation().keys
+    // MARK: Private
+    
+    private var allKeys: [String] {
+        Array(
+            dictionaryRepresentation().keys.filter { isOSSKey($0) == false }
+        )
     }
 
+    private func isOSSKey(_ key: String) -> Bool {
+        key.hasPrefix(storageKeyPrefix)
+    }
+    
     private func isSystemKey(_ key: String) -> Bool {
         userDefaultsSystemKeys.contains(key) ||
             userDefaultsSystemKeyPrefixes.matchAny { key.hasPrefix($0) }
