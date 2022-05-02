@@ -61,9 +61,9 @@ struct UserDefaultsView: View {
         }
 
         let exportString = """
-        
+
         \(key)
-        
+
         \(pretty + (raw.map { "\n" + $0 } ?? ""))
         """
 

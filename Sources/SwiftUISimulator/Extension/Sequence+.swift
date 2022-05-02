@@ -7,5 +7,4 @@
 
 import Foundation
 
-extension Sequence {
-}
+extension Sequence {}

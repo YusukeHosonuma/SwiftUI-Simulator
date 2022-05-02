@@ -37,6 +37,15 @@
       }
     },
     {
+      "identity" : "halfasheet",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/franklynw/HalfASheet",
+      "state" : {
+        "branch" : "develop",
+        "revision" : "5d1ade1157f87c4f922f4aa1af318f53fa1a3764"
+      }
+    },
+    {
       "identity" : "shlist",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/YusukeHosonuma/SHList.git",

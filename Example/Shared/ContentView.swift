@@ -6,6 +6,7 @@
 //
 
 import Combine
+import HalfASheet // For development
 import SwiftUI
 
 struct ContentView: View {
@@ -13,6 +14,9 @@ struct ContentView: View {
 
     @State var dateStyle: DateFormatter.Style = .medium
     @State var timeStyle: DateFormatter.Style = .medium
+    @State var isPresentedSheet = false
+    @State var isPresentedSimulatableSheet = false
+    @State var isPresentedHalfASheet = false
 
     @Environment(\.locale) var locale
     @Environment(\.calendar) var calendar
@@ -41,8 +45,16 @@ struct ContentView: View {
                 //
                 // Test for accentColor
                 //
-                Button("Hello") {}
-                    .font(.title3)
+                VStack {
+                    Button(".sheet()") {
+                        isPresentedSheet.toggle()
+                    }
+
+                    Button(".simulatableSheet()") {
+                        isPresentedSimulatableSheet.toggle()
+                    }
+                }
+                .font(.title3)
 
                 //
                 // Date style
@@ -81,10 +93,73 @@ struct ContentView: View {
             .navigationTitle("SwiftUI-Simulator")
         }
         .navigationViewStyle(.stack)
+        .sheet(isPresented: $isPresentedSheet) {
+            SampleSheetView()
+        }
+        .simulatableSheet(isPresented: $isPresentedSimulatableSheet) {
+            SampleSheetView()
+        }
         .onAppear {
             state.onAppear()
         }
         .debugFilename()
+    }
+}
+
+extension View {
+    func simulatableSheet<Content: View>(isPresented: Binding<Bool>, @ViewBuilder content: @escaping () -> Content) -> some View {
+        #if DEBUG
+        simulatedSheet(isPresented: isPresented, content: content)
+        #else
+        sheet(isPresented: isPresented, content: content)
+        #endif
+    }
+}
+
+struct SampleSheetView: View {
+    @Environment(\.presentationMode) private var presentationMode
+    #if DEBUG
+    @Environment(\.simulatedSheetDismiss) private var dismiss
+    #endif
+
+    var body: some View {
+        //
+        // ☑️ Not use `NavigationView`
+        //
+        // ZStack {
+        //    Color.green//.opacity(0.1)
+        //    VStack {
+        //        Text("Top")
+        //        Spacer()
+        //        Text("Bottom")
+        //    }
+        // }
+        // .border(.blue, width: 2)
+
+        //
+        // ☑️ Use `NavigationView`
+        //
+        NavigationView {
+            VStack {
+                Text("Top")
+                Spacer()
+                Text("This is sample sheet.")
+                    .navigationTitle("Sheet")
+                    .toolbar {
+                        ToolbarItem(placement: .destructiveAction) {
+                            Button("Done") {
+                                presentationMode.wrappedValue.dismiss()
+                                #if DEBUG
+                                dismiss()
+                                #endif
+                            }
+                        }
+                    }
+                Spacer()
+                Text("Bottom")
+            }
+        }
+        // FIXME: NavigationView の場合、勝手にセーフエリア（bottom）分の余白を追加してしまう
     }
 }
 

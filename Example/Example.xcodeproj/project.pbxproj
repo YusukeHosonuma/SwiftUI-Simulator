@@ -18,6 +18,9 @@
 		705C42D9280CE8D400441A8C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 705C42C7280CE8D200441A8C /* ContentView.swift */; };
 		705C42DA280CE8D400441A8C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 705C42C8280CE8D400441A8C /* Assets.xcassets */; };
 		705C42DB280CE8D400441A8C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 705C42C8280CE8D400441A8C /* Assets.xcassets */; };
+		70E7D42A281F49430078520D /* HalfASheet in Frameworks */ = {isa = PBXBuildFile; productRef = 70E7D429281F49430078520D /* HalfASheet */; };
+		70E7D42C281F4B3B0078520D /* SimulatableSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70E7D42B281F4B3B0078520D /* SimulatableSheet.swift */; };
+		70E7D42D281F4B3B0078520D /* SimulatableSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70E7D42B281F4B3B0078520D /* SimulatableSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +34,7 @@
 		705C42CD280CE8D400441A8C /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		705C42D3280CE8D400441A8C /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		705C42D5280CE8D400441A8C /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
+		70E7D42B281F4B3B0078520D /* SimulatableSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatableSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,6 +43,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7036CD6C280CEC07007EB7F8 /* SwiftUISimulator in Frameworks */,
+				70E7D42A281F49430078520D /* HalfASheet in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,6 +91,7 @@
 				705C42C8280CE8D400441A8C /* Assets.xcassets */,
 				7036CD73280CF107007EB7F8 /* Localizable.strings */,
 				70064E2D28198C0900365BAC /* MessageView.swift */,
+				70E7D42B281F4B3B0078520D /* SimulatableSheet.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -125,6 +131,7 @@
 			name = "Example (iOS)";
 			packageProductDependencies = (
 				7036CD6B280CEC07007EB7F8 /* SwiftUISimulator */,
+				70E7D429281F49430078520D /* HalfASheet */,
 			);
 			productName = "Example (iOS)";
 			productReference = 705C42CD280CE8D400441A8C /* Example.app */;
@@ -175,6 +182,9 @@
 				ja,
 			);
 			mainGroup = 705C42C0280CE8D200441A8C;
+			packageReferences = (
+				70E7D428281F49430078520D /* XCRemoteSwiftPackageReference "HalfASheet" */,
+			);
 			productRefGroup = 705C42CE280CE8D400441A8C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -212,6 +222,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				70064E2E28198C0900365BAC /* MessageView.swift in Sources */,
+				70E7D42C281F4B3B0078520D /* SimulatableSheet.swift in Sources */,
 				705C42D8280CE8D400441A8C /* ContentView.swift in Sources */,
 				705C42D6280CE8D400441A8C /* ExampleApp.swift in Sources */,
 			);
@@ -222,6 +233,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				70064E2F28198C0900365BAC /* MessageView.swift in Sources */,
+				70E7D42D281F4B3B0078520D /* SimulatableSheet.swift in Sources */,
 				705C42D9280CE8D400441A8C /* ContentView.swift in Sources */,
 				705C42D7280CE8D400441A8C /* ExampleApp.swift in Sources */,
 			);
@@ -500,10 +512,26 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		70E7D428281F49430078520D /* XCRemoteSwiftPackageReference "HalfASheet" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/franklynw/HalfASheet";
+			requirement = {
+				branch = develop;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		7036CD6B280CEC07007EB7F8 /* SwiftUISimulator */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftUISimulator;
+		};
+		70E7D429281F49430078520D /* HalfASheet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 70E7D428281F49430078520D /* XCRemoteSwiftPackageReference "HalfASheet" */;
+			productName = HalfASheet;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
