@@ -365,19 +365,18 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
                 } else {
                     ZStack {
                         content()
-                            .overrideEnvironments(
-                                sizeClasses: nil, // ☑️ Use real device size classes.
-                                locale: locale.map(Locale.init) ?? Locale.current,
-                                legibilityWeight: legibilityWeight,
-                                colorScheme: isDark ? .dark : .light,
-                                accentColor: isDark ? accentColorDark : accentColorLight,
-                                calendar: calendar.map(Calendar.init) ?? Calendar.current,
-                                timeZone: timeZone,
-                                dynamicTypeSize: dynamicTypeSize
-                            )
-
                         SimulatorSheet()
                     }
+                    .overrideEnvironments(
+                        sizeClasses: nil, // ☑️ Use real device size classes.
+                        locale: locale.map(Locale.init) ?? Locale.current,
+                        legibilityWeight: legibilityWeight,
+                        colorScheme: isDark ? .dark : .light,
+                        accentColor: isDark ? accentColorDark : accentColorLight,
+                        calendar: calendar.map(Calendar.init) ?? Calendar.current,
+                        timeZone: timeZone,
+                        dynamicTypeSize: dynamicTypeSize
+                    )
                     .environmentObject(simulatorSheetModelDefault)
                 }
 
@@ -820,8 +819,8 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
 
             SimulatorSheet()
         }
-        .frame(width: frameSize.width, height: frameSize.height)
         .clipped()
+        .frame(width: frameSize.width, height: frameSize.height)
         .border(simulatorBorderColor.rawValue)
         .overrideEnvironments(
             sizeClasses: sizeClass,
