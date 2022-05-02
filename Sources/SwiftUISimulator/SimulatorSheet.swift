@@ -99,6 +99,8 @@ struct SimulatorSheet: View {
                         // Content
                         //
                         model.content
+                            // ⚠️ FIXME: Temporary measures (AutoLayout errors when use NavigationView)
+                            .navigationViewStyle(.stack)
                             .padding(.bottom, safeAreaBottom)
                             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
                             .environment(\.simulatedSheetDismiss) { dismiss() }
