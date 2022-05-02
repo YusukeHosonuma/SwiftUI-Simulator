@@ -11,12 +11,21 @@ struct UserDefaultsSheet: View {
     // 💡 iOS 15+: `\.dismiss`
     @Environment(\.presentationMode) private var presentationMode
 
+    var suiteNames: [String]
+
+    private var userDefaults: [(String, UserDefaults)] {
+        [("standard", UserDefaults.standard)] +
+            suiteNames.compactMap { name in
+                UserDefaults(suiteName: name).map { (name, $0) }
+            }
+    }
+
     var body: some View {
         TabView {
             content(title: "User") {
                 UserDefaultsView(
-                    userDefaults: UserDefaults.standard,
-                    keys: UserDefaults.standard.userKeys
+                    userDefaults: userDefaults,
+                    extractKeys: { $0.userKeys }
                 )
             }
             .tabItem {
@@ -25,8 +34,8 @@ struct UserDefaultsSheet: View {
 
             content(title: "System") {
                 UserDefaultsView(
-                    userDefaults: UserDefaults.standard,
-                    keys: UserDefaults.standard.systemKeys
+                    userDefaults: userDefaults,
+                    extractKeys: { $0.systemKeys }
                 )
             }
             .tabItem {

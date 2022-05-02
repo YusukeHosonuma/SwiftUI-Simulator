@@ -23,7 +23,7 @@ private let userDefaultsSystemKeyPrefixes: [String] = [
     "AK",
     "NS",
     "PK",
-    "WebKit"
+    "WebKit",
 ]
 
 extension UserDefaults {
@@ -34,7 +34,7 @@ extension UserDefaults {
     var userKeys: [String] {
         allKeys.filter { isSystemKey($0) == false }
     }
-    
+
     var allKeys: [String] {
         Array(
             dictionaryRepresentation().keys.filter { isOSSKey($0) == false }
@@ -44,7 +44,7 @@ extension UserDefaults {
     private func isOSSKey(_ key: String) -> Bool {
         key.hasPrefix(storageKeyPrefix)
     }
-    
+
     private func isSystemKey(_ key: String) -> Bool {
         userDefaultsSystemKeys.contains(key) ||
             userDefaultsSystemKeyPrefixes.contains { key.hasPrefix($0) }
