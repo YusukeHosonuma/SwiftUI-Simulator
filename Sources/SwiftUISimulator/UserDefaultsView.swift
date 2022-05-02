@@ -119,7 +119,7 @@ struct UserDefaultsView: View {
 
         var option = Pretty.sharedOption
         option.indentSize = 2
-        
+
         var output = ""
 
         if let string = value as? String {
@@ -134,7 +134,7 @@ struct UserDefaultsView: View {
                 return .json(pretty: output, rawString: string)
             }
         }
-        
+
         Pretty.prettyPrintDebug(value, option: option, to: &output)
         return .string(output)
     }

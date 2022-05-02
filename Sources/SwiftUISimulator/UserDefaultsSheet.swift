@@ -48,6 +48,7 @@ struct UserDefaultsSheet: View {
         NavigationView {
             content()
                 .navigationTitle(title)
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .destructiveAction) {
                         Button("Done") {
