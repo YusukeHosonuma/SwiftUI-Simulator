@@ -45,6 +45,7 @@ public extension SimulatorView {
         defaultCalendarIdentifiers userCalendarIdentifiers: Set<Calendar.Identifier>? = nil,
         defaultTimeZones userTimeZones: Set<TimeZones>? = nil,
         accentColorName: String = "AccentColor",
+        userDefaultsSuiteNames: [String] = [],
         @ViewBuilder debugMenu: @escaping () -> DebugMenu,
         @ViewBuilder content: @escaping () -> Content
     ) {
@@ -69,6 +70,8 @@ public extension SimulatorView {
             accentColorLight = nil
             accentColorDark = nil
         }
+
+        self.userDefaultsSuiteNames = userDefaultsSuiteNames
 
         //
         // 💡 The following priority order.
@@ -171,6 +174,7 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
     private let defaultTimeZones: Set<TimeZones>
     private let accentColorLight: Color?
     private let accentColorDark: Color?
+    private let userDefaultsSuiteNames: [String]
 
     public var body: some View {
         VStack {
@@ -314,7 +318,7 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
         // 􀤄 UserDefaults
         //
         .fullScreenCover(isPresented: $isPresentedUserDefaultsSheet) {
-            UserDefaultsSheet()
+            UserDefaultsSheet(suiteNames: userDefaultsSuiteNames)
                 .accentColor(simulatorAccentColor.rawValue)
         }
     }

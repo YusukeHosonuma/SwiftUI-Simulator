@@ -18,7 +18,20 @@ struct ContentView: View {
     @Environment(\.calendar) var calendar
     @Environment(\.timeZone) var timeZone
 
-    init() {}
+    init() {
+        //
+        // UserDefaults.standard
+        //
+        UserDefaults.standard.set("Hello!", forKey: "message")
+        UserDefaults.standard.set(7, forKey: "number")
+
+        //
+        // AppGroup
+        //
+        guard let group = UserDefaults(suiteName: groupID) else { preconditionFailure() }
+        group.set("Goodbye.", forKey: "message")
+        group.set(42, forKey: "number")
+    }
 
     private var dateFormatter: DateFormatter {
         let f = DateFormatter()
