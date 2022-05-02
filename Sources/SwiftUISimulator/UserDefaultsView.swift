@@ -117,6 +117,9 @@ struct UserDefaultsView: View {
     private func prettyString(_ value: Any?) -> PrettyResult {
         guard let value = value else { return .string("nil") }
 
+        var option = Pretty.sharedOption
+        option.indentSize = 2
+        
         var output = ""
 
         if let string = value as? String {
@@ -127,12 +130,12 @@ struct UserDefaultsView: View {
             // `{"rawValue":{"red":0,"alpha":1,"blue":0,"green":0}}`
             //
             if string.hasPrefix("{"), string.hasSuffix("}"), let dict = string.jsonToDictionary() {
-                Pretty.prettyPrintDebug(dict, to: &output)
+                Pretty.prettyPrintDebug(dict, option: option, to: &output)
                 return .json(pretty: output, rawString: string)
             }
         }
-
-        Pretty.prettyPrintDebug(value, to: &output)
+        
+        Pretty.prettyPrintDebug(value, option: option, to: &output)
         return .string(output)
     }
 }
