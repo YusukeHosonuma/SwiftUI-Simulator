@@ -6,6 +6,7 @@
 //
 
 import Defaults
+import SwiftPrettyPrint
 import SwiftUI
 
 internal let storageKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator"
@@ -155,6 +156,7 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
     //
     @State private var isPresentedSettingSheet = false
     @State private var isPresentedCatalogSheet = false
+    @State private var isPresentedUserDefaultsSheet = false
 
     //
     // Environments
@@ -207,18 +209,19 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
             //
             // 􀆨 Disable Simulator
             //
-            Button {
-                isSimulatorEnabled.toggle()
-            } label: {
-                Label("Disable Simulator", systemImage: "power")
+            Group {
+                Button {
+                    isSimulatorEnabled.toggle()
+                } label: {
+                    Label("Disable Simulator", systemImage: "power")
+                }
+                Divider() // --------
             }
 
-            Divider() // --------
-
+            //
+            // 􀍟 Settings
+            //
             Group {
-                //
-                // 􀍟 Settings
-                //
                 Button {
                     isPresentedSettingSheet.toggle()
                 } label: {
@@ -233,9 +236,20 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
                 } label: {
                     Label("Catalog", systemImage: "book")
                 }
+                Divider() // --------
             }
 
-            Divider() // --------
+            //
+            // 􀤄 UserDefaults
+            //
+            Group {
+                Button {
+                    isPresentedUserDefaultsSheet.toggle()
+                } label: {
+                    Label("UserDefaults", systemImage: "opticaldiscdrive")
+                }
+                Divider() // --------
+            }
 
             //
             // User custom debug menu
@@ -314,6 +328,13 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
         //
         .fullScreenCover(isPresented: $isPresentedCatalogSheet) {
             CatalogListView(items: catalogItems, devices: enableDevices.sorted())
+        }
+        //
+        // 􀤄 UserDefaults
+        //
+        .fullScreenCover(isPresented: $isPresentedUserDefaultsSheet) {
+            UserDefaultsSheet()
+                .accentColor(simulatorAccentColor.rawValue)
         }
     }
 
