@@ -16,7 +16,6 @@ struct ContentView: View {
     @State var timeStyle: DateFormatter.Style = .medium
     @State var isPresentedSheet = false
     @State var isPresentedSimulatableSheet = false
-    @State var isPresentedHalfASheet = false
 
     @Environment(\.locale) var locale
     @Environment(\.calendar) var calendar
