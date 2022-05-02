@@ -17,8 +17,8 @@ public extension View {
 }
 
 struct SimulatorSheetModifier<SheetContent: View>: ViewModifier {
-    @EnvironmentObject var model: SimulatorSheetModel
-    @Environment(\.simulatorEnabled) var isSimulatorEnabled
+    @EnvironmentObject private var model: SimulatorSheetModel
+    @Environment(\.simulatorEnabled) private var isSimulatorEnabled
 
     let sheetContent: () -> SheetContent
     @Binding var isPresented: Bool
@@ -43,7 +43,7 @@ struct SimulatorSheetModifier<SheetContent: View>: ViewModifier {
     }
 }
 
-class SimulatorSheetModel: ObservableObject {
+final class SimulatorSheetModel: ObservableObject {
     @Published var isPresented = false
     @Published var content: AnyView = .init(EmptyView())
 
@@ -144,7 +144,7 @@ struct SimulatorSheet: View {
                 dragOffset = offset > 0 ? offset : 0
             }
             .onEnded {
-                if dragOffset > 0, ($0.predictedEndTranslation.height / $0.translation.height) > 2 {
+                if dragOffset > 0, ($0.predictedEndTranslation.height / $0.translation.height) > 2.0 {
                     dismiss()
                     return
                 }
