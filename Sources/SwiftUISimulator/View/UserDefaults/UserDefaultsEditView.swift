@@ -52,6 +52,8 @@ struct UserDefaultsEditView: View {
     @State private var valueDouble: Double = 0
     @State private var valueString: String = ""
     @State private var valueStringArray: [String] = []
+    
+    @State private var isValid = true
 
     var body: some View {
         NavigationView {
@@ -60,47 +62,28 @@ struct UserDefaultsEditView: View {
                     .font(.system(size: 14, weight: .bold, design: .monospaced))
                     .foregroundColor(.gray)
                     .lineLimit(1)
-                    .padding()
+                    .padding(.horizontal)
 
                 switch valueType {
                 case .bool:
                     Toggle("Bool", isOn: $valueBool)
-                        .padding()
+                        .padding(.horizontal)
 
                 case .string:
                     TextEditor(text: $valueString)
                         .border(.gray.opacity(0.5))
-                        .padding()
+                        .padding(.horizontal)
                         .autocapitalization(.none)
                         .disableAutocorrection(true)
 
-                    
                 case .int:
-                    TextField("", text: .init(get: {
-                        "\(valueInt)"
-                    }, set: { string in
-                        valueInt = Int(string) ?? 0 // TODO: Show error when can't convert.
-                    }))
-                    .padding()
-                    .border(.gray.opacity(0.5))
+                    UserDefaultsNumberEditor($valueInt, isValid: $isValid)
 
                 case .float:
-                    TextField("", text: .init(get: {
-                        "\(valueFloat)"
-                    }, set: { string in
-                        valueFloat = Float(string) ?? 0
-                    }))
-                    .padding()
-                    .border(.gray.opacity(0.5))
+                    UserDefaultsNumberEditor($valueFloat, isValid: $isValid)
 
                 case .double:
-                    TextField("", text: .init(get: {
-                        "\(valueDouble)"
-                    }, set: { string in
-                        valueDouble = Double(string) ?? 0
-                    }))
-                    .padding()
-                    .border(.gray.opacity(0.5))
+                    UserDefaultsNumberEditor($valueDouble, isValid: $isValid)
 
                 case .stringArray:
                     UserDefaultsStringArrayEditor(strings: $valueStringArray)
@@ -124,8 +107,7 @@ struct UserDefaultsEditView: View {
                         save()
                         presentationMode.wrappedValue.dismiss()
                     }
-                    .foregroundColor(.red)
-                    .disabled(valueType == .unknown)
+                    .disabled(valueType == .unknown || isValid == false)
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {

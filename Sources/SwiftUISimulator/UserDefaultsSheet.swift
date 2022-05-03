@@ -50,7 +50,7 @@ struct UserDefaultsSheet: View {
                 .navigationTitle(title)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .destructiveAction) {
+                    ToolbarItem(placement: .cancellationAction) {
                         Button("Done") {
                             presentationMode.wrappedValue.dismiss()
                         }

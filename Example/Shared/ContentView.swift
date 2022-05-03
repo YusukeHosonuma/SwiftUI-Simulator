@@ -23,14 +23,14 @@ struct ContentView: View {
         // UserDefaults.standard
         //
 //        UserDefaults.standard.set("Hello!", forKey: "message")
-//        UserDefaults.standard.set(7, forKey: "number")
-
-        //
-        // AppGroup
-        //
+//        UserDefaults.standard.set(7.5, forKey: "number")
+//
+//        //
+//        // AppGroup
+//        //
 //        guard let group = UserDefaults(suiteName: groupID) else { preconditionFailure() }
 //        group.set("Goodbye.", forKey: "message")
-//        group.set(42, forKey: "number")
+//        group.set(42.195, forKey: "number")
     }
 
     private var dateFormatter: DateFormatter {
