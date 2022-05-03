@@ -41,7 +41,7 @@ struct UserDefaultsNumberEditor<Value: EditableNumber>: View {
     }
 
     var body: some View {
-        TextField("float value", text: $text)
+        TextField("", text: $text)
             .padding()
             .border(.gray.opacity(0.5))
             .padding(.horizontal)

@@ -9,8 +9,8 @@ import Combine
 import SwiftUI
 
 struct ContentView: View {
-    @ObservedObject private var state: ContentState = .shared
     @AppStorage("isFirstLaunch") private var isFirstLaunch = true
+    @ObservedObject private var state: ContentState = .shared
 
     @State var dateStyle: DateFormatter.Style = .medium
     @State var timeStyle: DateFormatter.Style = .medium
