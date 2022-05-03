@@ -25,7 +25,7 @@ struct UserDefaultsSheet: View {
             content(title: "User") {
                 UserDefaultsView(
                     userDefaults: userDefaults,
-                    extractKeys: { $0.userKeys }
+                    type: .user
                 )
             }
             .tabItem {
@@ -35,7 +35,7 @@ struct UserDefaultsSheet: View {
             content(title: "System") {
                 UserDefaultsView(
                     userDefaults: userDefaults,
-                    extractKeys: { $0.systemKeys }
+                    type: .system
                 )
             }
             .tabItem {
@@ -50,7 +50,7 @@ struct UserDefaultsSheet: View {
                 .navigationTitle(title)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .destructiveAction) {
+                    ToolbarItem(placement: .cancellationAction) {
                         Button("Done") {
                             presentationMode.wrappedValue.dismiss()
                         }

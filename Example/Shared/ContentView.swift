@@ -9,6 +9,7 @@ import Combine
 import SwiftUI
 
 struct ContentView: View {
+    @AppStorage("isFirstLaunch") private var isFirstLaunch = true
     @ObservedObject private var state: ContentState = .shared
 
     @State var dateStyle: DateFormatter.Style = .medium
@@ -19,18 +20,22 @@ struct ContentView: View {
     @Environment(\.timeZone) var timeZone
 
     init() {
-        //
-        // UserDefaults.standard
-        //
-        UserDefaults.standard.set("Hello!", forKey: "message")
-        UserDefaults.standard.set(7, forKey: "number")
+        if isFirstLaunch {
+            defer { isFirstLaunch = false }
 
-        //
-        // AppGroup
-        //
-        guard let group = UserDefaults(suiteName: groupID) else { preconditionFailure() }
-        group.set("Goodbye.", forKey: "message")
-        group.set(42, forKey: "number")
+            //
+            // UserDefaults.standard
+            //
+            UserDefaults.standard.set("Hello!", forKey: "message")
+            UserDefaults.standard.set(7.5, forKey: "number")
+
+            //
+            // AppGroup
+            //
+            guard let group = UserDefaults(suiteName: groupID) else { preconditionFailure() }
+            group.set("Goodbye.", forKey: "message")
+            group.set(42.195, forKey: "number")
+        }
     }
 
     private var dateFormatter: DateFormatter {

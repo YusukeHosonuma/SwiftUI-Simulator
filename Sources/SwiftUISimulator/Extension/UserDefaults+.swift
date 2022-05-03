@@ -26,6 +26,11 @@ private let userDefaultsSystemKeyPrefixes: [String] = [
     "WebKit",
 ]
 
+enum UserDefaultsType {
+    case user
+    case system
+}
+
 extension UserDefaults {
     var systemKeys: [String] {
         allKeys.filter { isSystemKey($0) }
@@ -39,6 +44,13 @@ extension UserDefaults {
         Array(
             dictionaryRepresentation().keys.filter { isOSSKey($0) == false }
         )
+    }
+
+    func extractKeys(of type: UserDefaultsType) -> [String] {
+        switch type {
+        case .user: return userKeys
+        case .system: return systemKeys
+        }
     }
 
     private func isOSSKey(_ key: String) -> Bool {

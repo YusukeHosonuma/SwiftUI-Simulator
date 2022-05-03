@@ -8,11 +8,27 @@
 import SwiftPrettyPrint
 import SwiftUI
 
+struct UserDefaultsWrapper: Identifiable {
+    let name: String
+    let defaults: UserDefaults
+
+    var id: String { name }
+}
+
 struct UserDefaultsView: View {
-    let userDefaults: [(String, UserDefaults)]
-    let extractKeys: (UserDefaults) -> [String]
+    private let userDefaults: [(String, UserDefaults)]
+    private let type: UserDefaultsType
+
+    init(userDefaults: [(String, UserDefaults)], type: UserDefaultsType) {
+        self.userDefaults = userDefaults
+        self.type = type
+    }
 
     @State private var searchText = ""
+    @State private var isPresentedEditSheet = false
+    @State private var isPresentedDeleteConfirmAlert = false
+    @State private var editDefaults: UserDefaults? = nil
+    @State private var editKey: String? = nil
 
     private func filteredKeys(_ keys: [String]) -> [String] {
         if searchText.isEmpty {
@@ -22,6 +38,8 @@ struct UserDefaultsView: View {
         }
     }
 
+    @State var toDeleteDefaults: UserDefaultsWrapper?
+
     var body: some View {
         VStack {
             SearchTextField("Search by key...", text: $searchText)
@@ -29,118 +47,65 @@ struct UserDefaultsView: View {
 
             Form {
                 ForEach(userDefaults, id: \.0) { name, defaults in
-                    let keys = filteredKeys(extractKeys(defaults))
-                    let dict = defaults.dictionaryRepresentation()
+
+                    let keys = filteredKeys(defaults.extractKeys(of: type))
                     Section {
                         if keys.isEmpty {
                             Text("No results.")
                                 .foregroundColor(.gray)
                         } else {
                             VStack(alignment: .leading) {
+                                //
+                                // Value
+                                //
                                 ForEach(keys.sorted(), id: \.self) { key in
-                                    group(key: key, prettyResult: prettyString(dict[key]))
+                                    UserDefaultsValueRow(name: name, defaults: defaults, key: key)
                                 }
                             }
                         }
                     } header: {
-                        Label(name, systemImage: name == "standard" ? "person" : "externaldrive.connected.to.line.below")
+                        HStack {
+                            //
+                            // 􀉩 standard / 􀨤 group.xxx
+                            //
+                            Label(name, systemImage: name == "standard" ? "person" : "externaldrive.connected.to.line.below")
+
+                            Spacer()
+
+                            if type == .user {
+                                //
+                                // 􀍡
+                                //
+                                Menu {
+                                    Button {
+                                        toDeleteDefaults = .init(name: name, defaults: defaults)
+                                    } label: {
+                                        Label("Delete All Keys", systemImage: "trash")
+                                    }
+                                    .disabled(keys.isEmpty)
+                                } label: {
+                                    Image(systemName: "ellipsis.circle")
+                                }
+                            }
+                        }
+                        .font(.subheadline)
                     }
                     .textCase(nil)
-                }
-            }
-        }
-    }
-
-    private func group(key: String, prettyResult: PrettyResult) -> some View {
-        let pretty: String
-        let raw: String?
-
-        switch prettyResult {
-        case let .string(string):
-            pretty = string
-            raw = nil
-        case let .json(pretty: string, rawString: rawString):
-            pretty = string
-            raw = rawString
-        }
-
-        let exportString = """
-
-        \(key)
-
-        \(pretty + (raw.map { "\n" + $0 } ?? ""))
-        """
-
-        return GroupBox {
-            HStack {
-                VStack(alignment: .leading) {
-                    Text(pretty)
-                    if let raw = raw {
-                        Text(raw).foregroundColor(.gray)
+                    .alert(item: $toDeleteDefaults) { defaultsWrapper in
+                        //
+                        // ⚠️ Delete all keys
+                        //
+                        Alert(
+                            title: Text("Delete All Keys?"),
+                            message: Text("Are you delete all keys from '\(defaultsWrapper.name)'?"),
+                            primaryButton: .cancel(),
+                            secondaryButton: .destructive(Text("Delete"), action: {
+                                defaultsWrapper.defaults.removeAll()
+                            })
+                        )
                     }
                 }
-                Spacer()
-            }
-            .lineLimit(nil)
-            .fixedSize(horizontal: false, vertical: true)
-            .font(.system(size: 14, weight: .regular, design: .monospaced))
-            .padding(.top, 2)
-        } label: {
-            HStack {
-                Text(key)
-                    .font(.system(size: 14, weight: .bold, design: .monospaced))
-                    .lineLimit(1)
-                    .foregroundColor(.gray)
-                Spacer()
-
-                //
-                // 􀩼
-                //
-                Button {
-                    print(exportString)
-                } label: {
-                    Image(systemName: "terminal")
-                }
-
-                //
-                // 􀉁
-                //
-                Button {
-                    UIPasteboard.general.string = exportString
-                } label: {
-                    Image(systemName: "doc.on.doc")
-                }
             }
         }
     }
-
-    private func prettyString(_ value: Any?) -> PrettyResult {
-        guard let value = value else { return .string("nil") }
-
-        var option = Pretty.sharedOption
-        option.indentSize = 2
-
-        var output = ""
-
-        if let string = value as? String {
-            //
-            // 💡 Try decode as JSON. (For data that encoded by `JSONEncoder`)
-            //
-            // e.g.
-            // `{"rawValue":{"red":0,"alpha":1,"blue":0,"green":0}}`
-            //
-            if string.hasPrefix("{"), string.hasSuffix("}"), let dict = string.jsonToDictionary() {
-                Pretty.prettyPrintDebug(dict, option: option, to: &output)
-                return .json(pretty: output, rawString: string)
-            }
-        }
-
-        Pretty.prettyPrintDebug(value, option: option, to: &output)
-        return .string(output)
-    }
-}
-
-private enum PrettyResult {
-    case string(String)
-    case json(pretty: String, rawString: String)
 }
