@@ -10,7 +10,7 @@ import SwiftUI
 
 struct UserDefaultsValueRow: View {
     @Environment(\.simulatorAccentColor) private var simulatorAccentColor
-    
+
     private var name: String
     private var defaults: UserDefaults
     private var key: String
@@ -101,7 +101,6 @@ struct UserDefaultsValueRow: View {
                     } label: {
                         Image(systemName: "doc.on.doc")
                     }
-
                 }
                 .font(.system(size: 14, weight: .regular))
             }

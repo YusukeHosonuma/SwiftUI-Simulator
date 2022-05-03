@@ -28,7 +28,7 @@ struct ContentView: View {
             //
             UserDefaults.standard.set("Hello!", forKey: "message")
             UserDefaults.standard.set(7.5, forKey: "number")
-            
+
             //
             // AppGroup
             //

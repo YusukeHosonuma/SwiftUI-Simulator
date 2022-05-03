@@ -45,11 +45,11 @@ extension UserDefaults {
             dictionaryRepresentation().keys.filter { isOSSKey($0) == false }
         )
     }
-    
+
     func extractKeys(of type: UserDefaultsType) -> [String] {
         switch type {
-        case .user: return self.userKeys
-        case .system: return self.systemKeys
+        case .user: return userKeys
+        case .system: return systemKeys
         }
     }
 

@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Yusuke Hosonuma on 2022/05/03.
 //
@@ -34,12 +34,12 @@ struct UserDefaultsNumberEditor<Value: EditableNumber>: View {
     @Binding var value: Value
     @Binding var isValid: Bool
     @State var text: String = ""
-    
+
     init(_ value: Binding<Value>, isValid: Binding<Bool>) {
         _value = value
         _isValid = isValid
     }
-    
+
     var body: some View {
         TextField("float value", text: $text)
             .padding()

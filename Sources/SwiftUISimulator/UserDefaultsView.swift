@@ -11,7 +11,7 @@ import SwiftUI
 struct UserDefaultsWrapper: Identifiable {
     let name: String
     let defaults: UserDefaults
-    
+
     var id: String { name }
 }
 
@@ -29,7 +29,7 @@ struct UserDefaultsView: View {
     @State private var isPresentedDeleteConfirmAlert = false
     @State private var editDefaults: UserDefaults? = nil
     @State private var editKey: String? = nil
-    
+
     private func filteredKeys(_ keys: [String]) -> [String] {
         if searchText.isEmpty {
             return keys
@@ -39,7 +39,7 @@ struct UserDefaultsView: View {
     }
 
     @State var toDeleteDefaults: UserDefaultsWrapper?
-    
+
     var body: some View {
         VStack {
             SearchTextField("Search by key...", text: $searchText)
@@ -47,7 +47,7 @@ struct UserDefaultsView: View {
 
             Form {
                 ForEach(userDefaults, id: \.0) { name, defaults in
-                    
+
                     let keys = filteredKeys(defaults.extractKeys(of: type))
                     Section {
                         if keys.isEmpty {
@@ -69,9 +69,9 @@ struct UserDefaultsView: View {
                             // 􀉩 standard / 􀨤 group.xxx
                             //
                             Label(name, systemImage: name == "standard" ? "person" : "externaldrive.connected.to.line.below")
-                            
+
                             Spacer()
-                            
+
                             if type == .user {
                                 //
                                 // 􀍡
@@ -107,6 +107,5 @@ struct UserDefaultsView: View {
                 }
             }
         }
-
     }
 }

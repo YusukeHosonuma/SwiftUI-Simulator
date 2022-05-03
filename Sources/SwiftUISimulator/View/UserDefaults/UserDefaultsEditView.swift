@@ -52,7 +52,7 @@ struct UserDefaultsEditView: View {
     @State private var valueDouble: Double = 0
     @State private var valueString: String = ""
     @State private var valueStringArray: [String] = []
-    
+
     @State private var isValid = true
 
     var body: some View {
@@ -72,7 +72,7 @@ struct UserDefaultsEditView: View {
                 case .string:
                     TextEditor(text: $valueString)
                         .border(.gray.opacity(0.5))
-                        .padding(.horizontal)
+                        .padding([.horizontal, .bottom])
                         .autocapitalization(.none)
                         .disableAutocorrection(true)
 
@@ -87,7 +87,7 @@ struct UserDefaultsEditView: View {
 
                 case .stringArray:
                     UserDefaultsStringArrayEditor(strings: $valueStringArray)
-                    
+
                 case .unknown:
                     VStack(spacing: 16) {
                         Text("This type was not supported yet.")
