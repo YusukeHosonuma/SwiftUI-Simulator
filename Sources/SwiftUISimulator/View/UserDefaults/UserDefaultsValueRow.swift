@@ -74,32 +74,36 @@ struct UserDefaultsValueRow: View {
                     .foregroundColor(.gray)
                 Spacer()
 
-                //
-                // 􀈊 Edit
-                //
-                Button {
-                    isPresentedEditSheet.toggle()
-                } label: {
-                    Image(systemName: "pencil")
-                }
+                Group {
+                    //
+                    // 􀈊 Edit
+                    //
+                    Button {
+                        isPresentedEditSheet.toggle()
+                    } label: {
+                        Image(systemName: "pencil")
+                    }
 
-                //
-                // 􀩼 Console
-                //
-                Button {
-                    print(exportString)
-                } label: {
-                    Image(systemName: "terminal")
-                }
+                    //
+                    // 􀩼 Console
+                    //
+                    Button {
+                        print(exportString)
+                    } label: {
+                        Image(systemName: "terminal")
+                    }
 
-                //
-                // 􀉁 Copy
-                //
-                Button {
-                    UIPasteboard.general.string = exportString
-                } label: {
-                    Image(systemName: "doc.on.doc")
+                    //
+                    // 􀉁 Copy
+                    //
+                    Button {
+                        UIPasteboard.general.string = exportString
+                    } label: {
+                        Image(systemName: "doc.on.doc")
+                    }
+
                 }
+                .font(.system(size: 14, weight: .regular))
             }
         }
         .id(contentID)

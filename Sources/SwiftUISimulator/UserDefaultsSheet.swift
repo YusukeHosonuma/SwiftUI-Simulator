@@ -25,7 +25,7 @@ struct UserDefaultsSheet: View {
             content(title: "User") {
                 UserDefaultsView(
                     userDefaults: userDefaults,
-                    extractKeys: { $0.userKeys }
+                    type: .user
                 )
             }
             .tabItem {
@@ -35,7 +35,7 @@ struct UserDefaultsSheet: View {
             content(title: "System") {
                 UserDefaultsView(
                     userDefaults: userDefaults,
-                    extractKeys: { $0.systemKeys }
+                    type: .system
                 )
             }
             .tabItem {
