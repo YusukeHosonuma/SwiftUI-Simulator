@@ -11,6 +11,17 @@ import SwiftUI
 
 internal let storageKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator"
 
+public struct SimulatorAccentColor: EnvironmentKey {
+    public static var defaultValue: Color = .defaultSimulatorAccent
+}
+
+public extension EnvironmentValues {
+    var simulatorAccentColor: Color {
+        get { self[SimulatorAccentColor.self] }
+        set { self[SimulatorAccentColor.self] = newValue }
+    }
+}
+
 //
 // Initializer without `debugMenu`.
 //
@@ -313,6 +324,7 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
                 defaultTimeZones: defaultTimeZones
             )
             .accentColor(simulatorAccentColor.rawValue)
+            .environment(\.simulatorAccentColor, simulatorAccentColor.rawValue)
         }
         //
         // 􀤄 UserDefaults
