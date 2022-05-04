@@ -16,6 +16,7 @@ enum ValueType: Identifiable, CaseIterable {
     case url
     case date
     case stringArray
+    case dictionary
     case unknown
 
     var typeName: String {
@@ -28,6 +29,7 @@ enum ValueType: Identifiable, CaseIterable {
         case .url: return "URL"
         case .date: return "Date"
         case .stringArray: return "[String]"
+        case .dictionary: return "[String: Any]"
         case .unknown: return "(Unkonwn)"
         }
     }
@@ -58,6 +60,7 @@ struct UserDefaultsEditView: View {
     @State private var valueURL: URL? = nil
     @State private var valueDate: Date? = nil
     @State private var valueStringArray: [String] = []
+    @State private var valueDictionary: [String: Any] = [:]
 
     @State private var isValid = true
 
@@ -124,7 +127,8 @@ struct UserDefaultsEditView: View {
                 UserDefaultsStringEditor(.init(
                     get: { url },
                     set: { valueURL = $0 }
-                ), isValid: $isValid)
+                ), isValid: $isValid, style: .multiline)
+                    .padding(.bottom)
             }
 
         case .date:
@@ -137,6 +141,18 @@ struct UserDefaultsEditView: View {
 
         case .stringArray:
             UserDefaultsStringArrayEditor(strings: $valueStringArray)
+
+        case .dictionary:
+            VStack {
+                UserDefaultsStringEditor(.init(
+                    get: { DictionaryWrapper(valueDictionary) },
+                    set: { valueDictionary = $0.dictionary }
+                ), isValid: $isValid, style: .multiline)
+                Text("Please input as JSON.")
+                    .fontWeight(.bold)
+                    .foregroundColor(.red)
+                    .padding(.bottom)
+            }
 
         case .unknown:
             VStack(spacing: 16) {
@@ -184,6 +200,9 @@ struct UserDefaultsEditView: View {
             if let url = userDefaults.url(forKey: key) {
                 valueType = .url
                 valueURL = url
+            } else if let dict = userDefaults.dictionary(forKey: key) {
+                valueType = .dictionary
+                valueDictionary = dict
             } else {
                 let object = userDefaults.object(forKey: key)
 
@@ -217,6 +236,8 @@ struct UserDefaultsEditView: View {
             userDefaults.set(valueDate, forKey: key)
         case .stringArray:
             userDefaults.set(valueStringArray, forKey: key)
+        case .dictionary:
+            userDefaults.set(valueDictionary, forKey: key)
         case .unknown:
             return
         }

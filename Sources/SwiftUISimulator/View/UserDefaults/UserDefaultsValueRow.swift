@@ -27,6 +27,8 @@ struct UserDefaultsValueRow: View {
     private var value: String {
         if let _ = defaults.value(forKey: key) as? Data, let url = defaults.url(forKey: key) {
             return url.absoluteString
+        } else if let dict = defaults.dictionary(forKey: key) {
+            return dict.prettyJSON
         } else {
             switch prettyString(defaults.value(forKey: key)) {
             case let .string(string):
