@@ -103,8 +103,8 @@ struct UserDefaultsEditView: View {
     private func valueEditor() -> some View {
         switch valueType {
         case .bool:
-            Toggle("Bool", isOn: $valueBool)
-                .padding(.horizontal)
+            UserDefaultsBoolEditor(value: $valueBool)
+                .padding([.horizontal, .bottom])
 
         case .string:
             TextEditor(text: $valueString)
