@@ -14,6 +14,7 @@ enum ValueType: Identifiable, CaseIterable {
     case float
     case double
     case url
+    case date
     case stringArray
     case unknown
 
@@ -25,6 +26,7 @@ enum ValueType: Identifiable, CaseIterable {
         case .float: return "Float"
         case .double: return "Double"
         case .url: return "URL"
+        case .date: return "Date"
         case .stringArray: return "[String]"
         case .unknown: return "(Unkonwn)"
         }
@@ -54,6 +56,7 @@ struct UserDefaultsEditView: View {
     @State private var valueDouble: Double = 0
     @State private var valueString: String = ""
     @State private var valueURL: URL? = nil
+    @State private var valueDate: Date? = nil
     @State private var valueStringArray: [String] = []
 
     @State private var isValid = true
@@ -124,6 +127,14 @@ struct UserDefaultsEditView: View {
                 ), isValid: $isValid)
             }
 
+        case .date:
+            if let date = valueDate {
+                UserDefaultsStringEditor(.init(
+                    get: { date },
+                    set: { valueDate = $0 }
+                ), isValid: $isValid)
+            }
+
         case .stringArray:
             UserDefaultsStringArrayEditor(strings: $valueStringArray)
 
@@ -175,7 +186,15 @@ struct UserDefaultsEditView: View {
                 valueURL = url
             } else {
                 let object = userDefaults.object(forKey: key)
-                valueType = .unknown
+
+                switch object {
+                case let value as Date:
+                    valueType = .date
+                    valueDate = value
+                default:
+                    valueType = .unknown
+                    print("type: \(String(describing: object.self))")
+                }
             }
         }
     }
@@ -194,6 +213,8 @@ struct UserDefaultsEditView: View {
             userDefaults.set(valueDouble, forKey: key)
         case .url:
             userDefaults.set(valueURL, forKey: key)
+        case .date:
+            userDefaults.set(valueDate, forKey: key)
         case .stringArray:
             userDefaults.set(valueStringArray, forKey: key)
         case .unknown:

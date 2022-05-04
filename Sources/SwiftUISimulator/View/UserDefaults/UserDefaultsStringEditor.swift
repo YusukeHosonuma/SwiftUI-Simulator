@@ -40,6 +40,26 @@ extension URL: StringEditable {
     }
 }
 
+extension Date: StringEditable {
+    init?(_ string: String) {
+        if let date = Self.formatter.date(from: string) {
+            self = date
+        } else {
+            return nil
+        }
+    }
+
+    func toString() -> String {
+        Self.formatter.string(from: self)
+    }
+
+    static var formatter: ISO8601DateFormatter {
+        let f = ISO8601DateFormatter()
+        f.timeZone = .current
+        return f
+    }
+}
+
 struct UserDefaultsStringEditor<Value: StringEditable>: View {
     @Binding var value: Value
     @Binding var isValid: Bool
