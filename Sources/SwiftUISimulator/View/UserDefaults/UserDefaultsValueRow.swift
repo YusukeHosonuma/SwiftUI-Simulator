@@ -79,6 +79,7 @@ struct UserDefaultsValueRow: View {
                 Text(key)
                     .font(.system(size: 14, weight: .bold, design: .monospaced))
                     .lineLimit(1)
+                    .truncationMode(.middle)
                     .foregroundColor(.gray)
                 Spacer()
 

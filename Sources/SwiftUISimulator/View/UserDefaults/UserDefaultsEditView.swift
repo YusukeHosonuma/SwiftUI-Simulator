@@ -78,7 +78,6 @@ struct UserDefaultsEditView: View {
                 Text("\(key): \(valueType.typeName)")
                     .font(.system(size: 14, weight: .bold, design: .monospaced))
                     .foregroundColor(.gray)
-                    .lineLimit(1)
                     .padding(.horizontal)
 
                 valueEditor()
