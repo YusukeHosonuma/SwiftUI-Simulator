@@ -22,14 +22,11 @@ struct UserDefaultsStringArrayEditor: View {
                         // ⚠️ Do not use `Binding` directly. (it cause crash when `onDelete`)
                         // https://zenn.dev/usk2000/articles/563a79015bf59a
                         //
-                        TextEditor(text: .init(get: {
-                            strings[index]
-                        }, set: {
-                            strings[index] = $0
-                        }))
-                        .border(.gray.opacity(0.5))
-                        .autocapitalization(.none)
-                        .disableAutocorrection(true)
+                        TextEditor(text: .init(
+                            get: { strings[index] },
+                            set: { strings[index] = $0 }
+                        ))
+                        .style(.valueEditor)
                     }
                 }
                 .onMove { source, destination in

@@ -26,10 +26,18 @@ struct ContentView: View {
             //
             // UserDefaults.standard
             //
-            UserDefaults.standard.set("Hello!", forKey: "message")
-            UserDefaults.standard.set(7.5, forKey: "number")
-            UserDefaults.standard.set(URL(string: "https://github.com/YusukeHosonuma/SwiftUI-Simulator")!, forKey: "url")
-            UserDefaults.standard.set(Date(), forKey: "date")
+            let standard = UserDefaults.standard
+            standard.set("Hello!", forKey: "message")
+            standard.set(7.5, forKey: "number")
+            standard.set(URL(string: "https://github.com/YusukeHosonuma/SwiftUI-Simulator")!, forKey: "url")
+            standard.set(Date(), forKey: "date")
+            standard.set([
+                "int": 42,
+                "float": Float(3.14),
+                "bool": true,
+                "string": "String",
+                "array": ["one", "two"],
+            ], forKey: "dictionary")
 
             //
             // AppGroup

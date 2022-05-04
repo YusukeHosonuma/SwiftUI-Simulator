@@ -24,25 +24,18 @@ struct UserDefaultsValueRow: View {
     @State private var contentID = UUID() // for update view.
     @State private var isPresentedEditSheet = false
 
-    private var value: String {
+    private var value: (pretty: String, raw: String?) {
         if let _ = defaults.value(forKey: key) as? Data, let url = defaults.url(forKey: key) {
-            return url.absoluteString
+            return (url.absoluteString, nil)
+        } else if let dict = defaults.dictionary(forKey: key) {
+            return (dict.prettyJSON, nil)
         } else {
             switch prettyString(defaults.value(forKey: key)) {
             case let .string(string):
-                return string
-            case let .json(pretty: string, rawString: _):
-                return string
+                return (string, nil)
+            case let .json(pretty: string, rawString: rawString):
+                return (string, rawString)
             }
-        }
-    }
-
-    private var rawString: String? {
-        switch prettyString(defaults.value(forKey: key)) {
-        case .string:
-            return nil
-        case let .json(pretty: _, rawString: rawString):
-            return rawString
         }
     }
 
@@ -51,7 +44,7 @@ struct UserDefaultsValueRow: View {
 
         \(key)
 
-        \(value + (rawString.map { "\n" + $0 } ?? ""))
+        \(value.pretty + (value.raw.map { "\n" + $0 } ?? ""))
         """
     }
 
@@ -59,9 +52,9 @@ struct UserDefaultsValueRow: View {
         GroupBox {
             HStack {
                 VStack(alignment: .leading) {
-                    Text(value)
-                    if let rawString = rawString {
-                        Text(rawString).foregroundColor(.gray)
+                    Text(value.pretty)
+                    if let raw = value.raw {
+                        Text(raw).foregroundColor(.gray)
                     }
                 }
                 Spacer()

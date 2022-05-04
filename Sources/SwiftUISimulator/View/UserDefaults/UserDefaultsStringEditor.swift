@@ -60,31 +60,67 @@ extension Date: StringEditable {
     }
 }
 
-struct UserDefaultsStringEditor<Value: StringEditable>: View {
-    @Binding var value: Value
-    @Binding var isValid: Bool
-    @State var text: String = ""
+struct DictionaryWrapper: StringEditable {
+    let dictionary: [String: Any]
 
-    init(_ value: Binding<Value>, isValid: Binding<Bool>) {
+    init(_ dictionary: [String: Any]) {
+        self.dictionary = dictionary
+    }
+
+    init?(_ string: String) {
+        if let dict = [String: Any].from(jsonString: string) {
+            self.init(dict)
+        } else {
+            return nil
+        }
+    }
+
+    func toString() -> String {
+        dictionary.prettyJSON
+    }
+}
+
+struct UserDefaultsStringEditor<Value: StringEditable>: View {
+    enum Style {
+        case single
+        case multiline
+    }
+
+    @Binding private var value: Value
+    @Binding private var isValid: Bool
+    @State private var text: String = ""
+
+    private let style: Style
+
+    init(_ value: Binding<Value>, isValid: Binding<Bool>, style: Style = .single) {
         _value = value
         _isValid = isValid
+        self.style = style
     }
 
     var body: some View {
-        TextField("", text: $text)
-            .padding()
-            .border(.gray.opacity(0.5))
-            .padding(.horizontal)
-            .onChange(of: text) {
-                if let newValue = Value($0) {
-                    value = newValue
-                    isValid = true
-                } else {
-                    isValid = false
-                }
+        Group {
+            switch style {
+            case .single:
+                TextField("", text: $text)
+                    .style(.valueEditor)
+
+            case .multiline:
+                TextEditor(text: $text)
+                    .style(.valueEditor)
             }
-            .onAppear {
-                self.text = value.toString()
+        }
+        .padding([.horizontal])
+        .onChange(of: text) {
+            if let newValue = Value($0) {
+                value = newValue
+                isValid = true
+            } else {
+                isValid = false
             }
+        }
+        .onAppear {
+            self.text = value.toString()
+        }
     }
 }
