@@ -28,6 +28,7 @@ struct ContentView: View {
             //
             UserDefaults.standard.set("Hello!", forKey: "message")
             UserDefaults.standard.set(7.5, forKey: "number")
+            UserDefaults.standard.set(URL(string: "https://github.com/YusukeHosonuma/SwiftUI-Simulator")!, forKey: "URL")
 
             //
             // AppGroup

@@ -7,30 +7,40 @@
 
 import SwiftUI
 
-protocol EditableNumber {
+protocol StringEditable {
     init?(_ string: String)
     func toString() -> String
 }
 
-extension Int: EditableNumber {
+extension Int: StringEditable {
     func toString() -> String {
         "\(self)"
     }
 }
 
-extension Float: EditableNumber {
+extension Float: StringEditable {
     func toString() -> String {
         "\(self)"
     }
 }
 
-extension Double: EditableNumber {
+extension Double: StringEditable {
     func toString() -> String {
         "\(self)"
     }
 }
 
-struct UserDefaultsNumberEditor<Value: EditableNumber>: View {
+extension URL: StringEditable {
+    init?(_ string: String) {
+        self.init(string: string)
+    }
+
+    func toString() -> String {
+        absoluteString
+    }
+}
+
+struct UserDefaultsStringEditor<Value: StringEditable>: View {
     @Binding var value: Value
     @Binding var isValid: Bool
     @State var text: String = ""
