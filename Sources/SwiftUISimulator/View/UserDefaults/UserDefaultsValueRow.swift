@@ -25,11 +25,15 @@ struct UserDefaultsValueRow: View {
     @State private var isPresentedEditSheet = false
 
     private var value: String {
-        switch prettyString(defaults.value(forKey: key)) {
-        case let .string(string):
-            return string
-        case let .json(pretty: string, rawString: _):
-            return string
+        if let _ = defaults.value(forKey: key) as? Data, let url = defaults.url(forKey: key) {
+            return url.absoluteString
+        } else {
+            switch prettyString(defaults.value(forKey: key)) {
+            case let .string(string):
+                return string
+            case let .json(pretty: string, rawString: _):
+                return string
+            }
         }
     }
 
