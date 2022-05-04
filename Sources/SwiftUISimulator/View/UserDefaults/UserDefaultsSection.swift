@@ -29,7 +29,7 @@ struct UserDefaultsSection: View {
     }
 
     var body: some View {
-        Section {
+        DisclosureGroup {
             if filteredKeys.isEmpty {
                 Text("No results.")
                     .foregroundColor(.gray)
@@ -43,7 +43,7 @@ struct UserDefaultsSection: View {
                     }
                 }
             }
-        } header: {
+        } label: {
             HStack {
                 //
                 // 􀉩 standard / 􀨤 group.xxx
@@ -52,10 +52,10 @@ struct UserDefaultsSection: View {
 
                 Spacer()
 
+                //
+                // 􀍡
+                //
                 if type == .user {
-                    //
-                    // 􀍡
-                    //
                     Menu {
                         Group {
                             //
@@ -122,11 +122,9 @@ struct UserDefaultsSection: View {
                         .disabled(filteredKeys.isEmpty)
                     } label: {
                         Image(systemName: "ellipsis.circle")
-                            .font(.system(size: 18))
                     }
                 }
             }
-            .font(.subheadline)
         }
         .textCase(nil)
         .alert(item: $toDeleteDefaults) { defaultsWrapper in
