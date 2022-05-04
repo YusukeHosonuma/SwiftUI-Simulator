@@ -31,7 +31,20 @@ enum UserDefaultsType {
     case system
 }
 
+//
+// Stored as JSON data.
+//
 struct JSONData {
+    let dictionary: [String: Any]
+}
+
+//
+// Stored as JSON string.
+//
+// e.g.
+// `{"rawValue":{"red":0,"alpha":1,"blue":0,"green":0}}`)
+//
+struct JSONString {
     let dictionary: [String: Any]
 }
 
@@ -71,6 +84,14 @@ extension UserDefaults {
            let dict = decoded as? [String: Any]
         {
             return JSONData(dictionary: dict)
+        }
+
+        if let string = string(forKey: key),
+           string.hasPrefix("{"),
+           string.hasSuffix("}"),
+           let dict = string.jsonToDictionary()
+        {
+            return JSONString(dictionary: dict)
         }
 
         return value(forKey: key)

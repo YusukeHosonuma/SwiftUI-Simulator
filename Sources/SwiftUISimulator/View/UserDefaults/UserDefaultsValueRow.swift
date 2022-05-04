@@ -38,18 +38,13 @@ struct UserDefaultsValueRow: View {
             return (value.prettyJSON, nil)
         case let value as [String: Any]:
             return (value.prettyJSON, nil)
-
         case let value as JSONData:
             return (value.dictionary.prettyJSON, "<Decoded JSON Data>")
+        case let value as JSONString:
+            return (value.dictionary.prettyJSON, "<Decoded JSON String>")
 
         default:
-            switch prettyString(value) {
-            case let .string(string):
-                return (string, nil)
-
-            case let .json(pretty: string, rawString: rawString):
-                return (string, rawString)
-            }
+            return (prettyString(value), nil)
         }
     }
 
@@ -84,6 +79,7 @@ struct UserDefaultsValueRow: View {
                 Text(key)
                     .font(.system(size: 14, weight: .bold, design: .monospaced))
                     .lineLimit(1)
+                    .truncationMode(.middle)
                     .foregroundColor(.gray)
                 Spacer()
 
@@ -125,32 +121,13 @@ struct UserDefaultsValueRow: View {
     }
 }
 
-private func prettyString(_ value: Any?) -> PrettyResult {
-    guard let value = value else { return .string("nil") }
+private func prettyString(_ value: Any?) -> String {
+    guard let value = value else { return "nil" }
 
     var option = Pretty.sharedOption
     option.indentSize = 2
 
     var output = ""
-
-    if let string = value as? String {
-        //
-        // 💡 Try decode as JSON. (For data that encoded by `JSONEncoder`)
-        //
-        // e.g.
-        // `{"rawValue":{"red":0,"alpha":1,"blue":0,"green":0}}`
-        //
-        if string.hasPrefix("{"), string.hasSuffix("}"), let dict = string.jsonToDictionary() {
-            Pretty.prettyPrintDebug(dict, option: option, to: &output)
-            return .json(pretty: output, rawString: string)
-        }
-    }
-
     Pretty.prettyPrintDebug(value, option: option, to: &output)
-    return .string(output)
-}
-
-private enum PrettyResult {
-    case string(String)
-    case json(pretty: String, rawString: String)
+    return output
 }

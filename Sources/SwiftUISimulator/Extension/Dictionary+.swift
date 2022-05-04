@@ -18,10 +18,23 @@ extension Dictionary where Key == String, Value == Any {
     }
 
     var prettyJSON: String {
-        let jsonData = try? JSONSerialization.data(
-            withJSONObject: self,
-            options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
-        )
-        return String(data: jsonData!, encoding: .utf8)!
+        do {
+            let data = try JSONSerialization.data(
+                withJSONObject: self,
+                options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+            )
+            return String(data: data, encoding: .utf8)!
+        } catch {
+            preconditionFailure(error.localizedDescription)
+        }
+    }
+
+    var serializedJSON: String? {
+        do {
+            let data = try JSONSerialization.data(withJSONObject: self)
+            return String(data: data, encoding: .utf8)
+        } catch {
+            preconditionFailure(error.localizedDescription)
+        }
     }
 }
