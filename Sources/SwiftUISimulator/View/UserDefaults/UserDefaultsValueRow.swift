@@ -14,9 +14,9 @@ struct UserDefaultsValueRow: View {
     private var name: String
     private var defaults: UserDefaults
     private var key: String
-    private var onUpdate: () -> ()
+    private var onUpdate: () -> Void
 
-    init(name: String, defaults: UserDefaults, key: String, onUpdate: @escaping () -> ()) {
+    init(name: String, defaults: UserDefaults, key: String, onUpdate: @escaping () -> Void) {
         self.name = name
         self.defaults = defaults
         self.key = key
@@ -38,6 +38,9 @@ struct UserDefaultsValueRow: View {
             return (value.prettyJSON, nil)
         case let value as [String: Any]:
             return (value.prettyJSON, nil)
+
+        case let value as JSONData:
+            return (value.dictionary.prettyJSON, "<Decoded JSON Data>")
 
         default:
             switch prettyString(value) {
@@ -65,7 +68,9 @@ struct UserDefaultsValueRow: View {
                 VStack(alignment: .leading) {
                     Text(value.pretty)
                     if let raw = value.raw {
-                        Text(raw).foregroundColor(.gray)
+                        Text(raw)
+                            .foregroundColor(.gray)
+                            .padding(.top, 2)
                     }
                 }
                 Spacer()

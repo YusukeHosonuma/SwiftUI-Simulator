@@ -17,6 +17,7 @@ enum ValueType: Identifiable, CaseIterable {
     case date
     case array
     case dictionary
+    case jsonData
     case unknown
 
     var typeName: String {
@@ -30,6 +31,7 @@ enum ValueType: Identifiable, CaseIterable {
         case .date: return "Date"
         case .array: return "[Any]"
         case .dictionary: return "[String: Any]"
+        case .jsonData: return "Data"
         case .unknown: return "(Unkonwn)"
         }
     }
@@ -52,7 +54,7 @@ struct UserDefaultsEditView: View {
     }
 
     @State private var valueType: ValueType = .string
-    
+
     @State private var valueBool: Bool = false
     @State private var valueInt: Int = 0
     @State private var valueFloat: Float = 0
@@ -62,6 +64,7 @@ struct UserDefaultsEditView: View {
     @State private var valueDate: Date? = nil
     @State private var valueArray: [Any] = []
     @State private var valueDictionary: [String: Any] = [:]
+    @State private var valueJSONData: JSONData?
 
     @State private var isValid = true
     @State private var isPresentedConfirmDelete = false
@@ -122,7 +125,7 @@ struct UserDefaultsEditView: View {
             )
         }
     }
-    
+
     // MARK: Editor
 
     @ViewBuilder
@@ -152,7 +155,6 @@ struct UserDefaultsEditView: View {
                     get: { url },
                     set: { valueURL = $0 }
                 ), isValid: $isValid, style: .multiline)
-                    .padding(.bottom)
             }
 
         case .date:
@@ -164,27 +166,23 @@ struct UserDefaultsEditView: View {
             }
 
         case .array:
-            VStack {
-                UserDefaultsStringEditor(.init(
-                    get: { ArrayWrapper(valueArray) },
-                    set: { valueArray = $0.array }
-                ), isValid: $isValid, style: .multiline)
-                Text("Please input as JSON.")
-                    .font(.footnote)
-                    .foregroundColor(.gray)
-                    .padding(.bottom)
-            }
-            
+            jsonEditor(.init(
+                get: { ArrayWrapper(valueArray) },
+                set: { valueArray = $0.array }
+            ))
+
         case .dictionary:
-            VStack {
-                UserDefaultsStringEditor(.init(
-                    get: { DictionaryWrapper(valueDictionary) },
-                    set: { valueDictionary = $0.dictionary }
-                ), isValid: $isValid, style: .multiline)
-                Text("Please input as JSON.")
-                    .font(.footnote)
-                    .foregroundColor(.gray)
-                    .padding(.bottom)
+            jsonEditor(.init(
+                get: { DictionaryWrapper(valueDictionary) },
+                set: { valueDictionary = $0.dictionary }
+            ))
+
+        case .jsonData:
+            if let jsonData = valueJSONData {
+                jsonEditor(.init(
+                    get: { DictionaryWrapper(jsonData.dictionary) },
+                    set: { valueJSONData = JSONData(dictionary: $0.dictionary) }
+                ))
             }
 
         case .unknown:
@@ -199,10 +197,20 @@ struct UserDefaultsEditView: View {
         }
     }
 
+    private func jsonEditor<Value: StringEditable>(_ binding: Binding<Value>) -> some View {
+        VStack {
+            UserDefaultsStringEditor(binding, isValid: $isValid, style: .multiline)
+            Text("Please input as JSON.")
+                .font(.footnote)
+                .foregroundColor(.gray)
+                .padding(.bottom)
+        }
+    }
+
     // MARK: Load / Save
 
     private func load() {
-        let value = userDefaults.value(forKey: key)
+        let value = userDefaults.lookup(forKey: key)
 
         switch value {
         case let value as Bool:
@@ -232,7 +240,11 @@ struct UserDefaultsEditView: View {
         case let value as [String: Any]:
             valueType = .dictionary
             valueDictionary = value
-            
+
+        case let value as JSONData:
+            valueType = .jsonData
+            valueJSONData = value
+
         default:
             //
             // 💡 Note:
@@ -277,11 +289,17 @@ struct UserDefaultsEditView: View {
             userDefaults.set(valueArray, forKey: key)
         case .dictionary:
             userDefaults.set(valueDictionary, forKey: key)
+        case .jsonData:
+            if let dict = valueJSONData?.dictionary, let data = dict.prettyJSON.data(using: .utf8) {
+                userDefaults.set(data, forKey: key)
+            } else {
+                preconditionFailure("Can't save as `Data` type.")
+            }
         case .unknown:
             return
         }
     }
-    
+
     private func delete() {
         userDefaults.removeObject(forKey: key)
     }

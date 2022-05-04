@@ -5,9 +5,9 @@
 //  Created by Yusuke Hosonuma on 2022/05/03.
 //
 //
-//import SwiftUI
+// import SwiftUI
 //
-//struct UserDefaultsStringArrayEditor: View {
+// struct UserDefaultsStringArrayEditor: View {
 //    @Binding var strings: [String]
 //    @State var editMode: EditMode = .inactive
 //
@@ -69,4 +69,4 @@
 //            .environment(\.editMode, $editMode)
 //        }
 //    }
-//}
+// }

@@ -23,6 +23,13 @@ struct ContentView: View {
         if isFirstLaunch {
             defer { isFirstLaunch = false }
 
+            struct User: Codable {
+                let name: String
+                let age: Int
+                let date: Date
+                let url: URL
+            }
+
             //
             // UserDefaults.standard
             //
@@ -39,6 +46,15 @@ struct ContentView: View {
                 "string": "String",
                 "array": ["one", "two"],
             ], forKey: "dictionary")
+
+            let user = User(
+                name: "tobi462",
+                age: 17,
+                date: Date(),
+                url: URL(string: "https://github.com/YusukeHosonuma/SwiftUI-Simulator")!
+            )
+            let data = try! JSONEncoder().encode(user)
+            standard.set(data, forKey: "user")
 
             //
             // AppGroup

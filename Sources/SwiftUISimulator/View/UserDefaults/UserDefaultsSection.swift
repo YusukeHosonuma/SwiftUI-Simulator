@@ -131,6 +131,7 @@ struct UserDefaultsSection: View {
                         .disabled(filteredKeys.isEmpty)
                     } label: {
                         Image(systemName: "ellipsis.circle")
+                            .padding(.trailing, 8)
                     }
                 }
             }

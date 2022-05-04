@@ -31,6 +31,10 @@ enum UserDefaultsType {
     case system
 }
 
+struct JSONData {
+    let dictionary: [String: Any]
+}
+
 extension UserDefaults {
     var systemKeys: [String] {
         allKeys.filter { isSystemKey($0) }
@@ -56,11 +60,20 @@ extension UserDefaults {
     func lookup(forKey key: String) -> Any? {
         if let _ = value(forKey: key) as? Data, let url = url(forKey: key) {
             return url
-        } else if let dict = dictionary(forKey: key) {
-            return dict
-        } else {
-            return value(forKey: key)
         }
+
+        if let dict = dictionary(forKey: key) {
+            return dict
+        }
+
+        if let data = data(forKey: key),
+           let decoded = try? JSONSerialization.jsonObject(with: data),
+           let dict = decoded as? [String: Any]
+        {
+            return JSONData(dictionary: dict)
+        }
+
+        return value(forKey: key)
     }
 
     private func isOSSKey(_ key: String) -> Bool {
