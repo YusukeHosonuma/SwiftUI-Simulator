@@ -60,6 +60,26 @@ extension Date: StringEditable {
     }
 }
 
+struct ArrayWrapper: StringEditable {
+    let array: [Any]
+
+    init(_ array: [Any]) {
+        self.array = array
+    }
+
+    init?(_ string: String) {
+        if let array = [Any].from(jsonString: string) {
+            self.init(array)
+        } else {
+            return nil
+        }
+    }
+
+    func toString() -> String {
+        array.prettyJSON
+    }
+}
+
 struct DictionaryWrapper: StringEditable {
     let dictionary: [String: Any]
 

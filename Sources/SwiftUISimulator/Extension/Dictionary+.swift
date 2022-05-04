@@ -22,7 +22,6 @@ extension Dictionary where Key == String, Value == Any {
             withJSONObject: self,
             options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
         )
-        let jsonString = String(data: jsonData!, encoding: .utf8)!
-        return jsonString
+        return String(data: jsonData!, encoding: .utf8)!
     }
 }

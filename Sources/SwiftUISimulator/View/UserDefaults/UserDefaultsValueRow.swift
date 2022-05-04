@@ -27,20 +27,25 @@ struct UserDefaultsValueRow: View {
     private var value: (pretty: String, raw: String?) {
         let value = defaults.lookup(forKey: key)
 
+        switch value {
         //
         // 💡 Note:
-        // Display as JSON string (not use pretty), because editor of `[String: Any]` is input as JSON.
+        // `Array` and `Dictionary` are display as JSON string.
+        // Because editor of `[String: Any]` is input as JSON.
         //
-        if let dict = value as? [String: Any] {
-            return (dict.prettyJSON, nil)
-        }
+        case let value as [Any]:
+            return (value.prettyJSON, nil)
+        case let value as [String: Any]:
+            return (value.prettyJSON, nil)
 
-        switch prettyString(value) {
-        case let .string(string):
-            return (string, nil)
+        default:
+            switch prettyString(value) {
+            case let .string(string):
+                return (string, nil)
 
-        case let .json(pretty: string, rawString: rawString):
-            return (string, rawString)
+            case let .json(pretty: string, rawString: rawString):
+                return (string, rawString)
+            }
         }
     }
 

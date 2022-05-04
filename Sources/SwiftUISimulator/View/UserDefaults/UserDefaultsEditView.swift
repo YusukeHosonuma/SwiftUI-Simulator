@@ -15,7 +15,7 @@ enum ValueType: Identifiable, CaseIterable {
     case double
     case url
     case date
-    case stringArray
+    case array
     case dictionary
     case unknown
 
@@ -28,7 +28,7 @@ enum ValueType: Identifiable, CaseIterable {
         case .double: return "Double"
         case .url: return "URL"
         case .date: return "Date"
-        case .stringArray: return "[String]"
+        case .array: return "[Any]"
         case .dictionary: return "[String: Any]"
         case .unknown: return "(Unkonwn)"
         }
@@ -59,7 +59,7 @@ struct UserDefaultsEditView: View {
     @State private var valueString: String = ""
     @State private var valueURL: URL? = nil
     @State private var valueDate: Date? = nil
-    @State private var valueStringArray: [String] = []
+    @State private var valueArray: [Any] = []
     @State private var valueDictionary: [String: Any] = [:]
 
     @State private var isValid = true
@@ -137,9 +137,18 @@ struct UserDefaultsEditView: View {
                 ), isValid: $isValid)
             }
 
-        case .stringArray:
-            UserDefaultsStringArrayEditor(strings: $valueStringArray)
-
+        case .array:
+            VStack {
+                UserDefaultsStringEditor(.init(
+                    get: { ArrayWrapper(valueArray) },
+                    set: { valueArray = $0.array }
+                ), isValid: $isValid, style: .multiline)
+                Text("Please input as JSON.")
+                    .font(.footnote)
+                    .foregroundColor(.gray)
+                    .padding(.bottom)
+            }
+            
         case .dictionary:
             VStack {
                 UserDefaultsStringEditor(.init(
@@ -147,8 +156,8 @@ struct UserDefaultsEditView: View {
                     set: { valueDictionary = $0.dictionary }
                 ), isValid: $isValid, style: .multiline)
                 Text("Please input as JSON.")
-                    .fontWeight(.bold)
-                    .foregroundColor(.red)
+                    .font(.footnote)
+                    .foregroundColor(.gray)
                     .padding(.bottom)
             }
 
@@ -190,17 +199,23 @@ struct UserDefaultsEditView: View {
             valueType = .string
             valueString = value
 
-        case let value as [String]:
-            valueType = .stringArray
-            valueStringArray = value
+        case let value as [Any]:
+            valueType = .array
+            valueArray = value
 
+        case let value as [String: Any]:
+            valueType = .dictionary
+            valueDictionary = value
+            
         default:
+            //
+            // 💡 Note:
+            // The `URL` type was stored by encoded `Data`.
+            // Therefore must use `url(forKey:)`.
+            //
             if let url = userDefaults.url(forKey: key) {
                 valueType = .url
                 valueURL = url
-            } else if let dict = userDefaults.dictionary(forKey: key) {
-                valueType = .dictionary
-                valueDictionary = dict
             } else {
                 let object = userDefaults.object(forKey: key)
 
@@ -232,8 +247,8 @@ struct UserDefaultsEditView: View {
             userDefaults.set(valueURL, forKey: key)
         case .date:
             userDefaults.set(valueDate, forKey: key)
-        case .stringArray:
-            userDefaults.set(valueStringArray, forKey: key)
+        case .array:
+            userDefaults.set(valueArray, forKey: key)
         case .dictionary:
             userDefaults.set(valueDictionary, forKey: key)
         case .unknown:
