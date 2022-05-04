@@ -108,10 +108,8 @@ struct UserDefaultsEditView: View {
 
         case .string:
             TextEditor(text: $valueString)
-                .border(.gray.opacity(0.5))
+                .style(.valueEditor)
                 .padding([.horizontal, .bottom])
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
 
         case .int:
             UserDefaultsStringEditor($valueInt, isValid: $isValid)

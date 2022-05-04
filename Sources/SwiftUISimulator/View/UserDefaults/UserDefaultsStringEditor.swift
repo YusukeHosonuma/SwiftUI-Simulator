@@ -103,17 +103,13 @@ struct UserDefaultsStringEditor<Value: StringEditable>: View {
             switch style {
             case .single:
                 TextField("", text: $text)
-                    .padding()
-                    .border(.gray.opacity(0.5))
+                    .style(.valueEditor)
 
             case .multiline:
                 TextEditor(text: $text)
-                    .border(.gray.opacity(0.5))
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
+                    .style(.valueEditor)
             }
         }
-        .font(.system(size: 14, weight: .regular, design: .monospaced))
         .padding([.horizontal])
         .onChange(of: text) {
             if let newValue = Value($0) {
