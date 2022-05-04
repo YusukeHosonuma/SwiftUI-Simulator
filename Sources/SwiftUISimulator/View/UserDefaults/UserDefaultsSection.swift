@@ -15,6 +15,7 @@ struct UserDefaultsSection: View {
     @Binding var searchText: String
 
     @State private var toDeleteDefaults: UserDefaultsWrapper?
+    @State private var contentID = UUID() // for force-update to view.
 
     private var allKeys: [String] {
         defaults.extractKeys(of: type)
@@ -29,7 +30,7 @@ struct UserDefaultsSection: View {
     }
 
     var body: some View {
-        Section {
+        DisclosureGroup {
             if filteredKeys.isEmpty {
                 Text("No results.")
                     .foregroundColor(.gray)
@@ -39,11 +40,19 @@ struct UserDefaultsSection: View {
                     // Value
                     //
                     ForEach(filteredKeys.sorted(), id: \.self) { key in
-                        UserDefaultsValueRow(name: name, defaults: defaults, key: key)
+                        UserDefaultsValueRow(
+                            name: name,
+                            defaults: defaults,
+                            key: key,
+                            onUpdate: {
+                                contentID = UUID()
+                            }
+                        )
                     }
                 }
+                .id(contentID)
             }
-        } header: {
+        } label: {
             HStack {
                 //
                 // 􀉩 standard / 􀨤 group.xxx
@@ -52,10 +61,10 @@ struct UserDefaultsSection: View {
 
                 Spacer()
 
+                //
+                // 􀍡
+                //
                 if type == .user {
-                    //
-                    // 􀍡
-                    //
                     Menu {
                         Group {
                             //
@@ -122,11 +131,9 @@ struct UserDefaultsSection: View {
                         .disabled(filteredKeys.isEmpty)
                     } label: {
                         Image(systemName: "ellipsis.circle")
-                            .font(.system(size: 18))
                     }
                 }
             }
-            .font(.subheadline)
         }
         .textCase(nil)
         .alert(item: $toDeleteDefaults) { defaultsWrapper in

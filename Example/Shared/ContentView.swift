@@ -31,6 +31,7 @@ struct ContentView: View {
             standard.set(7.5, forKey: "number")
             standard.set(URL(string: "https://github.com/YusukeHosonuma/SwiftUI-Simulator")!, forKey: "url")
             standard.set(Date(), forKey: "date")
+            standard.set(["Apple", "Orange"], forKey: "array")
             standard.set([
                 "int": 42,
                 "float": Float(3.14),

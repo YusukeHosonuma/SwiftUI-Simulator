@@ -14,33 +14,39 @@ struct UserDefaultsValueRow: View {
     private var name: String
     private var defaults: UserDefaults
     private var key: String
+    private var onUpdate: () -> ()
 
-    init(name: String, defaults: UserDefaults, key: String) {
+    init(name: String, defaults: UserDefaults, key: String, onUpdate: @escaping () -> ()) {
         self.name = name
         self.defaults = defaults
         self.key = key
+        self.onUpdate = onUpdate
     }
 
-    @State private var contentID = UUID() // for update view.
     @State private var isPresentedEditSheet = false
 
     private var value: (pretty: String, raw: String?) {
         let value = defaults.lookup(forKey: key)
 
+        switch value {
         //
         // 💡 Note:
-        // Display as JSON string (not use pretty), because editor of `[String: Any]` is input as JSON.
+        // `Array` and `Dictionary` are display as JSON string.
+        // Because editor of `[String: Any]` is input as JSON.
         //
-        if let dict = value as? [String: Any] {
-            return (dict.prettyJSON, nil)
-        }
+        case let value as [Any]:
+            return (value.prettyJSON, nil)
+        case let value as [String: Any]:
+            return (value.prettyJSON, nil)
 
-        switch prettyString(value) {
-        case let .string(string):
-            return (string, nil)
+        default:
+            switch prettyString(value) {
+            case let .string(string):
+                return (string, nil)
 
-        case let .json(pretty: string, rawString: rawString):
-            return (string, rawString)
+            case let .json(pretty: string, rawString: rawString):
+                return (string, rawString)
+            }
         }
     }
 
@@ -107,8 +113,7 @@ struct UserDefaultsValueRow: View {
                 .font(.system(size: 14, weight: .regular))
             }
         }
-        .id(contentID)
-        .sheet(isPresented: $isPresentedEditSheet, onDismiss: { contentID = UUID() }) {
+        .sheet(isPresented: $isPresentedEditSheet, onDismiss: { onUpdate() }) {
             UserDefaultsEditView(name: name, userDefaults: defaults, key: key)
                 .accentColor(simulatorAccentColor)
         }
