@@ -14,14 +14,15 @@ struct UserDefaultsValueRow: View {
     private var name: String
     private var defaults: UserDefaults
     private var key: String
+    private var onUpdate: () -> ()
 
-    init(name: String, defaults: UserDefaults, key: String) {
+    init(name: String, defaults: UserDefaults, key: String, onUpdate: @escaping () -> ()) {
         self.name = name
         self.defaults = defaults
         self.key = key
+        self.onUpdate = onUpdate
     }
 
-    @State private var contentID = UUID() // for update view.
     @State private var isPresentedEditSheet = false
 
     private var value: (pretty: String, raw: String?) {
@@ -112,8 +113,7 @@ struct UserDefaultsValueRow: View {
                 .font(.system(size: 14, weight: .regular))
             }
         }
-        .id(contentID)
-        .sheet(isPresented: $isPresentedEditSheet, onDismiss: { contentID = UUID() }) {
+        .sheet(isPresented: $isPresentedEditSheet, onDismiss: { onUpdate() }) {
             UserDefaultsEditView(name: name, userDefaults: defaults, key: key)
                 .accentColor(simulatorAccentColor)
         }

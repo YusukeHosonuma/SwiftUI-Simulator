@@ -52,6 +52,7 @@ struct UserDefaultsEditView: View {
     }
 
     @State private var valueType: ValueType = .string
+    
     @State private var valueBool: Bool = false
     @State private var valueInt: Int = 0
     @State private var valueFloat: Float = 0
@@ -63,6 +64,7 @@ struct UserDefaultsEditView: View {
     @State private var valueDictionary: [String: Any] = [:]
 
     @State private var isValid = true
+    @State private var isPresentedConfirmDelete = false
 
     var body: some View {
         NavigationView {
@@ -78,7 +80,7 @@ struct UserDefaultsEditView: View {
             .navigationTitle(name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .destructiveAction) {
+                ToolbarItemGroup(placement: .destructiveAction) {
                     Button("Save") {
                         save()
                         presentationMode.wrappedValue.dismiss()
@@ -90,13 +92,37 @@ struct UserDefaultsEditView: View {
                         presentationMode.wrappedValue.dismiss()
                     }
                 }
+                ToolbarItem(placement: .bottomBar) {
+                    HStack {
+                        Button {
+                            isPresentedConfirmDelete.toggle()
+                        } label: {
+                            Image(systemName: "trash")
+                        }
+                        Spacer()
+                    }
+                }
             }
         }
         .onAppear {
             load()
         }
+        //
+        // ⚠️ Delete Key?
+        //
+        .alert(isPresented: $isPresentedConfirmDelete) {
+            Alert(
+                title: Text("Delete Key?"),
+                message: Text("Are you delete '\(key)'?"),
+                primaryButton: .cancel(),
+                secondaryButton: .destructive(Text("Delete"), action: {
+                    delete()
+                    presentationMode.wrappedValue.dismiss()
+                })
+            )
+        }
     }
-
+    
     // MARK: Editor
 
     @ViewBuilder
@@ -254,5 +280,9 @@ struct UserDefaultsEditView: View {
         case .unknown:
             return
         }
+    }
+    
+    private func delete() {
+        userDefaults.removeObject(forKey: key)
     }
 }
