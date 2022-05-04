@@ -146,7 +146,7 @@ struct UserDefaultsSection: View {
                 message: Text("Are you delete all keys from '\(defaultsWrapper.name)'?"),
                 primaryButton: .cancel(),
                 secondaryButton: .destructive(Text("Delete"), action: {
-                    defaultsWrapper.defaults.removeAll()
+                    defaultsWrapper.defaults.removeAll(of: type)
                 })
             )
         }
