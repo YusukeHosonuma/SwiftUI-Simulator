@@ -49,18 +49,16 @@ struct JSONString {
 }
 
 extension UserDefaults {
+    var allKeys: [String] {
+        Array(dictionaryRepresentation().keys.filter { isOSSKey($0) == false })
+    }
+
     var systemKeys: [String] {
         allKeys.filter { isSystemKey($0) }
     }
 
     var userKeys: [String] {
         allKeys.filter { isSystemKey($0) == false }
-    }
-
-    var allKeys: [String] {
-        Array(
-            dictionaryRepresentation().keys.filter { isOSSKey($0) == false }
-        )
     }
 
     func extractKeys(of type: UserDefaultsType) -> [String] {
@@ -96,7 +94,15 @@ extension UserDefaults {
 
         return value(forKey: key)
     }
+    
+    func removeAll(of type: UserDefaultsType) {
+        for key in extractKeys(of: type) {
+            removeObject(forKey: key)
+        }
+    }
 
+    // MARK: Private
+    
     private func isOSSKey(_ key: String) -> Bool {
         key.hasPrefix(storageKeyPrefix)
     }
