@@ -18,6 +18,7 @@ enum ValueType: Identifiable, CaseIterable {
     case array
     case dictionary
     case jsonData
+    case jsonString
     case unknown
 
     var typeName: String {
@@ -32,6 +33,7 @@ enum ValueType: Identifiable, CaseIterable {
         case .array: return "[Any]"
         case .dictionary: return "[String: Any]"
         case .jsonData: return "Data"
+        case .jsonString: return "String"
         case .unknown: return "(Unkonwn)"
         }
     }
@@ -65,6 +67,7 @@ struct UserDefaultsEditView: View {
     @State private var valueArray: [Any] = []
     @State private var valueDictionary: [String: Any] = [:]
     @State private var valueJSONData: JSONData?
+    @State private var valueJSONString: JSONString?
 
     @State private var isValid = true
     @State private var isPresentedConfirmDelete = false
@@ -185,6 +188,14 @@ struct UserDefaultsEditView: View {
                 ))
             }
 
+        case .jsonString:
+            if let jsonString = valueJSONString {
+                jsonEditor(.init(
+                    get: { DictionaryWrapper(jsonString.dictionary) },
+                    set: { valueJSONString = JSONString(dictionary: $0.dictionary) }
+                ))
+            }
+
         case .unknown:
             VStack(spacing: 16) {
                 Text("This type was not supported yet.")
@@ -245,6 +256,10 @@ struct UserDefaultsEditView: View {
             valueType = .jsonData
             valueJSONData = value
 
+        case let value as JSONString:
+            valueType = .jsonString
+            valueJSONString = value
+
         default:
             //
             // 💡 Note:
@@ -293,7 +308,13 @@ struct UserDefaultsEditView: View {
             if let dict = valueJSONData?.dictionary, let data = dict.prettyJSON.data(using: .utf8) {
                 userDefaults.set(data, forKey: key)
             } else {
-                preconditionFailure("Can't save as `Data` type.")
+                preconditionFailure("Can't save JSON as `Data` type.")
+            }
+        case .jsonString:
+            if let dict = valueJSONString?.dictionary, let json = dict.serializedJSON {
+                userDefaults.set(json, forKey: key)
+            } else {
+                preconditionFailure("Can't save JSON as `String` type.")
             }
         case .unknown:
             return
