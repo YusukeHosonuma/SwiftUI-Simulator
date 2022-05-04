@@ -18,7 +18,10 @@ extension Dictionary where Key == String, Value == Any {
     }
 
     var prettyJSON: String {
-        let jsonData = try? JSONSerialization.data(withJSONObject: self, options: .prettyPrinted)
+        let jsonData = try? JSONSerialization.data(
+            withJSONObject: self,
+            options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        )
         let jsonString = String(data: jsonData!, encoding: .utf8)!
         return jsonString
     }

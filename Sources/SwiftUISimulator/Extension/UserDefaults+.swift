@@ -53,6 +53,16 @@ extension UserDefaults {
         }
     }
 
+    func lookup(forKey key: String) -> Any? {
+        if let _ = value(forKey: key) as? Data, let url = url(forKey: key) {
+            return url
+        } else if let dict = dictionary(forKey: key) {
+            return dict
+        } else {
+            return value(forKey: key)
+        }
+    }
+
     private func isOSSKey(_ key: String) -> Bool {
         key.hasPrefix(storageKeyPrefix)
     }

@@ -30,16 +30,6 @@ struct UserDefaultsView: View {
     @State private var editDefaults: UserDefaults? = nil
     @State private var editKey: String? = nil
 
-    private func filteredKeys(_ keys: [String]) -> [String] {
-        if searchText.isEmpty {
-            return keys
-        } else {
-            return keys.filter { $0.localizedStandardContains(searchText) }
-        }
-    }
-
-    @State var toDeleteDefaults: UserDefaultsWrapper?
-
     var body: some View {
         VStack {
             SearchTextField("Search by key...", text: $searchText)
@@ -47,63 +37,12 @@ struct UserDefaultsView: View {
 
             Form {
                 ForEach(userDefaults, id: \.0) { name, defaults in
-
-                    let keys = filteredKeys(defaults.extractKeys(of: type))
-                    Section {
-                        if keys.isEmpty {
-                            Text("No results.")
-                                .foregroundColor(.gray)
-                        } else {
-                            VStack(alignment: .leading) {
-                                //
-                                // Value
-                                //
-                                ForEach(keys.sorted(), id: \.self) { key in
-                                    UserDefaultsValueRow(name: name, defaults: defaults, key: key)
-                                }
-                            }
-                        }
-                    } header: {
-                        HStack {
-                            //
-                            // 􀉩 standard / 􀨤 group.xxx
-                            //
-                            Label(name, systemImage: name == "standard" ? "person" : "externaldrive.connected.to.line.below")
-
-                            Spacer()
-
-                            if type == .user {
-                                //
-                                // 􀍡
-                                //
-                                Menu {
-                                    Button {
-                                        toDeleteDefaults = .init(name: name, defaults: defaults)
-                                    } label: {
-                                        Label("Delete All Keys", systemImage: "trash")
-                                    }
-                                    .disabled(keys.isEmpty)
-                                } label: {
-                                    Image(systemName: "ellipsis.circle")
-                                }
-                            }
-                        }
-                        .font(.subheadline)
-                    }
-                    .textCase(nil)
-                    .alert(item: $toDeleteDefaults) { defaultsWrapper in
-                        //
-                        // ⚠️ Delete all keys
-                        //
-                        Alert(
-                            title: Text("Delete All Keys?"),
-                            message: Text("Are you delete all keys from '\(defaultsWrapper.name)'?"),
-                            primaryButton: .cancel(),
-                            secondaryButton: .destructive(Text("Delete"), action: {
-                                defaultsWrapper.defaults.removeAll()
-                            })
-                        )
-                    }
+                    UserDefaultsSection(
+                        name: name,
+                        defaults: defaults,
+                        type: type,
+                        searchText: $searchText
+                    )
                 }
             }
         }

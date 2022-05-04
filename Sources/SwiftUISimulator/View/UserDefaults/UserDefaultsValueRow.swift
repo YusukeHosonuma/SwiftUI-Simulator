@@ -25,17 +25,22 @@ struct UserDefaultsValueRow: View {
     @State private var isPresentedEditSheet = false
 
     private var value: (pretty: String, raw: String?) {
-        if let _ = defaults.value(forKey: key) as? Data, let url = defaults.url(forKey: key) {
-            return (url.absoluteString, nil)
-        } else if let dict = defaults.dictionary(forKey: key) {
+        let value = defaults.lookup(forKey: key)
+
+        //
+        // 💡 Note:
+        // Display as JSON string (not use pretty), because editor of `[String: Any]` is input as JSON.
+        //
+        if let dict = value as? [String: Any] {
             return (dict.prettyJSON, nil)
-        } else {
-            switch prettyString(defaults.value(forKey: key)) {
-            case let .string(string):
-                return (string, nil)
-            case let .json(pretty: string, rawString: rawString):
-                return (string, rawString)
-            }
+        }
+
+        switch prettyString(value) {
+        case let .string(string):
+            return (string, nil)
+
+        case let .json(pretty: string, rawString: rawString):
+            return (string, rawString)
         }
     }
 
