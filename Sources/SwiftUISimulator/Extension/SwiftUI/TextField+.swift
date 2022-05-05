@@ -18,7 +18,7 @@ extension TextField {
         case .valueEditor:
             padding()
                 .border(.gray.opacity(0.5))
-                .font(.valueEditor)
+                .font(.codeStyle)
         }
     }
 }

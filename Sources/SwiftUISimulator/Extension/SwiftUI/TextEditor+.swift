@@ -19,7 +19,7 @@ extension TextEditor {
             border(.gray.opacity(0.5))
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
-                .font(.valueEditor)
+                .font(.codeStyle)
         }
     }
 }

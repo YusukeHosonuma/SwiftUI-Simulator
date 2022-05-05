@@ -72,7 +72,7 @@ struct UserDefaultsValueRow: View {
             }
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
-            .font(.system(size: 14, weight: .regular, design: .monospaced))
+            .font(.codeStyle)
             .padding(.top, 2)
         } label: {
             HStack {
