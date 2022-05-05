@@ -26,7 +26,7 @@ private let userDefaultsSystemKeyPrefixes: [String] = [
     "WebKit",
 ]
 
-enum UserDefaultsType {
+enum UserDefaultsType: String {
     case user
     case system
 }
@@ -49,6 +49,11 @@ struct JSONString {
 }
 
 extension UserDefaults {
+    //
+    // 💡 Please update version number when data incompatibility occur.
+    //
+    static let simulatorKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator/1.6.0/"
+
     var allKeys: [String] {
         Array(dictionaryRepresentation().keys.filter { isOSSKey($0) == false })
     }

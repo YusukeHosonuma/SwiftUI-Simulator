@@ -16,6 +16,7 @@ struct UserDefaultsSection: View {
 
     @State private var toDeleteDefaults: UserDefaultsWrapper?
     @State private var contentID = UUID() // for force-update to view.
+    @State private var isExpanded: Bool = false
 
     private var allKeys: [String] {
         defaults.extractKeys(of: type)
@@ -30,7 +31,7 @@ struct UserDefaultsSection: View {
     }
 
     var body: some View {
-        DisclosureGroup {
+        DisclosureGroup(isExpanded: $isExpanded) {
             if filteredKeys.isEmpty {
                 Text("No results.")
                     .foregroundColor(.gray)
@@ -137,6 +138,12 @@ struct UserDefaultsSection: View {
             }
         }
         .textCase(nil)
+        .onAppear {
+            isExpanded = UserDefaults.standard.bool(forKey: isExpandedKey)
+        }
+        .onChange(of: isExpanded) {
+            UserDefaults.standard.set($0, forKey: isExpandedKey)
+        }
         .alert(item: $toDeleteDefaults) { defaultsWrapper in
             //
             // ⚠️ Delete all keys
@@ -150,6 +157,14 @@ struct UserDefaultsSection: View {
                 })
             )
         }
+    }
+
+    private var isExpandedKey: String {
+        //
+        // e.g. "xxx/UserDefaultsBrowser.user.standard.isExpanded"
+        //
+        UserDefaults.simulatorKeyPrefix +
+            "UserDefaultsBrowser.\(type.rawValue).\(name).isExpanded"
     }
 
     private var exportSwiftCode: String {
