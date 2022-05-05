@@ -152,19 +152,13 @@ struct UserDefaultsEditView: View {
             UserDefaultsStringEditor($valueDouble, isValid: $isValid)
 
         case .url:
-            if let url = valueURL {
-                UserDefaultsStringEditor(.init(
-                    get: { url },
-                    set: { valueURL = $0 }
-                ), isValid: $isValid, style: .multiline)
+            if let urlBinding = $valueURL.wrappedBinding() {
+                UserDefaultsStringEditor(urlBinding, isValid: $isValid, style: .multiline)
             }
 
         case .date:
-            if let date = valueDate {
-                UserDefaultsDateEditor(date: .init(
-                    get: { date },
-                    set: { valueDate = $0 }
-                ), isValid: $isValid)
+            if let dateBinding = $valueDate.wrappedBinding() {
+                UserDefaultsDateEditor(date: dateBinding, isValid: $isValid)
             }
 
         case .array:
