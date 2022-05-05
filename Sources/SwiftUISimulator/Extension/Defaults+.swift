@@ -8,10 +8,9 @@
 import Defaults
 import SwiftUI
 
-// 💡 Please update version number when data incompatibility occur.
-private let prefix = "YusukeHosonuma/SwiftUI-Simulator/1.3.0"
-
 extension Defaults.Keys {
+    static var prefix: String { UserDefaults.simulatorKeyPrefix }
+
     //
     // Device and appearance
     //
