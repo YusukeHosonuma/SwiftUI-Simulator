@@ -94,7 +94,7 @@ extension UserDefaults {
 
         return value(forKey: key)
     }
-    
+
     func removeAll(of type: UserDefaultsType) {
         for key in extractKeys(of: type) {
             removeObject(forKey: key)
@@ -102,7 +102,7 @@ extension UserDefaults {
     }
 
     // MARK: Private
-    
+
     private func isOSSKey(_ key: String) -> Bool {
         key.hasPrefix(storageKeyPrefix)
     }
