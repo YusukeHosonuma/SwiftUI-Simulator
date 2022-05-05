@@ -72,6 +72,13 @@ struct UserDefaultsEditView: View {
     @State private var isValid = true
     @State private var isPresentedConfirmDelete = false
 
+    //
+    // 💡 Note:
+    // Just updating via binding is not enough to update text value. (why?)
+    // Therefore update via `id`.
+    //
+    @State private var dateEditorID = UUID()
+
     var body: some View {
         NavigationView {
             VStack(alignment: .leading) {
@@ -161,10 +168,27 @@ struct UserDefaultsEditView: View {
 
         case .date:
             if let date = valueDate {
-                UserDefaultsStringEditor(.init(
-                    get: { date },
-                    set: { valueDate = $0 }
-                ), isValid: $isValid)
+                VStack {
+                    UserDefaultsStringEditor(
+                        .init(
+                            get: { date },
+                            set: { valueDate = $0 }
+                        ), isValid: $isValid
+                    )
+                    .id(dateEditorID)
+
+                    DatePicker(selection: .init(
+                        get: { date },
+                        set: {
+                            valueDate = $0
+                            dateEditorID.refresh()
+                        }
+                    )) {
+                        EmptyView()
+                    }
+                    .datePickerStyle(.graphical)
+                    .padding()
+                }
             }
 
         case .array:

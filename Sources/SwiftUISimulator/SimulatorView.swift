@@ -453,7 +453,6 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
 
     @ViewBuilder
     private func deviceSelectControl() -> some View {
-        
         func prevDevice() -> Device? {
             guard let device = device else { return nil }
             return enableDevices.sorted().prev(device)
@@ -463,7 +462,7 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
             guard let device = device else { return nil }
             return enableDevices.sorted().next(device)
         }
-        
+
         return VStack(spacing: 0) {
             //
             // 􀃿
@@ -490,7 +489,6 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
             .disabled(nextDevice() == nil)
         }
     }
-
 
     private func cheetSheetOvelay() -> some View {
         HStack(alignment: .top) {
