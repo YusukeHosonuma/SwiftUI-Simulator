@@ -197,6 +197,33 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
                 }
             }
         }
+        //
+        // 􀤄 UserDefaults
+        //
+        .fullScreenCover(isPresented: $isPresentedUserDefaultsSheet) {
+            UserDefaultsSheet(suiteNames: userDefaultsSuiteNames)
+                .accentColor(simulatorAccentColor.rawValue)
+        }
+        //
+        // 􀋲 Settings
+        //
+        .sheet(isPresented: $isPresentedSettingSheet) {
+            SettingView(
+                sourceDevices: $enableDevices,
+                sourceLocales: $enableLocales,
+                sourceCalendars: $enableCalendars,
+                sourceTimeZones: $enableTimeZones,
+                sourceSimulatorAccentColor: $simulatorAccentColor.rawValue,
+                sourceSimulatorBorderColor: $simulatorBorderColor.rawValue,
+                sourceSimulatorSafeAreaColorr: $simulatorSafeAreaColor.rawValue,
+                defaultDevices: defaultDevices,
+                defaultLocales: defaultLocales,
+                defaultCalendars: defaultCalendars,
+                defaultTimeZones: defaultTimeZones
+            )
+            .accentColor(simulatorAccentColor.rawValue)
+            .environment(\.simulatorAccentColor, simulatorAccentColor.rawValue)
+        }
     }
 
     @ViewBuilder
@@ -204,14 +231,33 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
         ZStack(alignment: .bottomLeading) {
             content()
 
-            //
-            // 􀷄
-            //
-            Button {
-                isSimulatorEnabled.toggle()
+            Menu {
+                //
+                // 􀷄 Enable Simulator
+                //
+                Button {
+                    isSimulatorEnabled.toggle()
+                } label: {
+                    Label("Enable Simulator", systemImage: "power")
+                }
+
+                Divider() // --------
+
+                //
+                // 􀤄 UserDefaults
+                //
+                Button {
+                    isPresentedUserDefaultsSheet.toggle()
+                } label: {
+                    Label("UserDefaults", systemImage: "opticaldiscdrive")
+                }
             } label: {
-                Icon("power.circle.fill")
+                //
+                // 􀪏
+                //
+                Icon("terminal")
             }
+            .accentColor(simulatorAccentColor.rawValue)
         }
     }
 
@@ -305,33 +351,6 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
             // 􀪏
             //
             Icon("terminal.fill")
-        }
-        //
-        // 􀋲 Settings
-        //
-        .sheet(isPresented: $isPresentedSettingSheet) {
-            SettingView(
-                sourceDevices: $enableDevices,
-                sourceLocales: $enableLocales,
-                sourceCalendars: $enableCalendars,
-                sourceTimeZones: $enableTimeZones,
-                sourceSimulatorAccentColor: $simulatorAccentColor.rawValue,
-                sourceSimulatorBorderColor: $simulatorBorderColor.rawValue,
-                sourceSimulatorSafeAreaColorr: $simulatorSafeAreaColor.rawValue,
-                defaultDevices: defaultDevices,
-                defaultLocales: defaultLocales,
-                defaultCalendars: defaultCalendars,
-                defaultTimeZones: defaultTimeZones
-            )
-            .accentColor(simulatorAccentColor.rawValue)
-            .environment(\.simulatorAccentColor, simulatorAccentColor.rawValue)
-        }
-        //
-        // 􀤄 UserDefaults
-        //
-        .fullScreenCover(isPresented: $isPresentedUserDefaultsSheet) {
-            UserDefaultsSheet(suiteNames: userDefaultsSuiteNames)
-                .accentColor(simulatorAccentColor.rawValue)
         }
     }
 
