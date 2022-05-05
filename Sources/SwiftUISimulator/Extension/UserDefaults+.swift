@@ -48,11 +48,11 @@ struct JSONString {
     let dictionary: [String: Any]
 }
 
+private let repository = "YusukeHosonuma/SwiftUI-Simulator"
+private let ossVersion = "1.6.0" // 💡 Please update version number when data incompatibility occur.
+
 extension UserDefaults {
-    //
-    // 💡 Please update version number when data incompatibility occur.
-    //
-    static let simulatorKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator/1.6.0/"
+    static var simulatorKeyPrefix: String { "\(repository)/\(ossVersion)/" }
 
     var allKeys: [String] {
         Array(dictionaryRepresentation().keys.filter { isOSSKey($0) == false })
@@ -109,7 +109,7 @@ extension UserDefaults {
     // MARK: Private
 
     private func isOSSKey(_ key: String) -> Bool {
-        key.hasPrefix(storageKeyPrefix)
+        key.hasPrefix(repository)
     }
 
     private func isSystemKey(_ key: String) -> Bool {
