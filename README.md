@@ -21,9 +21,29 @@ https://user-images.githubusercontent.com/2990285/163325330-13297947-7222-4cf7-a
 
 ### UserDefaults browser
 
-You can browse UserDefaults on simulator.
+You can browse and edit `UserDefaults`.
 
-<img width="600" alt="image" src="https://user-images.githubusercontent.com/2990285/166129997-1211925c-504e-40c1-9578-d8a9975d70b7.png">
+| Browse | Edit (as JSON) | Edit (Date) | Export |
+| -- | -- | -- | -- |
+|<img width="414" alt="image" src="https://user-images.githubusercontent.com/2990285/166861450-ad694f54-74cf-481b-93f5-de096a1cb375.png">|<img width="414" alt="image" src="https://user-images.githubusercontent.com/2990285/166861467-37f04013-6867-4c02-b5f2-c3c5040cee9f.png">|<img width="414" alt="image" src="https://user-images.githubusercontent.com/2990285/166861482-bd2f927b-747c-458b-a4c6-0fe6db8d280d.png">|<img width="414" alt="image" src="https://user-images.githubusercontent.com/2990285/166861632-f945edb7-ab6b-40d9-8b60-01e7c16116a2.png">|
+
+Supported types:
+
+- Property list types
+  - [x] `String`
+  - [x] `Bool`
+  - [x] `Int`
+  - [x] `Float`
+  - [x] `Double`
+  - [x] `URL`
+  - [x] `Date`
+  - [x] `[Any]`
+  - [x] `[String: Any]`
+- JSON encoded types
+  - [x] `Data`
+  - [x] `String`
+
+The AppGroup (`UserDefaults(suiteName: "xxx")`) was supported, please see [Configurations](#Configurations).
 
 ## Quick Start
 
@@ -32,7 +52,7 @@ You can browse UserDefaults on simulator.
 ```swift
 let package = Package(
     dependencies: [
-        .package(url: "https://github.com/YusukeHosonuma/SwiftUI-Simulator.git", from: "1.4.0"),
+        .package(url: "https://github.com/YusukeHosonuma/SwiftUI-Simulator.git", from: "1.6.0"),
     ],
     targets: [
         .target(name: "<your-target-name>", dependencies: [
@@ -199,8 +219,9 @@ SimulatorView(
     defaultDevices: [.iPhone11, .iPhone13ProMax],       // Set<Device>
     defaultLocaleIdentifiers: ["it", "fr"],             // Set<String>
     defaultCalendarIdentifiers: [.gregorian, .iso8601], // Set<Calendar.Identifier>
-    defaultTimeZones: [.europeParis, .europeBerlin]     // Set<TimeZones>
+    defaultTimeZones: [.europeParis, .europeBerlin],    // Set<TimeZones>
     accentColorName: "MyAccentColor",                   // when not use default accent color name in Assets.
+    userDefaultsSuiteNames: ["someDomain"]              // [String]
 ) {
     RootView()
 }
