@@ -11,6 +11,17 @@ import SwiftUI
 
 internal let storageKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator"
 
+public struct SimulatorAccentColor: EnvironmentKey {
+    public static var defaultValue: Color = .defaultSimulatorAccent
+}
+
+public extension EnvironmentValues {
+    var simulatorAccentColor: Color {
+        get { self[SimulatorAccentColor.self] }
+        set { self[SimulatorAccentColor.self] = newValue }
+    }
+}
+
 //
 // Initializer without `debugMenu`.
 //
@@ -45,6 +56,7 @@ public extension SimulatorView {
         defaultCalendarIdentifiers userCalendarIdentifiers: Set<Calendar.Identifier>? = nil,
         defaultTimeZones userTimeZones: Set<TimeZones>? = nil,
         accentColorName: String = "AccentColor",
+        userDefaultsSuiteNames: [String] = [],
         @ViewBuilder debugMenu: @escaping () -> DebugMenu,
         @ViewBuilder content: @escaping () -> Content
     ) {
@@ -69,6 +81,8 @@ public extension SimulatorView {
             accentColorLight = nil
             accentColorDark = nil
         }
+
+        self.userDefaultsSuiteNames = userDefaultsSuiteNames
 
         //
         // 💡 The following priority order.
@@ -178,6 +192,7 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
     private let defaultTimeZones: Set<TimeZones>
     private let accentColorLight: Color?
     private let accentColorDark: Color?
+    private let userDefaultsSuiteNames: [String]
 
     public var body: some View {
         VStack {
@@ -191,6 +206,33 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
                 }
             }
         }
+        //
+        // 􀤄 UserDefaults
+        //
+        .fullScreenCover(isPresented: $isPresentedUserDefaultsSheet) {
+            UserDefaultsSheet(suiteNames: userDefaultsSuiteNames)
+                .accentColor(simulatorAccentColor.rawValue)
+        }
+        //
+        // 􀋲 Settings
+        //
+        .sheet(isPresented: $isPresentedSettingSheet) {
+            SettingView(
+                sourceDevices: $enableDevices,
+                sourceLocales: $enableLocales,
+                sourceCalendars: $enableCalendars,
+                sourceTimeZones: $enableTimeZones,
+                sourceSimulatorAccentColor: $simulatorAccentColor.rawValue,
+                sourceSimulatorBorderColor: $simulatorBorderColor.rawValue,
+                sourceSimulatorSafeAreaColorr: $simulatorSafeAreaColor.rawValue,
+                defaultDevices: defaultDevices,
+                defaultLocales: defaultLocales,
+                defaultCalendars: defaultCalendars,
+                defaultTimeZones: defaultTimeZones
+            )
+            .accentColor(simulatorAccentColor.rawValue)
+            .environment(\.simulatorAccentColor, simulatorAccentColor.rawValue)
+        }
     }
 
     @ViewBuilder
@@ -198,14 +240,33 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
         ZStack(alignment: .bottomLeading) {
             content()
 
-            //
-            // 􀷄
-            //
-            Button {
-                isSimulatorEnabled.toggle()
+            Menu {
+                //
+                // 􀷄 Enable Simulator
+                //
+                Button {
+                    isSimulatorEnabled.toggle()
+                } label: {
+                    Label("Enable Simulator", systemImage: "power")
+                }
+
+                Divider() // --------
+
+                //
+                // 􀤄 UserDefaults
+                //
+                Button {
+                    isPresentedUserDefaultsSheet.toggle()
+                } label: {
+                    Label("UserDefaults", systemImage: "opticaldiscdrive")
+                }
             } label: {
-                Icon("power.circle.fill")
+                //
+                // 􀪏
+                //
+                Icon("terminal")
             }
+            .accentColor(simulatorAccentColor.rawValue)
         }
     }
 
@@ -299,32 +360,6 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
             // 􀪏
             //
             Icon("terminal.fill")
-        }
-        //
-        // 􀋲 Settings
-        //
-        .sheet(isPresented: $isPresentedSettingSheet) {
-            SettingView(
-                sourceDevices: $enableDevices,
-                sourceLocales: $enableLocales,
-                sourceCalendars: $enableCalendars,
-                sourceTimeZones: $enableTimeZones,
-                sourceSimulatorAccentColor: $simulatorAccentColor.rawValue,
-                sourceSimulatorBorderColor: $simulatorBorderColor.rawValue,
-                sourceSimulatorSafeAreaColorr: $simulatorSafeAreaColor.rawValue,
-                defaultDevices: defaultDevices,
-                defaultLocales: defaultLocales,
-                defaultCalendars: defaultCalendars,
-                defaultTimeZones: defaultTimeZones
-            )
-            .accentColor(simulatorAccentColor.rawValue)
-        }
-        //
-        // 􀤄 UserDefaults
-        //
-        .fullScreenCover(isPresented: $isPresentedUserDefaultsSheet) {
-            UserDefaultsSheet()
-                .accentColor(simulatorAccentColor.rawValue)
         }
     }
 
@@ -434,8 +469,19 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
         }
     }
 
+    @ViewBuilder
     private func deviceSelectControl() -> some View {
-        VStack(spacing: 0) {
+        func prevDevice() -> Device? {
+            guard let device = device else { return nil }
+            return enableDevices.sorted().prev(device)
+        }
+
+        func nextDevice() -> Device? {
+            guard let device = device else { return nil }
+            return enableDevices.sorted().next(device)
+        }
+
+        return VStack(spacing: 0) {
             //
             // 􀃿
             //
@@ -460,16 +506,6 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
             }
             .disabled(nextDevice() == nil)
         }
-    }
-
-    private func prevDevice() -> Device? {
-        guard let device = device else { return nil }
-        return enableDevices.sorted().prev(device)
-    }
-
-    private func nextDevice() -> Device? {
-        guard let device = device else { return nil }
-        return enableDevices.sorted().next(device)
     }
 
     private func cheetSheetOvelay() -> some View {

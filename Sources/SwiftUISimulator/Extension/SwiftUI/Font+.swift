@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+extension Font {
+    static let codeStyle: Self = .system(size: 14, weight: .regular, design: .monospaced)
+}
+
 extension Font.TextStyle {
     var name: String {
         switch self {

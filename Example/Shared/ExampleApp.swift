@@ -8,6 +8,8 @@
 import SwiftUI
 import SwiftUISimulator
 
+let groupID = "group.swiftui-simulator-example"
+
 @main
 struct ExampleApp: App {
     #if DEBUG
@@ -18,29 +20,32 @@ struct ExampleApp: App {
     var body: some Scene {
         WindowGroup {
             #if DEBUG
-            SimulatorView(debugMenu: {
-                //
-                // Debug 􀌜
-                //
-                Menu {
+            SimulatorView(
+                userDefaultsSuiteNames: [groupID],
+                debugMenu: {
                     //
-                    // Filename 􀈷
+                    // Debug 􀌜
                     //
-                    Toggle(isOn: $isEnableDebugFilename) {
-                        Label("Filename", systemImage: "doc")
-                    }
-                    //
-                    // Show Alert 􀫊
-                    //
-                    Button {
-                        isPresentAlert.toggle()
+                    Menu {
+                        //
+                        // Filename 􀈷
+                        //
+                        Toggle(isOn: $isEnableDebugFilename) {
+                            Label("Filename", systemImage: "doc")
+                        }
+                        //
+                        // Show Alert 􀫊
+                        //
+                        Button {
+                            isPresentAlert.toggle()
+                        } label: {
+                            Label("Show Alert", systemImage: "swift")
+                        }
                     } label: {
-                        Label("Show Alert", systemImage: "swift")
+                        Label("Debug", systemImage: "ant.circle")
                     }
-                } label: {
-                    Label("Debug", systemImage: "ant.circle")
                 }
-            }) {
+            ) {
                 ContentView()
                     .environment(\.simulatorDebugFilename, isEnableDebugFilename)
                     .alert(isPresented: $isPresentAlert) {

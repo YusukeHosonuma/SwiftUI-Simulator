@@ -35,6 +35,7 @@
 		705C42CD280CE8D400441A8C /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		705C42D3280CE8D400441A8C /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		705C42D5280CE8D400441A8C /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
+		707CC8EE282015C40002F5B5 /* iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOS.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,10 +96,9 @@
 			isa = PBXGroup;
 			children = (
 				70287B202824CD19004768A9 /* Simulator+ */,
+				707CC8EF2820181A0002F5B5 /* Resources */,
 				705C42C6280CE8D200441A8C /* ExampleApp.swift */,
 				705C42C7280CE8D200441A8C /* ContentView.swift */,
-				705C42C8280CE8D400441A8C /* Assets.xcassets */,
-				7036CD73280CF107007EB7F8 /* Localizable.strings */,
 				70064E2D28198C0900365BAC /* MessageView.swift */,
 			);
 			path = Shared;
@@ -119,6 +119,16 @@
 				705C42D5280CE8D400441A8C /* macOS.entitlements */,
 			);
 			path = macOS;
+			sourceTree = "<group>";
+		};
+		707CC8EF2820181A0002F5B5 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				705C42C8280CE8D400441A8C /* Assets.xcassets */,
+				7036CD73280CF107007EB7F8 /* Localizable.strings */,
+				707CC8EE282015C40002F5B5 /* iOS.entitlements */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -374,6 +384,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Shared/Resources/iOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P437HSA6PY;
@@ -404,6 +415,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Shared/Resources/iOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P437HSA6PY;
