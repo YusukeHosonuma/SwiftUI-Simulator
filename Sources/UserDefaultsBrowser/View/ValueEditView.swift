@@ -41,17 +41,17 @@ enum ValueType: Identifiable, CaseIterable {
     var id: String { typeName }
 }
 
-struct UserDefaultsEditView: View {
+struct ValueEditView: View {
     // 💡 iOS 15+: `\.dismiss`
     @Environment(\.presentationMode) private var presentationMode
 
     private let name: String
-    private let userDefaults: UserDefaults
+    private let defaults: UserDefaults
     private let key: String
 
-    init(name: String, userDefaults: UserDefaults, key: String) {
-        self.name = name
-        self.userDefaults = userDefaults
+    init(defaults: UserDefaultsContainer, key: String) {
+        name = defaults.name
+        self.defaults = defaults.defaults
         self.key = key
     }
 
@@ -134,7 +134,7 @@ struct UserDefaultsEditView: View {
     private func valueEditor() -> some View {
         switch valueType {
         case .bool:
-            UserDefaultsBoolEditor(value: $valueBool)
+            BoolEditor(value: $valueBool)
                 .padding([.horizontal, .bottom])
 
         case .string:
@@ -143,22 +143,22 @@ struct UserDefaultsEditView: View {
                 .padding([.horizontal, .bottom])
 
         case .int:
-            UserDefaultsStringEditor($valueInt, isValid: $isValid)
+            StringRepresentableEditor($valueInt, isValid: $isValid)
 
         case .float:
-            UserDefaultsStringEditor($valueFloat, isValid: $isValid)
+            StringRepresentableEditor($valueFloat, isValid: $isValid)
 
         case .double:
-            UserDefaultsStringEditor($valueDouble, isValid: $isValid)
+            StringRepresentableEditor($valueDouble, isValid: $isValid)
 
         case .url:
             if let urlBinding = $valueURL.wrappedBinding() {
-                UserDefaultsStringEditor(urlBinding, isValid: $isValid, style: .multiline)
+                StringRepresentableEditor(urlBinding, isValid: $isValid, style: .multiline)
             }
 
         case .date:
             if let dateBinding = $valueDate.wrappedBinding() {
-                UserDefaultsDateEditor(date: dateBinding, isValid: $isValid)
+                DateEditor(date: dateBinding, isValid: $isValid)
             }
 
         case .array:
@@ -203,7 +203,7 @@ struct UserDefaultsEditView: View {
 
     private func jsonEditor<Value: StringEditable>(_ binding: Binding<Value>) -> some View {
         VStack {
-            UserDefaultsStringEditor(binding, isValid: $isValid, style: .multiline)
+            StringRepresentableEditor(binding, isValid: $isValid, style: .multiline)
             Text("Please input as JSON.")
                 .font(.footnote)
                 .foregroundColor(.gray)
@@ -214,7 +214,7 @@ struct UserDefaultsEditView: View {
     // MARK: Load / Save
 
     private func load() {
-        let value = userDefaults.lookup(forKey: key)
+        let value = defaults.lookup(forKey: key)
 
         switch value {
         case let value as Bool:
@@ -259,11 +259,11 @@ struct UserDefaultsEditView: View {
             // The `URL` type was stored by encoded `Data`.
             // Therefore must use `url(forKey:)`.
             //
-            if let url = userDefaults.url(forKey: key) {
+            if let url = defaults.url(forKey: key) {
                 valueType = .url
                 valueURL = url
             } else {
-                let object = userDefaults.object(forKey: key)
+                let object = defaults.object(forKey: key)
 
                 switch object {
                 case let value as Date:
@@ -280,32 +280,32 @@ struct UserDefaultsEditView: View {
     private func save() {
         switch valueType {
         case .string:
-            userDefaults.set(valueString, forKey: key)
+            defaults.set(valueString, forKey: key)
         case .bool:
-            userDefaults.set(valueBool, forKey: key)
+            defaults.set(valueBool, forKey: key)
         case .int:
-            userDefaults.set(valueInt, forKey: key)
+            defaults.set(valueInt, forKey: key)
         case .float:
-            userDefaults.set(valueFloat, forKey: key)
+            defaults.set(valueFloat, forKey: key)
         case .double:
-            userDefaults.set(valueDouble, forKey: key)
+            defaults.set(valueDouble, forKey: key)
         case .url:
-            userDefaults.set(valueURL, forKey: key)
+            defaults.set(valueURL, forKey: key)
         case .date:
-            userDefaults.set(valueDate, forKey: key)
+            defaults.set(valueDate, forKey: key)
         case .array:
-            userDefaults.set(valueArray, forKey: key)
+            defaults.set(valueArray, forKey: key)
         case .dictionary:
-            userDefaults.set(valueDictionary, forKey: key)
+            defaults.set(valueDictionary, forKey: key)
         case .jsonData:
             if let dict = valueJSONData?.dictionary, let data = dict.prettyJSON.data(using: .utf8) {
-                userDefaults.set(data, forKey: key)
+                defaults.set(data, forKey: key)
             } else {
                 preconditionFailure("Can't save JSON as `Data` type.")
             }
         case .jsonString:
             if let dict = valueJSONString?.dictionary, let json = dict.serializedJSON {
-                userDefaults.set(json, forKey: key)
+                defaults.set(json, forKey: key)
             } else {
                 preconditionFailure("Can't save JSON as `String` type.")
             }
@@ -315,6 +315,6 @@ struct UserDefaultsEditView: View {
     }
 
     private func delete() {
-        userDefaults.removeObject(forKey: key)
+        defaults.removeObject(forKey: key)
     }
 }

@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-public struct UserDefaultsSheet: View {
+public struct UserDefaultsBrowserView: View {
     // 💡 iOS 15+: `\.dismiss`
     @Environment(\.presentationMode) private var presentationMode
 
     private let suiteNames: [String]
     private let accentColor: Color
     private let excludeKeys: (String) -> Bool
-    
+
     public init(
         suiteNames: [String] = [],
         excludeKeys: @escaping (String) -> Bool = { _ in false },
@@ -24,13 +24,6 @@ public struct UserDefaultsSheet: View {
         self.excludeKeys = excludeKeys
         self.accentColor = accentColor
     }
-    
-    private var userDefaults: [(String, UserDefaults)] {
-        [("standard", UserDefaults.standard)] +
-            suiteNames.compactMap { name in
-                UserDefaults(suiteName: name).map { (name, $0) }
-            }
-    }
 
     private var defaults: [UserDefaultsContainer] {
         let standard = UserDefaultsContainer(
@@ -38,7 +31,7 @@ public struct UserDefaultsSheet: View {
             defaults: .standard,
             excludeKeys: excludeKeys
         )
-        
+
         return [standard] + suiteNames.compactMap { name in
             UserDefaults(suiteName: name).map {
                 UserDefaultsContainer(
@@ -52,15 +45,15 @@ public struct UserDefaultsSheet: View {
 
     public var body: some View {
         TabView {
-            content(title: "User") {
-                UserDefaultsView(type: .user, defaultsContainers: defaults)
+            tabContent(title: "User") {
+                SearchContainerView(type: .user, defaults: defaults)
             }
             .tabItem {
                 Label("User", systemImage: "person")
             }
 
-            content(title: "System") {
-                UserDefaultsView(type: .system, defaultsContainers: defaults)
+            tabContent(title: "System") {
+                SearchContainerView(type: .system, defaults: defaults)
             }
             .tabItem {
                 Label("System", systemImage: "iphone")
@@ -70,7 +63,7 @@ public struct UserDefaultsSheet: View {
         .environment(\.customAccentColor, accentColor)
     }
 
-    private func content(title: String, content: () -> UserDefaultsView) -> some View {
+    private func tabContent(title: String, content: () -> SearchContainerView) -> some View {
         NavigationView {
             content()
                 .navigationTitle(title)

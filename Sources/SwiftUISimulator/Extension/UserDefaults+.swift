@@ -12,7 +12,7 @@ private let ossVersion = "1.6.0" // 💡 Please update version number when data 
 
 extension UserDefaults {
     static let simulatorKeyPrefix: String = "\(repository)/\(ossVersion)/"
-    
+
     static func isOSSKey(_ key: String) -> Bool {
         key.hasPrefix(repository)
     }

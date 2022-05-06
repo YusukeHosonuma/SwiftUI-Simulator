@@ -8,17 +8,15 @@
 import SwiftPrettyPrint
 import SwiftUI
 
-struct UserDefaultsValueRow: View {
+struct RowView: View {
     @Environment(\.customAccentColor) private var customAccentColor
 
-    private var name: String
-    private var defaults: UserDefaults
+    private var defaults: UserDefaultsContainer
     private var key: String
     private var onUpdate: () -> Void
 
     init(defaults: UserDefaultsContainer, key: String, onUpdate: @escaping () -> Void) {
-        self.name = defaults.name
-        self.defaults = defaults.defaults
+        self.defaults = defaults
         self.key = key
         self.onUpdate = onUpdate
     }
@@ -115,7 +113,7 @@ struct UserDefaultsValueRow: View {
             }
         }
         .sheet(isPresented: $isPresentedEditSheet, onDismiss: { onUpdate() }) {
-            UserDefaultsEditView(name: name, userDefaults: defaults, key: key)
+            ValueEditView(defaults: defaults, key: key)
                 //
                 // ⚠️ SwiftUI Bug: AccentColor is not inherited to sheet.
                 //

@@ -100,7 +100,7 @@ struct DictionaryWrapper: StringEditable {
     }
 }
 
-struct UserDefaultsStringEditor<Value: StringEditable>: View {
+struct StringRepresentableEditor<Value: StringEditable>: View {
     enum Style {
         case single
         case multiline

@@ -8,7 +8,7 @@
 import SwiftPrettyPrint
 import SwiftUI
 
-struct UserDefaultsSection: View {
+struct SectionView: View {
     let defaults: UserDefaultsContainer
     let type: UserDefaultsType
     @Binding var searchText: String
@@ -40,7 +40,7 @@ struct UserDefaultsSection: View {
                     // Value
                     //
                     ForEach(filteredKeys.sorted(), id: \.self) { key in
-                        UserDefaultsValueRow(
+                        RowView(
                             defaults: defaults,
                             key: key,
                             onUpdate: { contentID = UUID() }

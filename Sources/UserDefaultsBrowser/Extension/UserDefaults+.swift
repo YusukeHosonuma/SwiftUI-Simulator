@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Yusuke Hosonuma on 2022/05/06.
 //
@@ -10,7 +10,7 @@ import Foundation
 extension UserDefaults {
     static let keyRepository = "YusukeHosonuma/UserDefaultsBrowser"
     static let keyVersion = "1.0.0" // 💡 Please update version number when data incompatibility occur.
-    
+
     static let keyPrefix: String = "\(keyRepository)/\(keyVersion)/"
 
     func lookup(forKey key: String) -> Any? {

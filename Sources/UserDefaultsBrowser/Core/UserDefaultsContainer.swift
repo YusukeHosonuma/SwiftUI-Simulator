@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Yusuke Hosonuma on 2022/05/06.
 //
@@ -28,11 +28,11 @@ private let userDefaultsSystemKeyPrefixes: [String] = [
 
 struct UserDefaultsContainer: Identifiable {
     var id: String { name }
-    
+
     let name: String
     let defaults: UserDefaults
     let excludeKeys: (String) -> Bool
-    
+
     var allKeys: [String] {
         Array(
             defaults.dictionaryRepresentation().keys.exclude {
@@ -55,7 +55,7 @@ struct UserDefaultsContainer: Identifiable {
         case .system: return systemKeys
         }
     }
-        
+
     func removeAll(of type: UserDefaultsType) {
         for key in extractKeys(of: type) {
             defaults.removeObject(forKey: key)

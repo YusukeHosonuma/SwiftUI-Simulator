@@ -211,7 +211,7 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
         // 􀤄 UserDefaults
         //
         .fullScreenCover(isPresented: $isPresentedUserDefaultsSheet) {
-            UserDefaultsSheet(
+            UserDefaultsBrowserView(
                 suiteNames: userDefaultsSuiteNames,
                 excludeKeys: UserDefaults.isOSSKey,
                 accentColor: simulatorAccentColor.rawValue

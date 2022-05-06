@@ -8,22 +8,14 @@
 import SwiftPrettyPrint
 import SwiftUI
 
-struct UserDefaultsWrapper: Identifiable {
-    let name: String
-    let defaults: UserDefaults
-
-    var id: String { name }
-}
-
-struct UserDefaultsView: View {
-//    private let userDefaults: [(String, UserDefaults)]
+struct SearchContainerView: View {
     let type: UserDefaultsType
     let defaultsContainers: [UserDefaultsContainer]
-    
-//    init(userDefaults: [(String, UserDefaults)], type: UserDefaultsType) {
-//        self.userDefaults = userDefaults
-//        self.type = type
-//    }
+
+    init(type: UserDefaultsType, defaults: [UserDefaultsContainer]) {
+        self.type = type
+        defaultsContainers = defaults
+    }
 
     @State private var searchText = ""
     @State private var isPresentedEditSheet = false
@@ -38,7 +30,7 @@ struct UserDefaultsView: View {
 
             Form {
                 ForEach(defaultsContainers) { defaults in
-                    UserDefaultsSection(
+                    SectionView(
                         defaults: defaults,
                         type: type,
                         searchText: $searchText
