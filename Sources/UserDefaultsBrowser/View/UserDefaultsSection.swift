@@ -9,12 +9,11 @@ import SwiftPrettyPrint
 import SwiftUI
 
 struct UserDefaultsSection: View {
-    let name: String
-    let defaults: UserDefaults
+    let defaults: UserDefaultsContainer
     let type: UserDefaultsType
     @Binding var searchText: String
 
-    @State private var toDeleteDefaults: UserDefaultsWrapper?
+    @State private var toDeleteDefaults: UserDefaultsContainer?
     @State private var contentID = UUID() // for force-update to view.
     @State private var isExpanded: Bool = false
 
@@ -42,12 +41,9 @@ struct UserDefaultsSection: View {
                     //
                     ForEach(filteredKeys.sorted(), id: \.self) { key in
                         UserDefaultsValueRow(
-                            name: name,
                             defaults: defaults,
                             key: key,
-                            onUpdate: {
-                                contentID = UUID()
-                            }
+                            onUpdate: { contentID = UUID() }
                         )
                     }
                 }
@@ -58,7 +54,10 @@ struct UserDefaultsSection: View {
                 //
                 // 􀉩 standard / 􀨤 group.xxx
                 //
-                Label(name, systemImage: name == "standard" ? "person" : "externaldrive.connected.to.line.below")
+                Label(
+                    defaults.name,
+                    systemImage: defaults.name == "standard" ? "person" : "externaldrive.connected.to.line.below"
+                )
 
                 Spacer()
 
@@ -117,13 +116,13 @@ struct UserDefaultsSection: View {
                         Group {
                             if #available(iOS 15.0, *) {
                                 Button(role: .destructive) {
-                                    toDeleteDefaults = .init(name: name, defaults: defaults)
+                                    toDeleteDefaults = defaults
                                 } label: {
                                     Label("Delete All Keys", systemImage: "trash")
                                 }
                             } else {
                                 Button {
-                                    toDeleteDefaults = .init(name: name, defaults: defaults)
+                                    toDeleteDefaults = defaults
                                 } label: {
                                     Label("Delete All Keys", systemImage: "trash")
                                 }
@@ -153,7 +152,7 @@ struct UserDefaultsSection: View {
                 message: Text("Are you delete all keys from '\(defaultsWrapper.name)'?"),
                 primaryButton: .cancel(),
                 secondaryButton: .destructive(Text("Delete"), action: {
-                    defaultsWrapper.defaults.removeAll(of: type)
+                    defaults.removeAll(of: type)
                 })
             )
         }
@@ -161,10 +160,9 @@ struct UserDefaultsSection: View {
 
     private var isExpandedKey: String {
         //
-        // e.g. "xxx/UserDefaultsBrowser.user.standard.isExpanded"
+        // e.g. "xxx/xxx/isExpanded/user.standard"
         //
-        UserDefaults.simulatorKeyPrefix +
-            "UserDefaultsBrowser.\(type.rawValue).\(name).isExpanded"
+        UserDefaults.keyPrefix + "isExpanded/\(type.rawValue).\(defaults.name)"
     }
 
     private var exportSwiftCode: String {

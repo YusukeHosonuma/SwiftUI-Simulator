@@ -8,6 +8,7 @@
 import Defaults
 import SwiftPrettyPrint
 import SwiftUI
+import UserDefaultsBrowser
 
 internal let storageKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator"
 
@@ -210,8 +211,11 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
         // 􀤄 UserDefaults
         //
         .fullScreenCover(isPresented: $isPresentedUserDefaultsSheet) {
-            UserDefaultsSheet(suiteNames: userDefaultsSuiteNames)
-                .accentColor(simulatorAccentColor.rawValue)
+            UserDefaultsSheet(
+                suiteNames: userDefaultsSuiteNames,
+                excludeKeys: UserDefaults.isOSSKey,
+                accentColor: simulatorAccentColor.rawValue
+            )
         }
         //
         // 􀋲 Settings

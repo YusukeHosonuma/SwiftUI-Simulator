@@ -16,13 +16,14 @@ struct UserDefaultsWrapper: Identifiable {
 }
 
 struct UserDefaultsView: View {
-    private let userDefaults: [(String, UserDefaults)]
-    private let type: UserDefaultsType
-
-    init(userDefaults: [(String, UserDefaults)], type: UserDefaultsType) {
-        self.userDefaults = userDefaults
-        self.type = type
-    }
+//    private let userDefaults: [(String, UserDefaults)]
+    let type: UserDefaultsType
+    let defaultsContainers: [UserDefaultsContainer]
+    
+//    init(userDefaults: [(String, UserDefaults)], type: UserDefaultsType) {
+//        self.userDefaults = userDefaults
+//        self.type = type
+//    }
 
     @State private var searchText = ""
     @State private var isPresentedEditSheet = false
@@ -36,9 +37,8 @@ struct UserDefaultsView: View {
                 .padding()
 
             Form {
-                ForEach(userDefaults, id: \.0) { name, defaults in
+                ForEach(defaultsContainers) { defaults in
                     UserDefaultsSection(
-                        name: name,
                         defaults: defaults,
                         type: type,
                         searchText: $searchText
