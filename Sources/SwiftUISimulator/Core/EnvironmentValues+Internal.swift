@@ -9,21 +9,13 @@ import SwiftUI
 
 extension EnvironmentValues {
     var simulatorEnabled: Bool {
-        get {
-            self[SimulatorEnabledEnvironmentKey.self]
-        }
-        set {
-            self[SimulatorEnabledEnvironmentKey.self] = newValue
-        }
+        get { self[SimulatorEnabledEnvironmentKey.self] }
+        set { self[SimulatorEnabledEnvironmentKey.self] = newValue }
     }
 
     var simulatedDevice: Device? {
-        get {
-            self[SimulatedDeviceEnvironmentKey.self]
-        }
-        set {
-            self[SimulatedDeviceEnvironmentKey.self] = newValue
-        }
+        get { self[SimulatedDeviceEnvironmentKey.self] }
+        set { self[SimulatedDeviceEnvironmentKey.self] = newValue }
     }
 }
 
