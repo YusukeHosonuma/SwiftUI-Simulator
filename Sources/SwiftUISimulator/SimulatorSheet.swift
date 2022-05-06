@@ -19,12 +19,13 @@ public extension View {
 struct SimulatorSheetModifier<SheetContent: View>: ViewModifier {
     @EnvironmentObject private var model: SimulatorSheetModel
     @Environment(\.simulatorEnabled) private var isSimulatorEnabled
+    @Environment(\.simulatedDevice) var simulatedDevice
 
     let sheetContent: () -> SheetContent
     @Binding var isPresented: Bool
 
     func body(content: Content) -> some View {
-        if isSimulatorEnabled {
+        if isSimulatorEnabled, let _ = simulatedDevice {
             content
                 .onChange(of: isPresented) { _ in
                     update()
