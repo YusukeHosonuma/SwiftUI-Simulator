@@ -18,6 +18,10 @@ let package = Package(
     targets: [
         .target(name: "SwiftUISimulator", dependencies: [
             "Defaults",
+            "SwiftPrettyPrint", // TODO: can remove?
+            "UserDefaultsBrowser",
+        ]),
+        .target(name: "UserDefaultsBrowser", dependencies: [
             "SwiftPrettyPrint",
         ]),
         .testTarget(name: "SwiftUISimulatorTests", dependencies: ["SwiftUISimulator"]),

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct UserDefaultsBoolEditor: View {
+struct BoolEditor: View {
     @Binding var value: Bool
 
     var body: some View {
