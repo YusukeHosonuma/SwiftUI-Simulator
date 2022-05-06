@@ -115,10 +115,12 @@ extension View {
 }
 
 struct SampleSheetView: View {
-    @Environment(\.presentationMode) private var presentationMode
-    #if DEBUG
-    @Environment(\.simulatedSheetDismiss) private var dismiss
-    #endif
+    //
+    // ☑️ Standard API (iOS 14+)
+    //
+    // @Environment(\.presentationMode) private var presentationMode
+    //
+    @DismissSheet private var dismiss
 
     var body: some View {
         //
@@ -146,10 +148,12 @@ struct SampleSheetView: View {
                     .toolbar {
                         ToolbarItem(placement: .destructiveAction) {
                             Button("Done") {
-                                presentationMode.wrappedValue.dismiss()
-                                #if DEBUG
+                                //
+                                // ☑️ Standard API (iOS 14+)
+                                //
+                                // presentationMode.wrappedValue.dismiss()
+                                //
                                 dismiss()
-                                #endif
                             }
                         }
                     }

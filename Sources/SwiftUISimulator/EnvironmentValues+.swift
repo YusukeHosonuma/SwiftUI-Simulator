@@ -10,7 +10,7 @@ import SwiftUI
 public typealias SimulatedSheetDismissAction = () -> Void
 
 public extension EnvironmentValues {
-    var simulatedSheetDismiss: SimulatedSheetDismissAction {
+    var simulatedSheetDismiss: SimulatedSheetDismissAction? {
         get {
             self[SimulatedSheetDismissEnvironmentKey.self]
         }
@@ -21,5 +21,5 @@ public extension EnvironmentValues {
 }
 
 struct SimulatedSheetDismissEnvironmentKey: EnvironmentKey {
-    static var defaultValue: SimulatedSheetDismissAction = {}
+    static var defaultValue: SimulatedSheetDismissAction?
 }
