@@ -14,6 +14,8 @@ struct ContentView: View {
 
     @State var dateStyle: DateFormatter.Style = .medium
     @State var timeStyle: DateFormatter.Style = .medium
+    @State var isPresentedSheet = false
+    @State var isPresentedSimulatableSheet = false
 
     @Environment(\.locale) var locale
     @Environment(\.calendar) var calendar
@@ -86,8 +88,16 @@ struct ContentView: View {
                 //
                 // Test for accentColor
                 //
-                Button("Hello") {}
-                    .font(.title3)
+                VStack {
+                    Button(".sheet()") {
+                        isPresentedSheet.toggle()
+                    }
+
+                    Button(".simulatableSheet()") {
+                        isPresentedSimulatableSheet.toggle()
+                    }
+                }
+                .font(.title3)
 
                 //
                 // Date style
@@ -126,10 +136,67 @@ struct ContentView: View {
             .navigationTitle("SwiftUI-Simulator")
         }
         .navigationViewStyle(.stack)
+        .sheet(isPresented: $isPresentedSheet) {
+            SampleSheetView()
+        }
+        .simulatableSheet(isPresented: $isPresentedSimulatableSheet) {
+            SampleSheetView()
+        }
         .onAppear {
             state.onAppear()
         }
         .debugFilename()
+    }
+}
+
+struct SampleSheetView: View {
+    //
+    // ☑️ Standard API (iOS 14+)
+    //
+    // @Environment(\.presentationMode) private var presentationMode
+    //
+    @DismissSheet private var dismiss
+
+    var body: some View {
+        //
+        // ☑️ Not use `NavigationView`
+        //
+        // ZStack {
+        //    Color.green//.opacity(0.1)
+        //    VStack {
+        //        Text("Top")
+        //        Spacer()
+        //        Text("Bottom")
+        //    }
+        // }
+        // .border(.blue, width: 2)
+
+        //
+        // ☑️ Use `NavigationView`
+        //
+        NavigationView {
+            VStack {
+                Text("Top")
+                Spacer()
+                Text("This is sample sheet.")
+                    .navigationTitle("Sheet")
+                    .toolbar {
+                        ToolbarItem(placement: .destructiveAction) {
+                            Button("Done") {
+                                //
+                                // ☑️ Standard API (iOS 14+)
+                                //
+                                // presentationMode.wrappedValue.dismiss()
+                                //
+                                dismiss()
+                            }
+                        }
+                    }
+                Spacer()
+                Text("Bottom")
+            }
+        }
+        // FIXME: NavigationView の場合、勝手にセーフエリア（bottom）分の余白を追加してしまう
     }
 }
 

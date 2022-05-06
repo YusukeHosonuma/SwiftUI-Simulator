@@ -175,6 +175,13 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     //
+    // Simulate sheets
+    //
+    @StateObject private var simulatorSheetModelDefault = SimulatorSheetModel()
+    @StateObject private var simulatorSheetModelDark = SimulatorSheetModel()
+    @StateObject private var simulatorSheetModelLight = SimulatorSheetModel()
+
+    //
     // Private properties
     //
     private let content: () -> Content
@@ -192,6 +199,8 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
             Group {
                 if isSimulatorEnabled {
                     simulatorContainer()
+                        .environment(\.simulatorEnabled, true)
+                        .environment(\.simulatedDevice, device)
                 } else {
                     simulatorIcon()
                 }
@@ -368,33 +377,42 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
                             if isPortrait {
                                 HStack(spacing: 24) {
                                     simulatedContent(device: device, colorScheme: .dark, orientation: orientation)
+                                        .environmentObject(simulatorSheetModelDark)
                                     simulatedContent(device: device, colorScheme: .light, orientation: orientation)
+                                        .environmentObject(simulatorSheetModelLight)
                                 }
                             } else {
                                 VStack(spacing: 64) {
                                     simulatedContent(device: device, colorScheme: .dark, orientation: orientation)
+                                        .environmentObject(simulatorSheetModelDark)
                                     simulatedContent(device: device, colorScheme: .light, orientation: orientation)
+                                        .environmentObject(simulatorSheetModelLight)
                                 }
                             }
                         } else {
                             simulatedContent(device: device, colorScheme: isDark ? .dark : .light, orientation: orientation)
+                                .environmentObject(simulatorSheetModelDefault)
                         }
                     }
                     .offset(y: -32)
                     .animation(.default, value: device)
                     .frame(width: reader.size.width, height: reader.size.height + reader.safeAreaInsets.bottom)
                 } else {
-                    content()
-                        .overrideEnvironments(
-                            sizeClasses: nil, // ☑️ Use real device size classes.
-                            locale: locale.map(Locale.init) ?? Locale.current,
-                            legibilityWeight: legibilityWeight,
-                            colorScheme: isDark ? .dark : .light,
-                            accentColor: isDark ? accentColorDark : accentColorLight,
-                            calendar: calendar.map(Calendar.init) ?? Calendar.current,
-                            timeZone: timeZone,
-                            dynamicTypeSize: dynamicTypeSize
-                        )
+                    ZStack {
+                        content()
+                        SimulatorSheet()
+                    }
+                    .overrideEnvironments(
+                        sizeClasses: nil, // ☑️ Use real device size classes.
+                        locale: locale.map(Locale.init) ?? Locale.current,
+                        legibilityWeight: legibilityWeight,
+                        colorScheme: isDark ? .dark : .light,
+                        accentColor: isDark ? accentColorDark : accentColorLight,
+                        calendar: calendar.map(Calendar.init) ?? Calendar.current,
+                        timeZone: timeZone,
+                        dynamicTypeSize: dynamicTypeSize
+                    )
+                    .environmentObject(simulatorSheetModelDefault)
                 }
 
                 //
@@ -804,35 +822,40 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
         let sizeClass = device.sizeClass(orientation: orientation)
         let frameSize = isDisplaySafeArea ? deviceSize : contentSize
 
-        VStack(spacing: 0) {
-            //
-            // Safe area - Top
-            //
-            safeAreaMargin(.vertical, size: safeArea.top)
+        ZStack {
+            VStack(spacing: 0) {
+                //
+                // Safe area - Top
+                //
+                safeAreaMargin(.vertical, size: safeArea.top)
 
-            HStack(spacing: 0) {
-                //
-                // Safe area - Left
-                //
-                safeAreaMargin(.horizontal, size: safeArea.left)
+                HStack(spacing: 0) {
+                    //
+                    // Safe area - Left
+                    //
+                    safeAreaMargin(.horizontal, size: safeArea.left)
+
+                    //
+                    // Application content
+                    //
+                    content()
+                        .frame(width: contentSize.width, height: contentSize.height, alignment: .center)
+
+                    //
+                    // Safe area - Right
+                    //
+                    safeAreaMargin(.horizontal, size: safeArea.right)
+                }
 
                 //
-                // Application content
+                // Safe area - Bottom
                 //
-                content()
-                    .frame(width: contentSize.width, height: contentSize.height, alignment: .center)
-
-                //
-                // Safe area - Right
-                //
-                safeAreaMargin(.horizontal, size: safeArea.right)
+                safeAreaMargin(.vertical, size: safeArea.bottom)
             }
 
-            //
-            // Safe area - Bottom
-            //
-            safeAreaMargin(.vertical, size: safeArea.bottom)
+            SimulatorSheet()
         }
+        .clipped()
         .frame(width: frameSize.width, height: frameSize.height)
         .border(simulatorBorderColor.rawValue)
         .overrideEnvironments(
