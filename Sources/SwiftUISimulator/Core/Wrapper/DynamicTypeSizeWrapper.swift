@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftUICommon
 
 //
 // ☑️ `DynamicTypeSize` is supported in iOS 15+.

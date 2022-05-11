@@ -46,6 +46,15 @@
       }
     },
     {
+      "identity" : "swift-case-paths",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-case-paths.git",
+      "state" : {
+        "revision" : "ce9c0d897db8a840c39de64caaa9b60119cf4be8",
+        "version" : "0.8.1"
+      }
+    },
+    {
       "identity" : "swiftparamtest",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/YusukeHosonuma/SwiftParamTest.git",
@@ -61,6 +70,15 @@
       "state" : {
         "revision" : "65b8a439c9e499aebb838c0418c72f7d0e66c6ae",
         "version" : "1.3.0"
+      }
+    },
+    {
+      "identity" : "swiftui-common",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/YusukeHosonuma/SwiftUI-Common.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "752116df39c91730a7bf6f017b50722d3a11f1de"
       }
     },
     {

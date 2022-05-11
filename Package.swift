@@ -15,12 +15,14 @@ let package = Package(
         .package(url: "https://github.com/sindresorhus/Defaults.git", from: "6.2.0"),
         .package(url: "https://github.com/YusukeHosonuma/SwiftPrettyPrint.git", from: "1.2.0"),
         .package(url: "https://github.com/YusukeHosonuma/UserDefaultsBrowser.git", branch: "main"),
+        .package(url: "https://github.com/YusukeHosonuma/SwiftUI-Common.git", branch: "main"),
     ],
     targets: [
         .target(name: "SwiftUISimulator", dependencies: [
             "Defaults",
             "SwiftPrettyPrint", // TODO: can remove?
             "UserDefaultsBrowser",
+            .product(name: "SwiftUICommon", package: "SwiftUI-Common"),
         ]),
         .testTarget(name: "SwiftUISimulatorTests", dependencies: ["SwiftUISimulator"]),
     ]

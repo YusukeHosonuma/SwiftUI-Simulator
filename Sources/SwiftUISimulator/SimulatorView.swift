@@ -9,6 +9,7 @@ import Defaults
 import SwiftPrettyPrint
 import SwiftUI
 import UserDefaultsBrowser
+import SwiftUICommon
 
 internal let storageKeyPrefix = "YusukeHosonuma/SwiftUI-Simulator"
 
@@ -595,7 +596,7 @@ public struct SimulatorView<Content: View, DebugMenu: View>: View {
                 //
                 if isDynamicTypeSizesEnabled {
                     Slider(
-                        value: $dynamicTypeSize.sliderBinding(),
+                        value: $dynamicTypeSize.slider(),
                         in: DynamicTypeSizeWrapper.sliderRange,
                         step: 1
                     )
