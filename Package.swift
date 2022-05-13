@@ -14,8 +14,8 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/sindresorhus/Defaults.git", from: "6.2.0"),
         .package(url: "https://github.com/YusukeHosonuma/SwiftPrettyPrint.git", from: "1.2.0"),
-        .package(url: "https://github.com/YusukeHosonuma/UserDefaultsBrowser.git", branch: "main"),
-        .package(url: "https://github.com/YusukeHosonuma/SwiftUI-Common.git", branch: "main"),
+        .package(url: "https://github.com/YusukeHosonuma/UserDefaultsBrowser.git", from: "1.0.0"),
+        .package(url: "https://github.com/YusukeHosonuma/SwiftUI-Common.git", from: "1.0.0"),
     ],
     targets: [
         .target(name: "SwiftUISimulator", dependencies: [
