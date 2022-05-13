@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/YusukeHosonuma/SwiftUI-Common.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "752116df39c91730a7bf6f017b50722d3a11f1de"
+        "revision" : "8e2672dbb3fea32d78236fc6048874718119307b",
+        "version" : "1.0.0"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/YusukeHosonuma/UserDefaultsBrowser.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "5ad3dafb328e2ddbb6072e923810ee362f9bb475"
+        "revision" : "24f5e6578ae0013208df2ab9d49b4f656d02aa0c",
+        "version" : "1.0.2"
       }
     }
   ],
