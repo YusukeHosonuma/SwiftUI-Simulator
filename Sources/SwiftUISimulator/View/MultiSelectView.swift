@@ -8,9 +8,6 @@
 import SwiftUI
 
 struct MultiItemSelectView<Item, Row>: View where Item: Hashable, Row: View {
-    // 💡 iOS 15+: `\.dismiss`
-    @Environment(\.presentationMode) private var presentationMode
-
     private let selectedItems: Binding<Set<Item>>
     private let allItems: [Item]
     private let row: (Item) -> Row
