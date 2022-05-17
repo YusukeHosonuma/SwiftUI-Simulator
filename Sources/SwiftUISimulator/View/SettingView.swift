@@ -7,6 +7,7 @@
 
 import Defaults
 import SwiftUI
+import SwiftUICommon
 
 struct SettingView: View {
     @Binding var sourceDevices: Set<Device>
@@ -29,8 +30,7 @@ struct SettingView: View {
     @Default(.isExpandedTimeZone) private var isExpandedTimeZone
     @Default(.isExpandedSimulator) private var isExpandedSimulator
 
-    // 💡 iOS 15+: `\.dismiss`
-    @Environment(\.presentationMode) private var presentationMode
+    @Dismiss private var dismiss
 
     @State private var isPresentedResetAlert = false
 
@@ -161,7 +161,7 @@ struct SettingView: View {
             .toolbar {
                 ToolbarItem(placement: .destructiveAction) {
                     Button("Done") {
-                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     }
                 }
             }
