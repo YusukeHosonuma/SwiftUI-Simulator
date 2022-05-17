@@ -8,9 +8,6 @@
 import SwiftUI
 
 struct DeviceSelectView: View {
-    // 💡 iOS 15+: \.dismiss
-    @Environment(\.presentationMode) var presentationMode
-
     private let selectedDevices: Binding<Set<Device>>
 
     init(selectedDevices: Binding<Set<Device>>) {
